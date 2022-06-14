@@ -1,0 +1,71 @@
+\documentclass[sigconf]{acmart}
+
+\settopmatter{printacmref=false}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\pagestyle{plain}
+
+\input{headers}
+
+\begin{document}
+\fancyhead{}
+\title{Node Group Centrality Based on Random Walk}
+\author{Haisong Xia and Zhongzhi Zhang \footnotemark}
+\affiliation{
+    \institution{Shanghai Key Laboratory of Intelligent Information Processing, Fudan University, Shanghai 200433, China\\
+        School of Computer Science, Fudan University, Shanghai 200433, China}
+    \city{}\country{}
+}
+\email{{hsxia18,zhangzz}@fudan.edu.cn}
+\begin{abstract}
+    In the field of complex networks, the problem of important node discovery is increasingly becoming one of the important topics of academic research.
+    % Although a large number of node centrality-related studies have been conducted previously, most of the existing studies focus only on the centrality of single node in the network, which are inadequate when applied to multiple important node discovery problems. 
+    In this paper, we extend the hitting time of a single node to the case of multiple nodes based on absorbing random walk. Specifically, we define a new metric related to the set of absorbing nodes: Multiple Absorbing Node Centrality(MANC). For undirected graphs, MANC for a node set \(S\) is defined as the weighted average of the hitting times of absorbing random walks from all nodes in the graph to \(S\). Based on the new metric, we construct MANC minimization problem: return the optimal set \(S^*\) of absorbing nodes with capacity \(k\), which minimize its MANC \(M(S^*)\). In this paper, we prove that this problem is NP-hard. However, thanks to the monotonicity and supermodularity of MANC, we give greedy algorithms with a \(1-\frac{1}{e}\) approximate factor and cubic running time. To accelerate the computation of MANC by avoiding the time-consuming matrix inversion, we give a faster algorithm with a \(1-\frac{1}{e}-\epsilon\) approximate factor and nearly linear running time for any \(\epsilon>0\). Numerical experiments on large-scale real networks demonstrate that our second algorithm is still well scalable while maintaining the approximation error.
+\end{abstract}
+\keywords{social network, random walk, graph algorithm, Laplacian solver}
+\maketitle
+\renewcommand{\thefootnote}{*}
+\footnotetext[1]{Corresponding author. Zhongzhi Zhang is also with Shanghai Blockchain Engineering Research Center, as well as Research Institute of Intelligent Complex Systems, Fudan University, Shanghai 200433.}
+
+\section{Introduction}
+\subsection{Related Works}
+
+\section{Preliminary}
+
+In this section, we briefly indroduce some notations as well as some basic concepts on graphs, random walk and special functions.
+
+\subsection{Notations}
+
+In the rest of the paper, we distinguish scalars, vectors and matrices by using regular lowercase letters \(a,b,c\), bold lowercase letters \(\bsym{a},\bsym{b},\bsym{c}\) and bold uppercase letters \(\bsym{A},\bsym{B},\bsym{C}\) respectively. For the convenience of representing some specific elements in vectors and matrices, we use \(\bsym{a}_{i}\) to denote the \(\myord{i}\) entry of vector \(\bsym a\) and \(\bsym A_{[i,j]}\) to denote entry \((i,j)\) of matrix \(\bsym A\). We also use \(\bsym{A}_{[i,:]}\) and \(\bsym{A}_{[:,j]}\) to respectively denote the \(\myord{i}\) row and the \(\myord{j}\) column of matrix \(\bsym{A}\).
+
+Moreover, to facilitate the representation of subvectors and submatrices, we introduce sets in the subscripts of vectors and matrices. For example, let \(S=\setof{S_1,S_2,\dots,S_t}\), we use \(\bsym{a}_{-S}\) to denote the subvector of \(\bsym{a}\) obtained by removing the \(\myord{S_1},\myord{S_2},\dots,\myord{S_t}\) component. We also use \(\bsym{A}_{-S}\) to denote the submatrix of \(\bsym{A}\) obtained by removing elements that either in the \(\myord{S_1},\myord{S_2},\dots,\myord{S_t}\) row or in the \(\myord{S_1},\myord{S_2},\dots,\myord{S_t}\) column.
+
+Note that when a vector or matrix has both superscripts and subscripts, the subscript takes precedence over the superscript. Therefore, \(\bsym{A}_{-S}^{-1}\) denotes the inverse of \(\bsym{A}_{-S}\) rather than the submatrix of \(\bsym{A}^{-1}\). Finally, we use \(\bsym{e}_i\) to denote the \(\myord{i}\) standard basis vector of particular dimensions, and \(\bsym{1}_n\in \rea^n\) to denote a vector of \(n\) dimensions with all elements of \(1\). Sometimes, we omit subscripts where there is no ambiguity.
+
+\subsection{Graphs and Laplacian Matrices}
+
+In the rest of the paper, we use \(G=(V,E,w)\) to denote connected weighted graph with \(n=\abs{V}\) vertices and \(m=\abs{E}\) edges, where \(V,E\) denote the node set and edge set of the graph respectively, and \(w:E\to\rea^+\) denote the edge weight function. Then the adjacency matrix of the graph \(\bsym{A}\) can be
+
+\subsection{Random Walk on Graphs}
+
+\subsection{Supermodular Functions}
+
+\section{Problem Formulation}
+
+\subsection{Definition of MANC and Its Minimization Problem}
+
+\subsection{Properties of MANC}
+
+\section{Simple Greedy Algorithm}
+
+\section{Faster Greedy Algorithm}
+
+\section{Experiments}
+
+\section{Conclusions}
+
+\bibliographystyle{ACM-Reference-Format}
+\balance
+\nocite{*}
+\bibliography{main}
+
+\end{document}
