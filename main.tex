@@ -80,15 +80,17 @@ We also use \(\mata_{-S}\) to denote the submatrix of \(\mata\) obtained by remo
 Note that when a vector or matrix has both superscripts and subscripts, the subscript takes precedence over the superscript.
 Therefore, \(\mata_{-S}^{-1}\) denotes the inverse of \(\mata_{-S}\) rather than the submatrix of \(\mata^{-1}\). Finally, we use \(\bsym{e}_i\) to denote the \(\myord{i}\) standard basis vector of particular dimensions, and \(\allone_n\in \rea^n\) to denote a vector of \(n\) dimensions with all elements of \(1\). Sometimes, we omit subscripts where there is no ambiguity.
 
-\subsection{Graphs and Laplacian Matrices}
+\subsection{Graphs and Laplacian Matrices}\label{sub:lap}
 
 In the rest of the paper, we use \(\gr=(V,E,w)\) to denote connected weighted undirected graph with \(n=\abs{V}\) nodes and \(m=\abs{E}\) edges, where \(V,E\) denote the node set and edge set of \(\gr\) respectively, and \(w:E\to\rea^+\) denote the edge weight function.
-Then the adjacency matrix of \(\gr\) can be denoted as \(\mata\in \rea^{n\times n}\): for node \(i,j\in V\), \(\mata_{[i,j]}=\mata_{[j,i]}=w_{i,j}\) if \(i\) and \(j\) are adjacent, and \(\mata_{[i,j]}=\mata_{[j,i]}=0\) otherwise.
+We use \(e=\edge{u}{v}\) to represent an edge \(e\) connecting node \(u\) and node \(v\), and also use \(w_{\min}\) and \(w_{\max}\) to represent the minimum and maximum edge weight of \(\gr\) respectively, thus, \(w_{\min}=\min_{e\in E}w_e\),\(w_{\max}=\max_{e\in E}w_e\).
+
+After giving the denotation of \(\gr\), then the adjacency matrix of \(\gr\) can be denoted as \(\mata\in \rea^{n\times n}\): for node \(i,j\in V\), \(\mata_{[i,j]}=\mata_{[j,i]}=w_{i,j}\) if \(i\) and \(j\) are adjacent, and \(\mata_{[i,j]}=\mata_{[j,i]}=0\) otherwise.
 Moreover, degree \(\vecd_i\) of node \(i\) can be defined as \(\vecd_i=\sum_{j=1}^n\mata_{[i,j]}\).
 If we denote the relevant degree diagnoal matrix as \(\matd={\rm{diag}}(\vecd)\), then the Laplacian matrix \(\lap\) of \(\gr\) is \(\lap=\matd-\mata\).
 
 The Laplacian matrix of a graph has other definitions.
-For an undirected graph \(\gr\), we first assign an arbitary direction to each edge in \(\gr\), then for edge \(e=(i,j)\in E\), the row corresponding to edge \(e\) in the incidence matrix \(\matb\in\rea^{m\times n}\) of \(\gr\) can be denoted as \(\matb_{[e,:]}=e_i-e_j\).
+For an undirected graph \(\gr\), we first assign an arbitary direction to each edge in \(\gr\), then for edge \(e=\edge{i}{j}\in E\), the row corresponding to edge \(e\) in the incidence matrix \(\matb\in\rea^{m\times n}\) of \(\gr\) can be denoted as \(\matb_{[e,:]}=e_i-e_j\).
 Furthermore, let \(\matw\in\rea^{m\times m}\) be a diagnoal matrix whose diagnoal entry \((e,e)\) is denoted as \(w_e\), then the Laplacian matrix \(\lap\) of \(\gr\) can be defined as \(\lap=\matb^\top\matw\matb=\sum_{e\in E}w_e\bsym{b}_e\bsym{b}_e^\top\).
 From the definition above, it is easy to prove that \(\lap\) is positive semi-definite.
 
@@ -137,8 +139,8 @@ Subsequently, we give the definitions of monotone and supermodular set functions
 
 In this paper, we define Multiple Absorbing Node Centrality (MANC) \(M(S)\) as the weighted average of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
 
-\begin{definition}[MANC]
-    \[M(S)=\sum_{u\in V}\vecpi_u T_{u,S}=\sum_{u\in V}\vecpi_u \mean{\{t:X_{u,t}^r\in S,t\ge0\}}\]
+\begin{definition}[MANC]\label{def:manc}
+    \[M(S)=\sum_{u\in V}\vecpi_u T_{u,S}=\sum_{u\in V}\vecpi_u \mean{\min\{t:X_{u,t}^r\in S,t\ge0\}}\]
 \end{definition}
 
 The definition of MANC naturally raises the problem of minimizing MANC subject to a cardinality constraint.
@@ -153,39 +155,75 @@ According to ~\cite{KeSn76}, we are able to transfrom the definition of MANC int
 \begin{fact}
     Given the absorbing node set \(S\) and transition matrix \(\matp\), then the fundamental matrix \(\matf\) can be denoted as
     \begin{equation}\label{eq:funda}
-        \matf=\sum_{l=0}^\infty\matp_{-S}^l=(\mate-\matp_{-S})^{-1}=(\mate-\matp)_{-S}^{-1}
+        \matf=\sum_{l=0}^\infty\matp_{-S}^l=(\mati-\matp_{-S})^{-1}=(\mati-\matp)_{-S}^{-1}
     \end{equation}
 \end{fact}
 
 According to ~\eqref{eq:funda}, the entry \((i,j)\) of \(\matf\) can be represented as the expected number of passages through node \(j\) by the random walker starting from node \(i\) before being absorbed.
 From the linearity of mean, it follows that the hitting time of a random walker is equivalent to the sum of the expected number of passages through all nodes in the graph, i.e. \(\vecl=\matf\allone\), where \(\vecl_i\) denotes the hitting time of a random walker starting from node \(i\).
 In particular, if the random walker starts from absorbing node, the hitting time can be regarded as \(0\). Considering the above case, MANC \(M(S)\) can be written as
-\[M(S)=\vecpi_{-S}^\top\vecl=\vecpi_{-S}^\top\matf\allone=\vecpi_{-S}^\top(\mate-\matp)_{-S}^{-1}\allone\]
+\[M(S)=\vecpi_{-S}^\top\vecl=\vecpi_{-S}^\top\matf\allone=\vecpi_{-S}^\top(\mati-\matp)_{-S}^{-1}\allone\]
 
 Furthermore, after simplification using ~\eqref{eq:trs}, we get the formula of \(M(S)\):
 \begin{equation}\label{eq:MANC}
     \begin{split}
-        M(S) & =\vecpi_{-S}^\top\left(\mate-\matp\right)_{-S}^{-1}\allone                                    \\
-        & =\vecpi_{-S}^\top\left(\mate-\matd^{-1}\mata\right)_{-S}^{-1}\allone                          \\
-        & =\vecpi_{-S}^\top\left(\mate-\matd^{-1}\mata\right)_{-S}^{-1}\matd_{-S}^{-1}\matd_{-S}\allone \\
+        M(S) & =\vecpi_{-S}^\top\left(\mati-\matp\right)_{-S}^{-1}\allone                                    \\
+        & =\vecpi_{-S}^\top\left(\mati-\matd^{-1}\mata\right)_{-S}^{-1}\allone                          \\
+        & =\vecpi_{-S}^\top\left(\mati-\matd^{-1}\mata\right)_{-S}^{-1}\matd_{-S}^{-1}\matd_{-S}\allone \\
         & =\vecpi_{-S}^\top\left(\matd-\mata\right)_{-S}^{-1}\vecd_{-S}                                \\
         & =\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}
     \end{split}
 \end{equation}
 
+\subsection{Physic Explanations of MANC}
+
+After detailing MANC and MANCM, we try to establish a connection between MANC \(M(S)\) and extra detour time \(\Delta D_{i,j}(S)\), which enables us to understand the importance of node set \(S\) from a different perspective. The similar idea of extra detour time has been proposed in~\cite{RaGyZh13}, where the authors prove a equation related to topological centrality and extra detour time of a single node. In this paper, we try to explore the detour time of a node set instead of a single node, giving a physical explanation of MANC.
+
+Random detour time \(D_{i,j}(S)\) is a natural extension of hitting time when considering random walk on a graph, which is defined as the expected time of a walker who starts from node \(i\), must visit an arbitary node in set \(S\), then first reaches node \(j\). Consequently, extra detour time \(\Delta D_{i,j}(S)\) is defined as the difference between random detour time and hitting time, i.e. \(\Delta D_{i,j}(S)=D_{i,j}(S)-T_{i,j}\). It is intuitive that the larger \(\Delta D_{i,j}(S)\) is ,the harder it is for a walker to reach nodes in \(S\), and less important \(S\) is in the whole network. Actually, we can prove the following theorem, which confirms the connection between MANC \(M(S)\) and extra detour time \(\Delta D_{i,j}(S)\).
+
+\begin{theorem}\label{thm:extra_detour}
+    \begin{equation}\label{eq:extra-detour}
+        M(S)=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_j\Delta D_{i,j}(S)
+    \end{equation}
+\end{theorem}
+\begin{proof}
+    % \(\matfstar={(\mati-\matp+\allone\vecpi^\top)}^{-1}\matpi^{-1}\)
+    To prove equation~\eqref{eq:extra-detour}, we utilize the fundamental matrix \(\matfstar\) in the non-absorbing random walk.
+    According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\allone\vecpi^\top)^{-1}\matpi^{-1}\).
+    Subsequently, the hitting time \(H_{i,j}\) can be represented by \(\matfstar\) as \(H_{i,j}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\).
+    If we denote the probability that a walker starting from node \(i\) first reaches node \(u\) in absorbing set \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpcal\in\rea^{n\times\abs{S}}\), then we can use \(\matfstar\) to represent the weighted average of random detour time as
+    \begin{align*}
+        \sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)
+         & =\sum_{i=1}\vecpi_i T_{i,S}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\vecpi_i\vecpi_j\matpcal_{[i,k]}T_{k,j}  \\
+         & =M(S)+\sum_{j=1}^n\vecpi_j\vecpi^\top\matpcal(\matfstar_{[j,j]\allone-\matfstar_{[S,j]}})                        \\
+         & =M(S)+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}\vecpi^\top\matpcal\allone-\vecpi^\top\matpcal\matfstar_{[S,:]}\vecpi \\
+         & =M(S)+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1
+    \end{align*}
+    where the last equality is due to the fact that \(\matpcal\allone=\allone\) and \(\matfstar\vecpi=\allone\).
+    Afterwards, we are able to rewrite the right hand side of equation~\eqref{eq:extra-detour} as
+    \begin{align*}
+        \sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_j\Delta D_{i,j}(S)
+         & =\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)-\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jT_{i,j}         \\
+         & =M(S)+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1-\sum_{i=1}^n\sum_{j=1}^n(\matfstar_{[j,j]}-\matfstar_{[i,j]}) \\
+         & =M(S)+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1-(\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1)                     \\
+         & =M(S)
+    \end{align*}
+    which completes our proof.
+\end{proof}
+
 \subsection{Properties of MANC}
 
-After detailing MANC and MANCM, we attempt to study the properties of them. First, we prove that MANCM is NP-hard.
+After proposing physic explanations of MANC, we attempt to study the properties of them. First, we prove that MANCM is NP-hard.
 Subsequently, we prove that the set function \(M(\cdot)\) is monotone and supermodular, which provides us with a theorecical basis for designing greedy algorithms with approximation guarantees.
 
 \subsubsection{NP-hard}
 
 \
 
-To prove the NP-hardness of MANCM, we first give the detailed definition of vertex cover and a decision version of MANCM, trying to construct a reduction from the former to the latter.
+To prove the NP-hardness of MANCM, we first give the detailed definition of vertex cover and a decision version of MANCM, trying to construct a reduction from the former to the latter on \(c\)-regular graphs.
 
-\begin{problem}[Vertex Cover]
-Given a connected graph \(G=(V,E)\) and an integer \(k\), the goal is to find out whether there exists a node set \(S\subseteq V\) such that \(\abs{S}\le k\) and every edge in \(E\) is incident with at least one node in \(S\).
+\begin{problem}[Vertex Cover on \(c\)-regular graphs]
+Given a connected \(c\)-regular graph \(G=(V,E)\) and an integer \(k\), the goal is to find out whether there exists a node set \(S\subseteq V\) such that \(\abs{S}\le k\) and every edge in \(E\) is incident with at least one node in \(S\).
 \end{problem}
 
 \begin{problem}[Multiple Absorbing Node Centrality Minimization, Decision Version, MANCMD]
@@ -194,14 +232,17 @@ The goal is to find out whether there exists a node set \(S\subseteq V\) such th
 \end{problem}
 
 \begin{lemma}\label{lem:reduct}
-    Let \(\gr=(V,E,w)\) be a connected graph with all edge weights being \(1\). Let \(S\subseteq V\) be a nonempty node set with capacity \(k\), then \(M(S)\ge \vecpi_{-S}\allone\) and the equality holds if and only if \(S\) is a vertex cover of \(\gr\).
+    Let \(\gr=(V,E,w)\) be a connected \(c\)-regular graph graph with all edge weights being \(1\).
+    Let \(S\subseteq V\) be a nonempty node set with capacity \(k\), then \(M(S)\ge (n-k)/n\) and the equality holds if and only if \(S\) is a vertex cover of \(\gr\).
 \end{lemma}
 \begin{proof}
-    We first prove that if \(S\) is a vertex cover of \(\gr\), then \(M(S)=\vecpi_{-S}\allone\).
+    We first prove that if \(S\) is a vertex cover of \(\gr\), then \(M(S)=(n-k)/n\).
     When \(S\) is a vertex cover of \(\gr\), because there are no edges between nodes in \(V\setminus S\), we can simplify~\eqref{eq:MANC} as
-    \[M(S)=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\matd_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}\allone\]
+    \[M(S)=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\matd_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\allone\]
+    Since \(\gr\) is a \(c\)-regular graph, \(\vecpi=\begin{pmatrix}1/n&\cdots&1/n\end{pmatrix}^\top\).
+    Thus, \(M(S)=\vecpi_{-S}^\top\allone=(n-k)/n\).
 
-    We then prove that if \(S\) is not a vertex cover of \(\gr\), then \(M(S)>\vecpi_{-S}\allone\).
+    We then prove that if \(S\) is not a vertex cover of \(\gr\), then \(M(S)>(n-k)/n\).
     For node \(u\in S\) and node \(v\in V\setminus S\), it is obvious that \(\Pr(T_{u,S}^r=0)=\Pr(T_{v,S}^r\neq0)=1\).
     Meanwhile, because \(S\) is not a vertex cover of \(\gr\), edge set \(E\) has at least one edge \((u',v')\) that is not covered by \(S\).
     Let \(d_{\max}=\max\{d_u|u\in V\}\),\(v\in V\setminus(S+u'+v')\), then we get
@@ -217,7 +258,8 @@ The goal is to find out whether there exists a node set \(S\subseteq V\) such th
         M(S) & =\sum_{v\in V}\vecpi_v\mean{T_{v,S}^r}                                                                             \\
              & =\sum_{v\in V\setminus(S+u'+v')}\vecpi_v\mean{T_{v,S}^r}+\vecpi_{u'}\mean{T_{u',S}^r}+\vecpi_{v'}\mean{T_{v',S}^r} \\
              & \ge\vecpi_{-(S+u'+v')}\allone+\vecpi_{u'}(1+\frac1n)+\vecpi_{v'}(1+\frac1n)                                        \\
-             & =\vecpi_{-S}\allone+\frac{\vecpi_{u'}+\vecpi_{v'}}n>\vecpi_{-S}\allone
+             & =\vecpi_{-S}^\top\allone+\frac{\vecpi_{u'}+\vecpi_{v'}}n
+        >\vecpi_{-S}^\top\allone=(n-k)/n
     \end{align*}
 \end{proof}
 
@@ -237,19 +279,42 @@ After accomplishing the proof of \lemref{lem:reduct}, we prove that MANCM is NP-
 
 \
 
-In this part, we prove that the objective function \(M(\cdot)\) is monotone and supermodular by discussing the classification of the random walk paths.
+In this part, we prove that the objective function \(M(\cdot)\) is monotone and supermodular.
 \begin{theorem}[Monotonicity]\label{thm:mono}
     Let \(S\) be an arbitary nonempty node set of connected weighted graph \(\gr=(V,E,w)\), then for node \(u\in V\setminus S\),
     \[M(S)\ge M(S+u)\]
 \end{theorem}
+
+\begin{proof}
+    According to \defref{def:manc}, \(M(S)=\sum_{v\in V}\vecpi_v\mean{T_{v,S}^r}\). Since \(S\) is a subset of \(S+u\), when a random walker reaches nodes in \(S\), it must have reached nodes in \(S+u\), i.e. \(T_{v,S}^r\ge T_{v,S+u}^r\). Therefore \(\mean{T_{v,S}^r}\ge\mean{T_{v,S+u}^r}\) holds for any node \(v\in V\), which completes our proof.
+\end{proof}
+
 \begin{theorem}[Supermodularity]\label{thm:supermod}
-    Let \(S,T\) be arbitary nonempty node sets of connected weighted graph \(\gr=(V,E,w)\) such that \(S\subseteq T\subseteq V\), then for node \(u\in V\setminus T\),
+    Let \(S,T\) be arbitary nonempty node sets of connected weighted graph \(\gr=(V,E,w)\) such that \(S\subseteq T\subsetneq V\), then for node \(u\in V\setminus T\),
     \[M(S)-M(S+u)\ge M(T)-M(T+u)\]
 \end{theorem}
 
+\begin{proof}
+    For a subset \(A\) of the probability space, we denote \(\allone_A\) as the indicator function of the event \(A\). Then we rewrite \(M(S)-M(S+u)\) by discussing the hitting node of random walker.
+    \begin{align*}
+        M(S)-M(S+u)
+        = & \sum_{v\in V}\vecpi_v\left(\mean{T_{v,S}^r}-\mean{\min\{T_{v,S}^r,T_{v,u}^r \}}\right)      \\
+        = & \sum_{v\in V}\vecpi_v(\mean{T_{v,S}^r}-\mean{T_{v,S}^r\allone_{\{T_{v,S}^r\le T_{v,u}^r\}}} \\
+          & -\mean{T_{v,S}^r\allone_{\{T_{v,u}^r<T_{v,S}^r\}}})                                         \\
+        = & \sum_{v\in V}\vecpi_v\mean{(T_{v,S}^r-T_{v,u}^r)\allone_{\{T_{v,u}^r<T_{v,S}^r\}}}
+    \end{align*}
+    Similarly, we also have
+    \[M(T)-M(T+u)=\sum_{v\in V}\vecpi_v\mean{(T_{v,T}^r-T_{v,u}^r)\allone_{\{T_{v,u}^r<T_{v,T}^r\}}}\]
+    As is mentioned in proof of \thmref{thm:mono}, \(T_{v,S}^r\ge T_{v,T}^r\forall v\in V\).
+    It is also obvious that \(\allone_{\{T_{v,u}-T_{v,S}\}}\ge\allone_{\{T_{v,u}-T_{v,T}\}}\).
+    Combining the above two inequalities, we can prove that
+    \[(T_{v,S}^r-T_{v,u}^r)\allone_{\{T_{v,u}^r<T_{v,S}^r\}}\ge(T_{v,T}^r-T_{v,u}^r)\allone_{\{T_{v,u}^r<T_{v,T}^r\}}\]
+    holds for any node \(v\in V\), which completes our proof.
+\end{proof}
+
 \section{Simple Greedy Algorithm}
 
-Due to the monotonicity adn supermodularity of the set function \(M(\cdot)\), there exists a simple greedy algorithm with a \(1-\frac1e\) approximate factor to MANCM~\cite{NeWoFi78}:
+Due to the monotonicity and supermodularity of the set function \(M(\cdot)\), there exists a simple greedy algorithm with a \(1-\frac1e\) approximate factor to MANCM~\cite{NeWoFi78}:
 At each iteration, a new absorbing node \(u^*\) is selected from the set of non-absorbing nodes \(V\setminus S\), satisfying
 \[margin(u,S)=M(S)-M(S+u)\]
 \[u^*=\argmax_{u\in V\setminus S}(margin(u,S))\]
@@ -263,7 +328,7 @@ For node \(u\in V\setminus S\), after adjusting the order of submatrix \(\lap_{-
 where \(\mata\) denotes \(\lap_{-(S+u)}\).
 According to the properties of block matrices, we can get
 \[\lap_{-S}^{-1}=\begin{pmatrix}
-        t & t\veca^\top\mata^{-1} \\t\mata^{-1}\vecb&\mata^[-1]+t\mata^{-1}\vecb\veca^\top\mata^{-1}
+        t & t\veca^\top\mata^{-1} \\t\mata^{-1}\vecb&\mata^{-1}+t\mata^{-1}\vecb\veca^\top\mata^{-1}
     \end{pmatrix}\]
 where \(t=(l_u-\veca^\top\mata^{-1}\veca)^{-1}\).
 Therefore, when \(S\neq\varnothing\), \(margin(u,S)\) can be rewritten as
@@ -341,7 +406,7 @@ Furthermore, we also need the following lemma to provide our approximation.
     \[\vecv_i^2\le n\Abs{\vecv}_{\lap_{-S}}^2\]
 \end{lemma}
 
-\subsection{Approximations of~\eqref{eq:margin-empty}}
+\subsection{Approximations of~\eqref{eq:margin-empty}}\label{subsec:approx-margin-empty}
 
 Given that~\eqref{eq:margin-empty} can be regarded as the Single Absorbing Node Centrality (SANC), we use an efficient algorithm proposed by~\cite{ZhXuZh20}.
 \begin{lemma}\label{lem:approxhk}
@@ -375,19 +440,49 @@ Given that~\eqref{eq:margin-empty} can be regarded as the Single Absorbing Node 
 
 \subsection{Approximations of~\eqref{eq:margin-deriv}}
 
+Before proposing the approximations of~\eqref{eq:margin-deriv}, the proof of the following lemma is necessary.
+\begin{lemma}\label{lem:norm-ineq}
+    Given a connected weighted undirected graph \(\gr=(V,E,w)\), let \(\lap\) and \(w_{\min}\) denote the Laplacian and the minimal edge weight of the graph respectively.
+    Then for an arbitary node set \(S\subseteq V\) and an arbitary vector \(\vecv\in\rea^{n-\abs{S}}\), \(\vecv_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\) holds.
+\end{lemma}
+
+\begin{proof}
+    As is mentioned in~\secref{sub:lap}, we can decompose Laplacian matrix as \(\lap=\matb^\top\matw\matb\).
+    Similarly, we can decompose SDDM matrix \(\lap_{-S}\) as \(\lap_{-S}=\matb'^\top\matw'\matb'+\matz\).
+    If \(\matz_{[i,i]}\neq0\), then we have \(\matz_{[i,i]}\ge w_{\min}\), it is apparent that \(\vecv_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\).
+    If \(\matz_{[i,i]}=0\), there must exist a node \(j\) that satisfies \(\matz_{[j,j]}\ge w_{\min}\) in the component of graph that contains node \(i\) after removing nodes in \(S\).
+    Let \(\pscr_{ij}\) denotes the simple path connecting node \(i\) and node \(j\), then we have
+    \begin{align*}
+        \Abs{\vecv}^2_{\lap_{-S}}
+         & \ge w_{\min}\sum_{(a,b)\in\pscr_{ij}}(\vecv_a-\vecv_b)^2+w_{\min}\vecv_j^2           \\
+         & \ge w_{\min}n^{-1}\left(\sum_{(a,b)\in\pscr_{ij}}(\vecv_a-\vecv_b)+\vecv_j \right)^2
+        \ge w_{\min}n^{-1}\vecv_i^2
+    \end{align*}
+    which completes our proof.
+\end{proof}
+
 We first approximate the numerator of~\eqref{eq:margin-deriv}, which requires the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}\).
 Since \(\lap_{-S}\) is a SDDM matrix, we can use~\lemref{lem:solver} to avoid computing matrix inverse \(\lap_{-S}^{-1}\).
-% where \(\delta_1=TODO\)
 \begin{lemma}\label{lem:approx-numer}
-    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the Laplacian submatrix \(\lap_{-S}\) and an error parameter \(\epsilon>0\), let \(\vecx'=\textsc{Solve}(\lap_{-S},\vecd_{-S},\delta_1)\) where \(\delta_1=\frac{\epsilon}{7n}\sqrt{\frac{w_{\min}}{w_{\max}}}\). Then for any node \(i\in V\setminus S\), we have
+    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the Laplacian submatrix \(\lap_{-S}\) and an error parameter \(\epsilon>0\), let \(\vecx'=\textsc{Solve}(\lap_{-S},\vecd_{-S},\delta_1)\) where \(\delta_1=\frac{w_{\min}\epsilon}{7n^3w_{\max}}\). Then for any node \(i\in V\setminus S\), we have
     \begin{equation}\label{eq:approx-numer}
         \vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\approx_{\epsilon/7}\vecx'_i
     \end{equation}
 \end{lemma}
+\begin{proof}
 
-% \begin{proof}
-
-% \end{proof}
+    Combining \lemref{lem:solver} and \lemref{lem:norm-ineq}, we can bound \((\vecx'_i-\vecx_i)^2\) as
+    \begin{align*}
+        (\vecx'_i-\vecx_i)^2
+         & \le nw_{\min}^{-1}\Abs{\vecx'-\vecx}^2_{\lap_{-S}}        \\
+         & \le nw_{\min}^{-1}\delta_1^2\Abs{\vecx}^2_{\lap_{-S}}     \\
+         & \le n^4w_{\min}^{-1}w_{\max}^2\delta_1^2\trace{\lap_{-S}} \\
+         & \le n^6w_{\min}^{-2}w_{\max}^2\delta_1^2
+    \end{align*}
+    On the other hand, since \(\vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\) denotes the hitting time of a random walker starting from node \(i\), we have \(\vecx_i\ge1\).
+    Finally, we are able to give the approximation of \(\vecx_i\) as
+    \[\frac{\abs{\vecx'_i-\vecx_i}}{\vecx_i}\le n^3w_{\max}w_{\min}^{-1}\delta_1=\epsilon/7\]
+\end{proof}
 
 Subsequently, we attempt to approximate the denominator of~\eqref{eq:margin-deriv}, which can be recast in an euclidian norm by using \lemref{lem:JL}:
 \begin{equation}\label{eq:denom-solver}
@@ -420,11 +515,10 @@ Then~\eqref{eq:denom-solver} and~\eqref{eq:denom-jl} can be rewritten as
 \end{equation}
 
 Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can efficiently approximate the denominator of~\eqref{eq:margin-deriv}.
-% where \(\delta_2=TODO\)
 \begin{lemma}\label{lem:approx-denom}
     Given a connected weighted undirected graph \(\gr=(V,E,w)\),the Laplacian submatrix \(\lap_{-S}\) and an error parameter \(\epsilon>0\).
     Let \(\overline{\matx}\) and \(\overline{\maty}\) denote \(\matq\matw^{1/2}\matb\) and \(\matr\matz^{1/2}\) respectively.
-    Let \(\matx'\in\rea^{q\times n}\) and \(\maty'\in\rea^{r\times n}\) be matrices such that \(\matx'_{[i,:]}=\textsc{Solve}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\), \(\maty'_{[i,:]}=\textsc{Solve}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\), where \(\delta_2=\frac{\epsilon}{7n^2}\sqrt{\frac{1-\epsilon/3}{2w_{\max}(1+\epsilon/3)}}\). Then for any node \(i\in V\setminus S\), we have
+    Let \(\matx'\in\rea^{q\times n}\) and \(\maty'\in\rea^{r\times n}\) be matrices such that \(\matx'_{[i,:]}=\textsc{Solve}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\), \(\maty'_{[i,:]}=\textsc{Solve}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\), where \(\delta_2=\frac{w_{\min}\epsilon}{15n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\). Then for any node \(i\in V\setminus S\), we have
     \begin{equation}\label{eq:approx-denom}
         \Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2=\vece_i^\top\lap_{-S}^{-1}\vece_i\approx_{\epsilon/3}\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2
     \end{equation}
@@ -448,8 +542,7 @@ Combining Lemmas \ref{lem:approx-numer} and \ref{lem:approx-denom}, we finally p
     }
     Compute \(\lap\) and \(\vecd\)\;
     \(d\gets\vecd\allone\),\(q,r\gets\ceil{24(\epsilon/3)^{-2}\log n}\)\;
-    % \(\delta_1\gets TODO\),\(\delta_2\gets TODO\)\;
-    \(\delta_1\gets \frac{\epsilon}{7n}\sqrt{\frac{w_{\min}}{w_{\max}}}\),\(\delta_2\gets \frac{\epsilon}{7n^2}\sqrt{\frac{1-\epsilon/3}{2w_{\max}(1+\epsilon/3)}}\)\;
+    \(\delta_1\gets \frac{w_{\min}\epsilon}{7n^2w_{\max}}\),\(\delta_2\gets \frac{w_{\min}\epsilon}{15n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\)\;
     \(\vecx'\gets\textsc{Solve}(\lap_{-S},\vecd_{-S},\delta_1)\)\;
     \(\matq\gets\textsc{GenerateRandomMatrix}(q,m)\)\;
     \(\matr\gets\textsc{GenerateRandomMatrix}(r,n)\)\;
@@ -501,39 +594,119 @@ Combining~\algoref{algo:sancest} and~\algoref{algo:marginest}, we can give the f
 
 After theorecical analyses of the two approximate algorithm \textsc{Exact} and \textsc{Approx}, we attempt to verify their performance on real-world network datasets.
 We choose some datasets from KONECT~\cite{Ku13} and SNAP~\cite{JuAn14}.
-The information of these datasets is shown in Table~\ref{tab:info}.
+The information of these datasets is shown in \tabref{tab:info}.
 Note that our algorithm works only for connected graphs, therefore for the originally disconnected networks, we perform numerical experiments on their largest connected components.
 \begin{table}
     \caption{Information of datasets, where \(n,m\) and \(n',m'\) denote the number of nodes and edges of a network and its largest connected component respectively.}
     \label{tab:info}
     \begin{tabular}{ccccc}
         \toprule
-        Network      & \(n\)   & \(m\)   & \(n'\)  & \(m'\)  \\
+        Network             & \(n\)   & \(m\)   & \(n'\)  & \(m'\)  \\
         \midrule
-        ego-Facebook & 4039    & 88324   & 4039    & 88324   \\
-        CA-GrQc      & 5242    & 14496   & 4158    & 13428   \\
-        CA-HepTh     & 9877    & 25998   & 8638    & 24827   \\
-        CA-HepPh     & 12008   & 118521  & 11204   & 117649  \\
-        loc-Gowalla  & 196591  & 950327  & 196591  & 950327  \\
-        com-Amazon   & 334863  & 925872  & 334863  & 925872  \\
-        roadNet-PA   & 1088092 & 1541898 & 1087562 & 1541514 \\
-        roadNet-CA   & 1965206 & 2766607 & 1957027 & 2760388 \\
+        Zachary karate club & 34      & 78      & 34      & 78      \\
+        Contiguous USA      & 49      & 107     & 49      & 107     \\
+        Les Misérables      & 77      & 254     & 77      & 254     \\
+        Jazz musicians      & 198     & 2742    & 198     & 2742    \\
+        Euroroads           & 1174    & 1417    & 1039    & 1305    \\
+        Hamsterster friends & 2952    & 12534   & 1788    & 12476   \\
+        ego-Facebook        & 4039    & 88234   & 4039    & 88234   \\
+        CA-GrQc             & 5242    & 14496   & 4158    & 13428   \\
+        US power grid       & 4941    & 6594    & 4941    & 6594    \\
+        Reactome            & 6327    & 147547  & 5973    & 146992  \\
+        CA-HepTh            & 9877    & 25998   & 8638    & 24827   \\
+        Sister cities       & 14274   & 20573   & 10320   & 17988   \\
+        CA-HepPh            & 12008   & 118521  & 11204   & 117649  \\
+        CAIDA               & 26475   & 53381   & 26475   & 53381   \\
+        loc-Gowalla         & 196591  & 950327  & 196591  & 950327  \\
+        com-Amazon          & 334863  & 925872  & 334863  & 925872  \\
+        Dogster friends     & 451710  & 8543549 & 426485  & 8543321 \\
+        roadNet-PA          & 1088092 & 1541898 & 1087562 & 1541514 \\
+        roadNet-CA          & 1965206 & 2766607 & 1957027 & 2760388 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-For the convenience of calling SDD solver in Laplacians.jl\footnote{https://github.com/danspielman/Laplacians.jl}, our numerical experiment programs are implemented by Julia. We run our programs on a linux box equipped with 256GiB RAM and 3.5GHz AMD EPYC Milan CPU, using 56 threads.
+For the convenience of calling SDD solver in Laplacians.jl\footnote{https://github.com/danspielman/Laplacians.jl}, our numerical experiment programs are implemented by Julia.
+We run our programs on a linux box equipped with 128GiB RAM and 3.5GHz AMD EPYC Milan CPU, using 32 threads.
 
-\subsection{Accuracy of \textsc{MarginEst} and \textsc{SANCEst}}
+\subsection{Accuracy of \textsc{MarginEst}}
 
-% Since we give the approximate guarantee for algorithm \textsc{MarginEst} and \textsc{SANCEst} above, it is necessary to calculate the approximation errors of both algorithms in real networks by numerical experiments.
+Since we give the approximate guarantee for algorithm \textsc{MarginEst} and \textsc{SANCEst} above, it is necessary to calculate the approximation errors of both algorithms in real networks by numerical experiments.
 
-% The introduced relative error of approximate algorithm can be represented as
-% \[error=\frac{\abs{margin'(u,S)-margin(u,S)}}{margin(u,S)}\]
+The introduced relative error of approximate algorithm can be represented as
+\[error_u=\frac{\abs{margin'(u,S)-margin(u,S)}}{margin(u,S)}\]
+which is caused by using \lemref{lem:JL} and \lemref{lem:solver}.
+To intuituively demonstrate the relationship between the error and the dimension of the projection matrix in \lemref{lem:JL}, we use quantity \(c_{JL}\) to denote \(q/\log n\) in \textsc{MarginEst}.
+We run \textsc{MarginEst} with various \(c_{JL}\) on different real networks (Euroroads, Hamsterster friends, ego-Facebook and CA-GrQc), setting absorbing set \(S=\{u^*\}\) where
+\[u^*=\argmin_{u\in V}M(\{u\})\]
+For each \(c_{JL}\), we compute \(error_u\) for each node \(u\neq u^*\), then draw the distribution of them in \figref{pic:margin-error}.
+We observe that almost all of the relative errors are in the interval \((0,0.2]\) when \(c_{JL}\ge50\), so we set parameter \(c_{JL}=50\) in the following experiments, whose results will show that this parameter is sufficient to get approximate solution.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.475\textwidth]{margin_errors.eps}
+    \caption{Relative error \(error_u\) distribution of algorithm \textsc{MarginEst} with different \(c_{JL}\) on four networks: ego-Facebook (a), CA-GrQc (b), Euroroads (c) and Hamsterster friends (d).\label{pic:margin-error}}
+\end{figure}
 
 \subsection{Performance of \textsc{Exact} and \textsc{Approx}}
 
+Subsequently, we show the performance of proposed algorithms by comparing them with optimum solution and two other algorithms: \textsc{Top-SANC} and \textsc{Top-Degree} when solving MANC minimization problem.
+
+We first compare the performance of \textsc{Exact} and \textsc{Approx} with optimum solution on four small networks.
+For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC value by enumerating all the \(k\)-element subsets of \(V\), then compare the minimum MANC value with solution given by \textsc{Exact} and \textsc{Approx}, whose results is shown in \figref{pic:compare-effect-optimum}.
+\figref{pic:compare-effect-optimum} demonstrates that the solutions given by our greedy algorithms are almost the same with each other, both of them are also quite close to the optimum solution, which indicates that the approximation ratio of our proposed algorithms are far better than the theorecical guarantees.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.475\textwidth]{compare_effects_optimum.eps}
+    \caption{MANC \(M(S)\) of node set \(S\) computed by three different algorithms(\textsc{Exact},\textsc{Approx} and \textsc{Optimum}) on four networks: Zachary karate club (a), Les Misérables (b), Contiguous USA (c) and Zebra (d).\label{pic:compare-effect-optimum}}
+\end{figure}
+
+\textsc{Top-SANC} simply chooses \(k\) absorbing nodes with minimum SANC value which is defined in \secref{subsec:approx-margin-empty}, while \textsc{Top-Degree} chooses them with biggest degrees.
+We run these four algorithms on four different real networks, the results is shown in \figref{pic:compare-effect}.
+\figref{pic:compare-effect} demonstrates that both of our algorithms also get similar approximate solutions in larger networks, which outperform the solutions of other algorithms.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.475\textwidth]{compare_effects_exact.eps}
+    \caption{MANC \(M(S)\) of node set \(S\) computed by four different algorithms(\textsc{Exact},\textsc{Approx},\textsc{Top-SANC} and \textsc{Top-Degree}) on four networks: US power grid (a), ego-Facebook (b), CA-GrQc (c) and Euroroads (d).\label{pic:compare-effect}}
+\end{figure}
+
 \subsection{Running time of \textsc{Exact} and \textsc{Approx}}
+
+Finally, we prove that algorithm \textsc{Approx} is much more efficient than algorithm \textsc{Exact}, especially when applicated on large networks.
+We test both algorithms on a larger set of real networks,.
+For each network, we use \textsc{Exact} and \textsc{Approx} separately to solve MANC minimization problem, setting \(k=10\).
+The running time of both algorithms is listed in \tabref{tab:running-time}.
+From \tabref{tab:running-time}, we can observe that the running time of \textsc{Approx} is proportional to the number of edges in the network, thus leading to an increase in the speedup ratio of \textsc{Approx} compared to \textsc{Exact}as the network size grows.
+In addition, \tabref{tab:running-time} indicates that \textsc{Approx} is still usable when dealing with networks with millions of nodes, while \textsc{Exact} fails because of its high time complexity.
+
+\begin{table}
+    \caption{The average running times and corresponding speedup ratio of \textsc{Exact} and \textsc{Approx} on a larger set of real networks.}
+    \label{tab:running-time}
+    \begin{tabular}{*4{c}}
+        \toprule
+        \multirow{2}*{Network} & \multicolumn{2}{c}{Time (seconds)} & \multirow{2}*{Speedup ratio}          \\
+        \cmidrule(lr){2-3}     & \textsc{Exact}                     & \textsc{Approx}                       \\
+        \midrule
+        Euroroads              & 0.864                              & 0.509                        & 1.697  \\
+        Hamsterster friends    & 2.679                              & 1.133                        & 2.365  \\
+        ego-Facebook           & 39.499                             & 6.150                        & 6.423  \\
+        CA-GrQc                & 42.611                             & 1.515                        & 28.126 \\
+        US power grid          & 74.966                             & 1.530                        & 48.997 \\
+        Reactome               & 139.377                            & 10.426                       & 13.368 \\
+        CA-HepTh               & 392.903                            & 4.050                        & 97.013 \\
+        Sister cities          & 667.902                            & 8.362                        & 79.873 \\
+        CA-HepPh               & -                                  & 23.377                       & -      \\
+        CAIDA                  & -                                  & 23.705                       & -      \\
+        loc-Gowalla            & -                                  & 543.582                      & -      \\
+        com-Amazon             & -                                  & 1643.860                     & -      \\
+        Dogster friends        & -                                  & 3702.121                     & -      \\
+        roadNet-PA             & -                                  & 8556.227                     & -      \\
+        roadNet-CA             & -                                  & 17876.751                    & -      \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \section{Conclusions}
 
