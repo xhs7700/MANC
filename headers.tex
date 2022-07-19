@@ -23,7 +23,7 @@
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{definition}[theorem]{Definition}
+\newtheorem{definition}{Definition}[section]
 \newtheorem{fact}[theorem]{Fact}
 
 % \newcommand{\proof}{{\bf Proof.}\hskip 0.3truecm}
@@ -31,12 +31,14 @@
 
 \newcommand{\defeq}{\stackrel{\mathrm{def}}{=}}
 \newcommand{\setof}[1]{\left\{#1 \right\}}
-% \newcommand{\sizeof}[1]{\left|#1 \right|}
 \newcommand{\abs}[1]{\left|#1 \right|}
-\newcommand{\mean}[1]{\mathbb{E}[#1]}
+\newcommand{\mean}[1]{\mathbb{E}\left[#1\right]}
 \newcommand{\ceil}[1]{\left\lceil#1\right\rceil}
 \newcommand{\Abs}[1]{\left\Vert#1\right\Vert}
 \newcommand{\trace}[1]{\mathrm{Tr}\left(#1\right)}
+\newcommand{\manc}[1]{M\left(#1\right)}
+\newcommand{\tmanc}[1]{\tilde{M}\left(#1\right)}
+\newcommand{\mypar}[1]{\left( #1 \right)}
 
 \newcommand{\bsym}[1]{\boldsymbol{#1}}
 \newcommand{\myord}[1]{{#1}^{\rm{th}}}
@@ -53,6 +55,7 @@
 \newcommand{\vecx}{\bsym{x}}
 
 \newcommand{\pscr}{\mathscr{P}}
+\newcommand{\kcal}{\mathcal{K}}
 
 \newcommand{\lap}{\bsym{L}}
 \newcommand{\matd}{\bsym{D}}
@@ -80,6 +83,7 @@
 \newcommand{\secref}[1]{Section~\ref{#1}}
 \newcommand{\tabref}[1]{Table~\ref{#1}}
 \newcommand{\figref}[1]{Figure~\ref{#1}}
+\newcommand{\factref}[1]{Fact~\ref{#1}}
 
 \newcommand{\edge}[2]{\langle #1, #2 \rangle}
 
