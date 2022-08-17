@@ -18,14 +18,15 @@
 }
 \email{{hsxia18,zhangzz}@fudan.edu.cn}
 \begin{abstract}
-    In the field of complex networks, the problem of important node discovery is increasingly becoming one of the important topics of academic research.
-    % Although a large number of node centrality-related studies have been conducted previously, most of the existing studies focus only on the centrality of single node in the network, which are inadequate when applied to multiple important node discovery problems. 
-    In this paper, we extend the hitting time of a single node to the case of multiple nodes based on absorbing random walk.
-    Specifically, we define a new metric related to the set of absorbing nodes: Multiple Absorbing Node Centrality(MANC).
+    In the field of complex networks, the usage of random walk and its relevant quantities arises in many academic researches.
+    In this paper, we consider the connection between random detour time and Kemeny constant, then subsequently extend it to the case of multiple nodes.
+    Inspired by this newly discovered connection, we propose a new centrality that happens to be Multiple Absorbing Node Centrality(MANC).
     For undirected graphs, MANC for a node set \(S\) is defined as the weighted average of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
-    Based on the new metric, we construct MANC minimization problem: return the optimal set \(S^*\) of absorbing nodes with capacity \(k\), which minimize its MANC \(\manc{S^*}\).
-    In this paper, we prove that this problem is NP-hard. However, thanks to the monotonicity and supermodularity of MANC, we give greedy algorithms with a \(1-\frac{k}{(k-1)e}\) approximate factor and cubic running time.
-    To further accelerate the computation of MANC by avoiding the time-consuming matrix inversion, we give a faster algorithm with a \(1-\frac{k}{(k-1)e}-\epsilon\) approximate factor and nearly linear running time for any \(\epsilon\in(0,1)\). Numerical experiments on large-scale real networks demonstrate that our second algorithm is still well scalable while maintaining the approximation error.
+    Based on the new centrality, we investigate MANC minimization problem: return the optimal set \(S^*\) of absorbing nodes with capacity \(k\), which minimize its MANC \(\manc{S^*}\).
+    In this paper, we prove that this problem is NP-hard.
+    However, thanks to the monotonicity and supermodularity of MANC, we give greedy algorithms with a \(1-\frac{k}{(k-1)e}\) approximate factor and cubic running time.
+    To further accelerate the computation of MANC, we give a faster algorithm with a \(1-\frac{k}{(k-1)e}-\epsilon\) approximate factor and nearly linear running time for any \(\epsilon\in(0,1)\).
+    Numerical experiments on large-scale real networks demonstrate that our second algorithm is still well scalable while maintaining the approximation error.
 \end{abstract}
 \keywords{social network, random walk, graph algorithm, Laplacian solver}
 \maketitle
@@ -109,14 +110,14 @@ As \(\lap\) is not invertible due to its null space \(\allone\), we turn to use 
 
 Moreover, Laplacian matrix has some useful properties. According to~\cite{LiPeShYiZh19}, we have the following fact.
 \begin{fact}\label{fact:trace-lap}
-    For a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) nodes, where \(w_{\min}\) denotes the minimum edge weith of \(gr\), let \(\lap\) denote the Laplacian matrix of \(\gr\).
+    For a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) nodes, where \(w_{\min}\) denotes the minimum edge weight of \(\gr\), let \(\lap\) denote the Laplacian matrix of \(\gr\).
     Then for any nonempty set \(S\subseteq V\),
     \[\trace{\lap_{-S}^{-1}}\le n^2w_{\min}^{-1}\]
 \end{fact}
 
-\subsection{Random Walk on Graphs}
+\subsection{Random Walk on Graphs}\label{subsec:random-walk}
 
-For a connected weighted graph \(\gr\), the classical random walk model of \(\gr\) can be described by the transition matrix \(\matp\): at any time step, the walker located at node \(i\) moves to node \(j\) with probability \({\matp_{[i,j]}=\mata_{[i,j]}}/{\vecd}_i\).
+For a connected weighted graph \(\gr\) with \(n\) nodes, the classical random walk model of \(\gr\) can be described by the transition matrix \(\matp\in\rea^{n\times n}\): at any time step, the walker located at node \(i\) moves to node \(j\) with probability \({\matp_{[i,j]}=\mata_{[i,j]}}/{\vecd}_i\).
 It is easy to verify that
 
 \begin{equation}\label{eq:trs}
@@ -136,20 +137,35 @@ where \(d=\sum_{i=1}^n\vecd_i\).
 Let \(X_{u,t}^r\) denote the location of random walker \(r\) starting from node \(u\) at time step \(t\), then we can give the definition of hitting time.
 
 The node hitting time \(T_{u,v}\) from node \(u\) to node \(v\) is the expected number of time steps for a walker starting from \(u\) to visit node \(v\) for the first time.
-Similarly, the group hitting time \(T_{u,S}\) from node \(u\) to node set \(S\) is the expected number of time steps for a walker starting from \(u\) to visit an arbitary node of \(S\) for the first time.
 
-\begin{definition}[Hitting Time]
+\begin{definition}[Hitting time]\label{def:hitting-time-single}
     \[T_{u,v}^r\defeq\min\setof{t:X_{u,t}=v,t\ge0},T_{u,v}\defeq\mean{T_{u,v}^r}\]
-    \[T_{u,S}^r\defeq\min\setof{t:X_{u,t}\in S,t\ge0},T_{u,S}\defeq\mean{T_{u,S}^r}\]
 \end{definition}
 where the \(r\) at the superscript denotes \(\myord{r}\) independent random walk.
 
 Hitting time is a fundamental quantity in random walks, which is also known as absorbing length.
-Many interesting quantities can be further obtained from hitting time, one of them is Kemeny constant \(\kcal\).
-For a connected graph \(\gr=(V,E)\), its Kemeny constant \(kcal\) is defined as the expected hitting time for a random walker who starts from an arbitary node \(i\) to node \(j\) which is selected according to the stationary distribution \(\vecpi\).
-\begin{definition}[Kemeny constant]
+Many interesting quantities can be further obtained from hitting time, including Kemeny constant \(\kcal\), absorbing random-walk centrality \(H_u\) and random detour time \(D_{i,j}(u)\).
+
+For a connected graph \(\gr=(V,E)\), its Kemeny constant \(\kcal\) is defined as the expected hitting time for a random walker who starts from an arbitary node \(i\) to node \(j\) which is selected according to the stationary distribution \(\vecpi\).
+\begin{definition}[Kemeny constant]\label{def:kemeny}
     \[\kcal\defeq\sum_{j\in V}\vecpi_jT_{u,v},\forall u\in V\]
 \end{definition}
+
+For node \(u\) in a connected graph \(\gr=(V,E)\), its absorbing random-walk centrality \(H_u\) is defined as the expected hitting time of a walker who starts from node \(i\) for node \(u\), where node \(i\) is selected according to the stationary distribution \(\vecpi\).
+To distinguish from the newly defined centrality in \secref{subsec:def-manc}, we denote \(H_u\) as \textit{Single Absorbing Node Centrality}(SANC).
+
+\begin{definition}[SANC]\label{def:sanc}
+    \[H_u=\sum_{i\in V}\vecpi_iT_{i,u}\]
+\end{definition}
+
+Subsequently, for graph \(\gr\), its random detour time \(D_{i,j}(u)\) is defined as the expected time of a walker who starts from node \(i\), must visit node \(u\), then first reaches node \(j\), where \(i,u,j\in V\) differs from each other.
+
+\begin{definition}[Random detour time]\label{def:detour-single}
+    \[D_{i,j}(u)\defeq T_{i,u}+T_{u,j}\]
+\end{definition}
+
+It is intuitive that the larger \(D_{i,j}(u)\) is, the harder it is for a walker to reach node \(u\), then less important \(u\) is in the whole network.
+Actually, previous research has confirmed this suspicion, establishing connection among Kemeny constant \(\kcal\), SANC \(H_u\) and random detour time \(D_{i,j}(u)\).
 
 \subsection{Supermodular Functions}
 
@@ -165,17 +181,90 @@ Subsequently, we give the definitions of monotone and supermodular set functions
 
 \section{Problem Formulation}\label{sec:prob-form}
 
-\subsection{Definition of MANC and Its Minimization Problem}
+\subsection{Connections among quantities related to random walk}
 
-In this paper, we define Multiple Absorbing Node Centrality (MANC) \(\manc{S}\) as the weighted average of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
+After proposing definitions in \secref{subsec:random-walk}, it is intuitive that the larger \(D_{i,j}(u)\) is, the harder it is for a walker to reach node \(u\), then less important \(u\) is in the whole network.
+Actually, it is easy to prove the following theorem, establishing connection among Kemeny constant \(\kcal\), SANC \(H_u\) and random detour time \(D_{i,j}(u)\).
+\begin{theorem}\label{thm:connection-single}
+    For an arbitary node \(u\) in a connected graph \(\gr=(V,E)\) with \(n\) nodes,
+    \begin{equation}\label{eq:detour-single}
+        H_u+\kcal=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(u)
+    \end{equation}
+\end{theorem}
+\begin{proof}
+    According to definitions in \secref{subsec:random-walk}, the right side of~\eqref{eq:detour-single} can be rewritten as
+    \begin{align*}
+        \sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(u) & =\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_j\mypar{T_{i,u}+T_{u,j}} \\
+                                                           & =\sum_{i=1}^n\vecpi_iT_{i,u}+\sum_{j=1}^n\vecpi_jT_{u,j}         \\
+                                                           & =H_u+\kcal
+    \end{align*}
+    where the first equality is due to \defref{def:detour-single}, the last equality is due to \defref{def:sanc} and \defref{def:kemeny}.
+\end{proof}
 
-It is obvious that when \(S\) contains only one node \(v\), MANC \(\manc{S}\) automatically reduces to Single Absorbing Node Centrality (SANC) \(\manc{\setof{v}}\), which is also known as the trivial absorbing random-walk centrality.
+Inspired by this single-node version of theorem, we try to extend it to the case of multiple nodes.
+To begin with, we need to extend \defref{def:hitting-time-single} and \defref{def:detour-single} to multi-node case.
 
-\begin{definition}[MANC and SANC]\label{def:manc}
-    \[\manc{S}\defeq\sum_{u\in V}\vecpi_u T_{u,S}=\sum_{u\in V}\vecpi_u \mean{\min\setof{t:X_{u,t}^r\in S,t\ge0}}\]
-    \[\manc{\setof{v}}\defeq\sum_{u\in V}\vecpi_u T_{u,v}=\sum_{u\in V}\vecpi_u\mean{\min\setof{t:X_{u,t}^r=v,t\ge0}}\]
+Similarly, for node set \(S\) in a connected graph \(\gr=(V,E)\), the group hitting time \(T_{u,S}\) from node \(u\) to node set \(S\) is the expected number of time steps for a walker starting from \(u\) to visit an arbitary node of \(S\) for the first time.
+
+\begin{definition}[Group hitting time]\label{def:hitting-time-multiple}
+    \[T_{u,S}^r\defeq\min\setof{t:X_{u,t}\in S,t\ge0},T_{u,S}\defeq\mean{T_{u,S}^r}\]
 \end{definition}
 
+For node set \(S\) in graph \(\gr\), the group random detour time is defined as the expected time of a walker who starts from node \(i\), must visit an arbitary node in set \(S\), then first reaches node \(j\).
+
+\begin{definition}[Group random detour time]\label{def:detour-multiple}
+    If we denote the probability that a walker starting from node \(i\) first reaches node \(u\) in absorbing set \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpdistr\in\rea^{n\times\abs{S}}\), then we have
+    \[D_{i,j}(S)\defeq T_{i,S}+\sum_{k=1}^{\abs{S}}\matpdistr_{[i,k]T_{k,j}}\]
+\end{definition}
+
+It is clear that when \(S\) contains only one node \(v\), group hitting time \(T_{u,S}\) and group random detour time \(D_{i,j}(S)\) automatically reduces to hitting time \(T_{u,v}\) and random detour time \(D_{i,j}(v)\).
+It prompts us to similarly extend \thmref{thm:connection-single} to multi-node case.
+
+\begin{theorem}\label{thm:connection-multiple}
+    For an arbitary node subset \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) nodes,
+    \begin{equation}\label{eq:connection-multiple}
+        \sum_{i=1}^n\vecpi_iT_{i,S}+\kcal=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)
+    \end{equation}
+\end{theorem}
+\begin{proof}
+    To prove~\eqref{eq:connection-multiple}, we utilize the fundamental matrix \(\matfstar\) in the non-absorbing random walk.
+    According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\allone\vecpi^\top)^{-1}\matpi^{-1}\).
+    Subsequently, the hitting time \(H_{i,j}\) can be represented by \(\matfstar\) as \(H_{i,j}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\).
+    If we denote the probability that a walker starting from node \(i\) first reaches node \(u\) in absorbing set \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpdistr\in\rea^{n\times\abs{S}}\), then we can use \(\matfstar\) to represent the weighted average of random detour time as
+    \begin{equation}\label{eq:detour}
+        \begin{split}
+            \sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)
+            & =\sum_{i=1}^n\vecpi_i T_{i,S}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\vecpi_i\vecpi_j\matpdistr_{[i,k]}T_{k,j}  \\
+            & =\sum_{i=1}^n\vecpi_i T_{i,S}+\sum_{j=1}^n\vecpi_j\vecpi^\top\matpdistr(\matfstar_{[j,j]\allone-\matfstar_{[S,j]}})                        \\
+            & =\sum_{i=1}^n\vecpi_i T_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\allone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
+            & =\sum_{i=1}^n\vecpi_i T_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1
+        \end{split}
+    \end{equation}
+    where the last equality is due to the fact that \(\matpdistr\allone=\allone\) and \(\matfstar\vecpi=\allone\).
+
+    Afterwards, we are able to rewrite Kemeny constant \(\kcal\) as
+    \begin{equation}\label{eq:kemeny}
+        \begin{split}
+            \kcal&=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jT_{i,j}\\
+            &=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_j\mypar{\matfstar_{[j,j]}-\matfstar_{[i,j]}}\\
+            &=\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1
+        \end{split}
+    \end{equation}
+    where the last equality is due to the fact that \(\matfstar\vecpi=\allone\) and \(\vecpi^\top\allone=1\).
+    Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes our proof.
+\end{proof}
+
+Since \(D_{i,j}(S)\) is a multi-node extension from \(D_{i,j}(u)\), it is natrual to view the term \(\sum_{i=1}^n\vecpi_iT_{i,S}\) in~\eqref{eq:connection-multiple} as the multi-node extension of SANC \(H_u=\sum_{i=1}^n\vecpi_iT_{i,u}\), which means that it can be defined as a new form of group node centrality.
+
+\subsection{Definition of MANC and Its Minimization Problem}\label{subsec:def-manc}
+
+In this section, we define Multiple Absorbing Node Centrality (MANC) \(\manc{S}\) as the weighted average of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
+
+\begin{definition}[MANC]\label{def:manc}
+    \[\manc{S}\defeq\sum_{u\in V}\vecpi_u T_{u,S}=\sum_{u\in V}\vecpi_u \mean{\min\setof{t:X_{u,t}^r\in S,t\ge0}}\]
+\end{definition}
+
+It is obvious that when \(S\) contains only one node \(v\), MANC \(\manc{S}\) automatically reduces to Single Absorbing Node Centrality (SANC) \(H_v\).
 The definition of MANC naturally raises the problem of minimizing MANC subject to a cardinality constraint.
 
 \begin{problem}[Multiple Absorbing Node Centrality Minimization, MANCM]
@@ -208,48 +297,48 @@ Furthermore, after simplification using~\eqref{eq:trs}, we get the formula of \(
     \end{split}
 \end{equation}
 
-\subsection{Physic Explanations of MANC}
+% \subsection{Physic Explanations of MANC}
 
-After detailing MANC and MANCM, we try to establish a connection among MANC \(\manc{S}\), detour time \(D_{i,j}(S)\) and Kemeny constant \(\kcal\), which enables us to understand the importance of node set \(S\) from a different perspective. The similar idea of detour time has been proposed in~\cite{RaGyZh13}, where the authors prove a equation related to topological centrality and detour time of a single node. In this paper, we try to explore the detour time of a node set instead of a single node, giving a physical explanation of MANC.
+% After detailing MANC and MANCM, we try to establish a connection among MANC \(\manc{S}\), detour time \(D_{i,j}(S)\) and Kemeny constant \(\kcal\), which enables us to understand the importance of node set \(S\) from a different perspective. The similar idea of detour time has been proposed in~\cite{RaGyZh13}, where the authors prove a equation related to topological centrality and detour time of a single node. In this paper, we try to explore the detour time of a node set instead of a single node, giving a physical explanation of MANC.
 
-Random detour time \(D_{i,j}(S)\) is a natural extension of hitting time when considering random walk on a graph, which is defined as the expected time of a walker who starts from node \(i\), must visit an arbitary node in set \(S\), then first reaches node \(j\). It is intuitive that the larger \(D_{i,j}(S)\) is ,the harder it is for a walker to reach nodes in \(S\), and less important \(S\) is in the whole network. Actually, we can prove the following theorem, which confirms the connection among MANC \(\manc{S}\), detour time \(D_{i,j}(S)\) and Kemeny constant \(\kcal\).
+% Random detour time \(D_{i,j}(S)\) is a natural extension of hitting time when considering random walk on a graph, which is defined as the expected time of a walker who starts from node \(i\), must visit an arbitary node in set \(S\), then first reaches node \(j\). It is intuitive that the larger \(D_{i,j}(S)\) is ,the harder it is for a walker to reach nodes in \(S\), and less important \(S\) is in the whole network. Actually, we can prove the following theorem, which confirms the connection among MANC \(\manc{S}\), detour time \(D_{i,j}(S)\) and Kemeny constant \(\kcal\).
 
-\begin{theorem}\label{thm:extra_detour}
-    \begin{equation}\label{eq:extra-detour}
-        \manc{S}+\kcal=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)
-    \end{equation}
-\end{theorem}
-\begin{proof}
-    % \(\matfstar={(\mati-\matp+\allone\vecpi^\top)}^{-1}\matpi^{-1}\)
-    To prove~\eqref{eq:extra-detour}, we utilize the fundamental matrix \(\matfstar\) in the non-absorbing random walk.
-    According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\allone\vecpi^\top)^{-1}\matpi^{-1}\).
-    Subsequently, the hitting time \(H_{i,j}\) can be represented by \(\matfstar\) as \(H_{i,j}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\).
-    If we denote the probability that a walker starting from node \(i\) first reaches node \(u\) in absorbing set \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpcal\in\rea^{n\times\abs{S}}\), then we can use \(\matfstar\) to represent the weighted average of random detour time as
-    \begin{equation}\label{eq:detour}
-        \begin{split}
-            \sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)
-            & =\sum_{i=1}\vecpi_i T_{i,S}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\vecpi_i\vecpi_j\matpcal_{[i,k]}T_{k,j}  \\
-            & =\manc{S}+\sum_{j=1}^n\vecpi_j\vecpi^\top\matpcal(\matfstar_{[j,j]\allone-\matfstar_{[S,j]}})                        \\
-            & =\manc{S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}\vecpi^\top\matpcal\allone-\vecpi^\top\matpcal\matfstar_{[S,:]}\vecpi \\
-            & =\manc{S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1
-        \end{split}
-    \end{equation}
-    where the last equality is due to the fact that \(\matpcal\allone=\allone\) and \(\matfstar\vecpi=\allone\).
+% \begin{theorem}\label{thm:extra_detour}
+%     \begin{equation}\label{eq:extra-detour}
+%         \manc{S}+\kcal=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)
+%     \end{equation}
+% \end{theorem}
+% \begin{proof}
+%     % \(\matfstar={(\mati-\matp+\allone\vecpi^\top)}^{-1}\matpi^{-1}\)
+%     To prove~\eqref{eq:extra-detour}, we utilize the fundamental matrix \(\matfstar\) in the non-absorbing random walk.
+%     According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\allone\vecpi^\top)^{-1}\matpi^{-1}\).
+%     Subsequently, the hitting time \(H_{i,j}\) can be represented by \(\matfstar\) as \(H_{i,j}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\).
+%     If we denote the probability that a walker starting from node \(i\) first reaches node \(u\) in absorbing set \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpdistr\in\rea^{n\times\abs{S}}\), then we can use \(\matfstar\) to represent the weighted average of random detour time as
+%     \begin{equation}\label{eq:detour}
+%         \begin{split}
+%             \sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)
+%             & =\sum_{i=1}\vecpi_i T_{i,S}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\vecpi_i\vecpi_j\matpdistr_{[i,k]}T_{k,j}  \\
+%             & =\manc{S}+\sum_{j=1}^n\vecpi_j\vecpi^\top\matpdistr(\matfstar_{[j,j]\allone-\matfstar_{[S,j]}})                        \\
+%             & =\manc{S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\allone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
+%             & =\manc{S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1
+%         \end{split}
+%     \end{equation}
+%     where the last equality is due to the fact that \(\matpdistr\allone=\allone\) and \(\matfstar\vecpi=\allone\).
 
-    Afterwards, we are able to rewrite Kemeny constant \(\kcal\) as
-    \begin{equation}\label{eq:kemeny}
-        \begin{split}
-            \kcal&=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jT_{i,j}\\
-            &=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_j\mypar{\matfstar_{[j,j]}-\matfstar_{[i,j]}}\\
-            &=\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1
-        \end{split}
-    \end{equation}
-    where the last equality is due to the fact that \(\matfstar\vecpi=\allone\) and \(\vecpi^\top\allone=1\).
-    Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes our proof.
-\end{proof}
+%     Afterwards, we are able to rewrite Kemeny constant \(\kcal\) as
+%     \begin{equation}\label{eq:kemeny}
+%         \begin{split}
+%             \kcal&=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jT_{i,j}\\
+%             &=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_j\mypar{\matfstar_{[j,j]}-\matfstar_{[i,j]}}\\
+%             &=\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1
+%         \end{split}
+%     \end{equation}
+%     where the last equality is due to the fact that \(\matfstar\vecpi=\allone\) and \(\vecpi^\top\allone=1\).
+%     Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes our proof.
+% \end{proof}
 
-Since \(\kcal\) is only related to the structure of graph \(\gr\) itself, equation~\eqref{eq:extra-detour} indicates a constant difference between MANC \(\manc{S}\) and detour time \(D_{i,j}(S)\).
-This equation inspires us that MANC \(\manc{S}\) can also reflect the extent of detour in the network when setting \(S\) as the "passing set", which is another physical explanation of MANC.
+% Since \(\kcal\) is only related to the structure of graph \(\gr\) itself, equation~\eqref{eq:extra-detour} indicates a constant difference between MANC \(\manc{S}\) and detour time \(D_{i,j}(S)\).
+% This equation inspires us that MANC \(\manc{S}\) can also reflect the extent of detour in the network when setting \(S\) as the "passing set", which is another physical explanation of MANC.
 
 \subsection{Properties of MANC}
 
@@ -285,9 +374,9 @@ The goal is to find out whether there exists a node set \(S\subseteq V\) such th
     We then prove that if \(S\) is not a vertex cover of \(\gr\), then \(\manc{S}>(n-k)/n\).
     For node \(u\in S\) and node \(v\in V\setminus S\), it is obvious that \(\Pr(T_{u,S}^r=0)=\Pr(T_{v,S}^r\neq0)=1\).
     Meanwhile, because \(S\) is not a vertex cover of \(\gr\), edge set \(E\) has at least one edge \((u',v')\) that is not covered by \(S\).
-    Let \(d_{\max}=\max\setof{d_u|u\in V}\),\(v\in V\setminus(S+u'+v')\), then we get
-    \[\Pr(T_{v,S}^r=1)-\Pr(T_{u',S}^r=1)>\frac{1}{d_{\max}}>\frac{1}{n}\]
-    \[\Pr(T_{v,S}^r=1)-\Pr(T_{v',S}^r=1)>\frac{1}{d_{\max}}>\frac{1}{n}\]
+    Let \(\vecd_{\max}=\max\setof{\vecd_u|u\in V}\),\(v\in V\setminus(S+u'+v')\), then we get
+    \[\Pr(T_{v,S}^r=1)-\Pr(T_{u',S}^r=1)>\frac{1}{\vecd_{\max}}>\frac{1}{n}\]
+    \[\Pr(T_{v,S}^r=1)-\Pr(T_{v',S}^r=1)>\frac{1}{\vecd_{\max}}>\frac{1}{n}\]
 
     Therefore, we are able to give a lower bound of hitting time for nodes \(u'\),\(v'\) and node \(v\in V\setminus(S+u'+v')\).
     \[\mean{T_{u,S}^r}\ge1\]
@@ -340,13 +429,13 @@ In this part, we prove that the objective function \(\manc{\cdot}\) is monotone 
         \manc{S}-\manc{S+u}
         = & \sum_{v\in V}\vecpi_v\mypar{\mean{T_{v,S}^r}-\mean{\min\setof{T_{v,S}^r,T_{v,u}^r}}}            \\
         = & \sum_{v\in V}\vecpi_v(\mean{T_{v,S}^r}-\mean{T_{v,S}^r\allone_{\setof{T_{v,S}^r\le T_{v,u}^r}}} \\
-          & -\mean{T_{v,S}^r\allone_{\setof{T_{v,u}^r<T_{v,S}^r}}})                                         \\
+          & -\mean{T_{v,u}^r\allone_{\setof{T_{v,u}^r<T_{v,S}^r}}})                                         \\
         = & \sum_{v\in V}\vecpi_v\mean{(T_{v,S}^r-T_{v,u}^r)\allone_{\setof{T_{v,u}^r<T_{v,S}^r}}}
     \end{align*}
     Similarly, we also have
     \[\manc{T}-\manc{T+u}=\sum_{v\in V}\vecpi_v\mean{(T_{v,T}^r-T_{v,u}^r)\allone_{\setof{T_{v,u}^r<T_{v,T}^r}}}\]
     As is mentioned in proof of \thmref{thm:mono}, \(T_{v,S}^r\ge T_{v,T}^r\forall v\in V\).
-    It is also obvious that \(\allone_{\setof{T_{v,u}-T_{v,S}}}\ge\allone_{\setof{T_{v,u}-T_{v,T}}}\).
+    It is also obvious that \(\allone_{\setof{T_{v,u}<T_{v,S}}}\ge\allone_{\setof{T_{v,u}<T_{v,T}}}\).
     Combining the above two inequalities, we can prove that
     \[(T_{v,S}^r-T_{v,u}^r)\allone_{\setof{T_{v,u}^r<T_{v,S}^r}}\ge(T_{v,T}^r-T_{v,u}^r)\allone_{\setof{T_{v,u}^r<T_{v,T}^r}}\]
     holds for any node \(v\in V\), which completes our proof.
@@ -377,7 +466,7 @@ Therefore, when \(S\neq\varnothing\), \(\Delta(u,S)\) can be rewritten as
     \begin{split}
         &\manc{S}-\manc{S+u}\\
         =&\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecd_{-(S+u)}\\
-        =&\begin{pmatrix}\vecpi_u&\vecpi_{-(S+u)}^\top\end{pmatrix}\begin{pmatrix}t & t\veca^\top\mata^{-1} \\t\mata^{-1}\vecb&\mata^{-1}+t\mata^{-1}\vecb\veca^\top\mata^{-1}\end{pmatrix}\begin{pmatrix}d_u\\\vecd_{-(S+u)}\end{pmatrix}\\
+        =&\begin{pmatrix}\vecpi_u&\vecpi_{-(S+u)}^\top\end{pmatrix}\begin{pmatrix}t & t\veca^\top\mata^{-1} \\t\mata^{-1}\vecb&\mata^{-1}+t\mata^{-1}\vecb\veca^\top\mata^{-1}\end{pmatrix}\begin{pmatrix}\vecd_u\\\vecd_{-(S+u)}\end{pmatrix}\\
         &-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecd_{-(S+u)}\\
         =&t\vecpi_u\vecd_u+t\vecd_u\vecpi_{-(S+u)}^\top\mata^{-1}\vecb+t\vecpi_u\veca^\top\mata^{-1}\vecd_{-(S+u)}\\
         &+t\vecpi_{-(S+u)}^\top\mata^{-1}\vecb\veca^\top\mata^{-1}\vecd_{-(S+u)}\\
@@ -755,7 +844,7 @@ Note that our algorithm works only for connected graphs, therefore for the origi
 \end{table}
 
 To facilitate calling SDD solver in Laplacians.jl\footnote{https://github.com/danspielman/Laplacians.jl}, our numerical experiment programs are implemented by Julia.
-We run our programs on a linux box equipped with 128GiB RAM and 3.5GHz AMD EPYC Milan CPU, using 32 threads.
+We run our programs on a Linux box equipped with 128GiB RAM and 3.5GHz AMD EPYC Milan CPU, using 32 threads.
 
 \subsection{Accuracy of \textsc{MarginEst}}
 
