@@ -36,8 +36,8 @@
 \newcommand{\ceil}[1]{\left\lceil#1\right\rceil}
 \newcommand{\Abs}[1]{\left\Vert#1\right\Vert}
 \newcommand{\trace}[1]{\mathrm{Tr}\left(#1\right)}
-\newcommand{\manc}[1]{M\left(#1\right)}
-\newcommand{\tmanc}[1]{\tilde{M}\left(#1\right)}
+\newcommand{\manc}[1]{H\left(#1\right)}
+\newcommand{\tmanc}[1]{\tilde{H}\left(#1\right)}
 \newcommand{\mypar}[1]{\left( #1 \right)}
 
 \newcommand{\bsym}[1]{\boldsymbol{#1}}
@@ -55,7 +55,9 @@
 \newcommand{\vecx}{\bsym{x}}
 
 \newcommand{\pscr}{\mathscr{P}}
-\newcommand{\kcal}{\mathcal{K}}
+\newcommand{\kem}{K}
+\newcommand{\dsum}{d_{\sum}}
+\newcommand{\mydeg}{d}
 
 \newcommand{\lap}{\bsym{L}}
 \newcommand{\matd}{\bsym{D}}
@@ -85,7 +87,7 @@
 \newcommand{\figref}[1]{Figure~\ref{#1}}
 \newcommand{\factref}[1]{Fact~\ref{#1}}
 
-\newcommand{\edge}[2]{\langle #1, #2 \rangle}
+\newcommand{\edge}[2]{\mypar{#1,#2}}
 
 
 \DeclareMathOperator*{\argmin}{arg\,min}
