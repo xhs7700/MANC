@@ -19,9 +19,9 @@
 \email{{hsxia18,zhangzz}@fudan.edu.cn}
 \begin{abstract}
     In the field of complex networks, the usage of random walk and its relevant quantities arises in many academic researches.
-    In this paper, we consider the connection between random detour time and Kemeny constant, then subsequently extend it to the case of multiple nodes.
+    In this paper, we consider the connection among Kemeny constant, absorbing random-walk centrality and random detour time, then subsequently extend it to the case of multiple nodes.
     Inspired by this newly discovered connection, we propose a new centrality that happens to be Multiple Absorbing Node Centrality(MANC).
-    For undirected graphs, MANC for a node set \(S\) is defined as the weighted average of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
+    For undirected graphs, MANC for a node set \(S\) is defined as the weighted sum of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
     Based on the new centrality, we investigate MANC minimization problem: return the optimal set \(S^*\) of absorbing nodes with capacity \(k\), which minimize its MANC \(\manc{S^*}\).
     In this paper, we prove that this problem is NP-hard.
     However, thanks to the monotonicity and supermodularity of MANC, we give greedy algorithms with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximate factor and cubic running time.
@@ -35,25 +35,17 @@
 
 \section{Introduction}\label{sec:intro}
 
-Among all the topics in the field of network science and graph mining, the problem of identifying important nodes has been heavily studied.
-Due to the small-world and scale-free properties of complex networks, changes in a very few nodes may have a tremendous impact on the entire network.
-This feature can also be verified in real-life situations such as the spread of virus, community opinion impact, and power grid collapse.
-If we are able to identify the most critical or vulnerable nodes in a network, then we can take effective preventive measures in advance to avoid unnecessary huge cost.
-Therefore, the problem of identifying important nodes has high research value.
+As a useful method or model, random walk on graphs is widely applicated in many fields: from link prediction~\cite{YiGuWeTiHa10} and improving search results~\cite{LiPeMaQiWeQi10}, which are closely related to complex networks, to object detection~\cite{GoViHuRa10}, image background extraction~\cite{HuWaYeChLa16} and image annotation refinement~\cite{WaJiZhZh10} in the field of image processing, to DDoS attack detection~\cite{XuZhXiYu14} and clone attack detection~\cite{ZeCaZhGuXi10} in the field of information security.
+A fundamental quantity relevant to random walks is hitting time.
+The hitting time \(H_{u,v}\) is the expected number of time steps for a walker starting from node \(u\) to first reach node \(v\).
+Hitting time can be used to define other interesting quantities like Kemeny constant, absorbing random-walk centrality and random detour time.
 
-While a large number of studies related to node centralities have been conducted previously, most of the existing studies focus only on the centrality of single node in the network, which are inadequate when applied to multiple important nodes discovery problems.
-For example, removing an important node in a network may result in significant changes in the importance of the remaining nodes.
-Therefore, the traditional important node ranking algorithm has good recognition accuracy only for nodes with the highest centrality, and has limitations in solving the problem of identifying important nodes in practice.
-The centrality defined for node groups, on the other hand, considers the impact on the network after removing multiple nodes at the same time.
-It can better adapt to different scenarios in practical applications while improving the accuracy of identification.
+In this paper, we first establish a connection among Kemeny constant, absorbing random-walk centrality and random detour time, which prompts us to further extend it to the case of multiple nodes.
+Inspired by the newly discovered connection, we propose a centrality relevant to node groups: Multiple Absorbing Node Centrality (MANC) through an absorbing random walk model on graphs.
+For a connected undirected graph, the MANC \(\manc{S}\) of a node set \(S\) is defined as the weighted sum of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
 
-Meanwhile, random walk on graphs is widely applicated in many fields due to its recursiveness and robustness: from link prediction~\cite{YiGuWeTiHa10} and improving search results~\cite{LiPeMaQiWeQi10}, which are closely related to complex networks, to object detection~\cite{GoViHuRa10}, image background extraction~\cite{HuWaYeChLa16} and image annotation refinement~\cite{WaJiZhZh10} in image processing, to DDoS attack detection~\cite{XuZhXiYu14} and clone attack detection~\cite{ZeCaZhGuXi10} in the field of information security.
-
-In this paper, we establish a metric relevant to node group centrality: Multiple Absorbing Node Centrality (MANC) through an absorbing random walk model on graphs.
-For a connected undirected graph, the MANC \(\manc{S}\) of a node set \(S\) is defined as the weighted average of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
-
-Due to the definition of MANC, this metric can be directly applied to the search engine ranking systems.
-If we denote web pages that satisfy the search keywords as nodes, and denote hyperlinks between web pages as edges, the selected set of web pages should be close enough to all candidate pages, i.e. cover all candidate pages as much as possible.
+Due to the definition of MANC, this centrality can be directly applied to the search engine ranking systems.
+If we denote web pages that satisfy the search keywords as nodes, then denote hyperlinks between web pages as edges, the selected set of web pages should be close enough to all candidate pages, i.e. cover all candidate pages as much as possible.
 The traditional method of ranking important nodes cannot meet the above requirements, while MANC can theoretically achieve better application results because it is defined directly according to the hitting time of node groups.
 Consequently, we further construct the MANC minimization problem: finding the node set \(S^*\) with capacity \(k\) that minimizes MANC \(\manc{S^*}\).
 
@@ -61,13 +53,13 @@ In this paper, we prove that the MANC minimization problem is NP-hard.
 Subsequently, we use the monotonicity and supermodularity of MANC to design greedy algorithms with approximation guarantees to solve this problem.
 However, the inevitable matrix inversion in the greedy algorithm leads to a complexity of \(O(kn^3)\) for networks containing \(n\) nodes, which cannot be employed in large networks.
 Then, we attempt to reformulate MANC as the quadratic form of either the pseudoinverse of Laplacian matrix or the inverse of a SDDM matrix so that we can approximate it by using SDD solver~\cite{CoKyMiPaJaPeRaXu14,SpTe14} and Johnson-Lindenstrauss Lemma~\cite{JoLi84}.
-For network with \(n\) nodes and \(m\) edges, our proposed fast greedy algorithm \textsc{Approx} has a \(\tilde{O}(km)\) time complexity.
+For a network with \(n\) nodes and \(m\) edges, our proposed fast greedy algorithm \textsc{Approx} has a \(\tilde{O}(km)\) time complexity.
 In order to verify the accuracy and efficiency of \textsc{Approx}, we perform extensive numerical experiments on networks of different sizes, the result demonstrates that \textsc{Approx} is still well scalable while maintaining the approximation error and can be applicated in large networks with millions of nodes.
 % \subsection{Related Works}
 
 \section{Preliminary}\label{sec:prelim}
 
-In this section, we briefly indroduce some notations as well as some basic concepts on graphs, random walks and special functions.
+In this section, we briefly indroduce some notations as well as some basic concepts on special functions, graphs and random walks.
 
 \subsection{Notations}
 
@@ -97,11 +89,11 @@ Since we prove the approximation guarantee of our algorithms in \secref{sec:fast
 Subsequently, we give the definitions of monotone and supermodular set functions. For simplicity, we denote \(S\cup\setof{u}\) as \(S+u\).
 
 \begin{definition}[Monotonicity]
-    The set function \(f:2^{V}\to\rea^+\) is monotone if and only if \(\forall X\subseteq Y\subseteq V\) satisfies \(f(X)\ge f(Y)\).
+    The set function \(f:2^{V}\to\rea^+\) is monotone if and only if for any nonempty set \(X,Y\) that satisfies \(X\subseteq Y\subseteq V\), the inequality \(f(X)\ge f(Y)\) holds.
 \end{definition}
 
 \begin{definition}[Supermodularity]
-    The set function \(f:2^{V}\to\rea^+\) is supermodular if and only if \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\) satisfies \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\).
+    The set function \(f:2^{V}\to\rea^+\) is supermodular if and only if for any nonempty set \(X,Y\) that satisfies \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\), the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds.
 \end{definition}
 
 \subsection{Graphs and Laplacian Matrices}\label{sub:lap}
@@ -123,7 +115,7 @@ From the definition above, it is easy to prove that \(\lap\) is positive semi-de
 In addition, all its eigenvalues are positive except for one unique zero eigenvalue.
 If we denote eigenvalues and corresponding eigenvectors of \(\lap\in\rea^{n\times n}\) as \(0=\lambda_1<\lambda_2\le\lambda_3\le\dots\le\lambda_n\) and \(\vecv_1,\vecv_2,\dots,\vecv_n\) respectively, then \(\lap\) can be rewritten as \(\lap=\sum_{i=1}^n\lambda_i\vecv_i\vecv_i^\top\).
 Since \(\lap\) is not invertible due to its null space \(\allone\), we turn to use its pseudoinverse form, which is defined as \(\lap^\dagger=\sum_{i=2}^n\lambda_i^{-1}\vecv_i\vecv_i^\top\).
-\(\lap^\dagger\) appears in many quantities related to random walk, such as Kemeny constant, Kirchhoff index and betweenness measures.
+\(\lap^\dagger\) appears in many quantities related to random walk, such as Kemeny constant~\cite{Hu14} and Kirchhoff index.
 
 Moreover, Laplacian matrix has some useful properties.
 It is easy to verify that Laplacian matrix is Symmetric Diagonally Dominant(SDD).
@@ -272,7 +264,8 @@ According to ~\cite{KeSn76}, we are able to transfrom the definition of MANC int
 
 According to~\eqref{eq:funda}, the entry \((i,j)\) of \(\matf\) can be represented as the expected number of passages through node \(j\) by the random walker starting from node \(i\) before being absorbed.
 From the linearity of mean, it follows that the hitting time of a random walker is equivalent to the sum of the expected number of passages through all nodes in the graph, i.e. \(\vecl=\matf\allone\), where \(\vecl_i\) denotes the hitting time of a random walker starting from node \(i\).
-In particular, if the random walker starts from absorbing node, the hitting time can be regarded as \(0\). Considering the above case, MANC \(\manc{S}\) can be written as
+In particular, if the random walker starts from absorbing node, the hitting time can be regarded as \(0\).
+Considering the above case, MANC \(\manc{S}\) can be written as
 \[\manc{S}=\vecpi_{-S}^\top\vecl=\vecpi_{-S}^\top\matf\allone=\vecpi_{-S}^\top(\mati-\matp)_{-S}^{-1}\allone.\]
 
 Furthermore, after simplification using~\eqref{eq:trs}, we get the formula of \(\manc{S}\):
@@ -878,7 +871,7 @@ In addition, \tabref{tab:info} indicates that \textsc{Approx} is still usable wh
 \section{Conclusions}\label{sec:conc}
 
 In this paper, we took the definition of hitting time of absorbing random walk as a basis, and extended it to the case to multiple nodes, i.e, Multiple Absorbing Node Centrality (MANC).
-For a connected weighted undirected graph with \(n\) nodes and \(m\) edges, MANC \(\manc{S}\) of the node set \(S\) is defined as the weighted average of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
+For a connected weighted undirected graph with \(n\) nodes and \(m\) edges, MANC \(\manc{S}\) of the node set \(S\) is defined as the weighted sum of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
 Furthermore, we constructed the problem of finding the node set \(S^*\) with capacity \(k\) that minimizes \(\manc{S^*}\).
 We proved that this problem is NP-hard, and the objective function is monotone and supermodular.
 Due to these properties of MANC, we designed two approximate greedy algorithm, the former algorithm has a \(1-\frac1e\) approximate factor and \(O(kn^3)\) time complexity, while the latter algorithm obtains a \(1-\frac1e-\epsilon\) approximate factor and runs in time \(\tilde{O}(km)\).
