@@ -38,7 +38,7 @@
 As a useful method or model, random walk on graphs is widely applicated in many fields: from link prediction~\cite{YiGuWeTiHa10} and improving search results~\cite{LiPeMaQiWeQi10}, which are closely related to complex networks, to object detection~\cite{GoViHuRa10}, image background extraction~\cite{HuWaYeChLa16} and image annotation refinement~\cite{WaJiZhZh10} in the field of image processing, to DDoS attack detection~\cite{XuZhXiYu14} and clone attack detection~\cite{ZeCaZhGuXi10} in the field of information security.
 A fundamental quantity relevant to random walks is hitting time.
 The hitting time \(H_{u,v}\) is the expected number of time steps for a walker starting from node \(u\) to first reach node \(v\).
-Hitting time can be used to define other interesting quantities like Kemeny constant, absorbing random-walk centrality and random detour time.
+Hitting time can be used to define other interesting quantities like Kemeny constant, absorbing random-walk centrality and random detour time~\cite{RaZh13}.
 
 In this paper, we first establish a connection among Kemeny constant, absorbing random-walk centrality and random detour time, which prompts us to further extend it to the case of multiple nodes.
 Inspired by the newly discovered connection, we propose a centrality relevant to node groups: Multiple Absorbing Node Centrality (MANC) through an absorbing random walk model on graphs.
@@ -54,10 +54,8 @@ Subsequently, we use the monotonicity and supermodularity of MANC to design gree
 However, the inevitable matrix inversion in the greedy algorithm leads to a complexity of \(O(kn^3)\) for networks containing \(n\) nodes, which cannot be employed in large networks.
 Then, we attempt to reformulate MANC as the quadratic form of either the pseudoinverse of Laplacian matrix or the inverse of a SDDM matrix so that we can approximate it by using SDD solver~\cite{CoKyMiPaJaPeRaXu14,SpTe14} and Johnson-Lindenstrauss Lemma~\cite{JoLi84}.
 For a network with \(n\) nodes and \(m\) edges, our proposed fast greedy algorithm \textsc{Approx} has a \(\tilde{O}(km)\) time complexity.
-In order to verify the accuracy and efficiency of \textsc{Approx}, we perform extensive numerical experiments on networks of different sizes, the result demonstrates that \textsc{Approx} is still well scalable while maintaining the approximation error and can be applicated in large networks with millions of nodes.
-
-% \subsection{Related Works}
-
+In order to verify the accuracy and efficiency of \textsc{Approx}, we perform extensive numerical experiments on networks of different sizes。
+The result demonstrates that \textsc{Approx} is still well scalable while maintaining the approximation error and can be applicated in large networks with millions of nodes.
 
 \section{Preliminary}\label{sec:prelim}
 
@@ -163,6 +161,14 @@ In this case, \(H_u=\sum_{i\in V}\vecpi_iH_{i,u}\).
 
 Subsequently, for graph \(\gr\), its random detour time \(D_{i,j}(u)\) is defined as the expected time of a walker who starts from node \(i\), must visit node \(u\), then first reaches node \(j\), where \(i,u,j\in V\) differs from each other.
 That is, \(D_{i,j}(u)= H_{i,u}+H_{u,j}\).
+
+\section{Related Work}
+
+Many researchers have noticed the connection between random detour time and their proposed centralities.
+Ranjan et al.~\cite{RaZh13} presented \textit{topological centrality} \(\cscr^*(u)\) as the reciprocal of \(\lap^\dagger_{uu}\), and found that \(\cscr^*(u)\) can be represented by random detour time and hitting time, that is, \({\cscr^*(u)}^{-1}\propto \sum_{i=1}^n\sum_{j=1}^n\mypar{D_{i,j}(u)-H_{i,j}}\).
+Gangemi et al.~\cite{GaLePaGoLiZh15} simply took variants of random detour time as components of \textit{pivotality}, which is the measure of node reachability.
+We prove that random detour time is also related to Kemeny constant and absorbing random-walk centrality.
+This connection also holds for the case of multiple nodes.
 
 \section{Problem Formulation}\label{sec:prob-form}
 
