@@ -55,7 +55,9 @@ However, the inevitable matrix inversion in the greedy algorithm leads to a comp
 Then, we attempt to reformulate MANC as the quadratic form of either the pseudoinverse of Laplacian matrix or the inverse of a SDDM matrix so that we can approximate it by using SDD solver~\cite{CoKyMiPaJaPeRaXu14,SpTe14} and Johnson-Lindenstrauss Lemma~\cite{JoLi84}.
 For a network with \(n\) nodes and \(m\) edges, our proposed fast greedy algorithm \textsc{Approx} has a \(\tilde{O}(km)\) time complexity.
 In order to verify the accuracy and efficiency of \textsc{Approx}, we perform extensive numerical experiments on networks of different sizes, the result demonstrates that \textsc{Approx} is still well scalable while maintaining the approximation error and can be applicated in large networks with millions of nodes.
+
 % \subsection{Related Works}
+
 
 \section{Preliminary}\label{sec:prelim}
 
@@ -136,7 +138,7 @@ It is easy to verify that
     \matp=\matd^{-1}\mata.
 \end{equation}
 
-If \(\gr\) is non-bipartite and finite, there exists a unique stationary distribution of the random walk
+If \(\gr\) is non-bipartite and finite, there exists a unique stationary distribution of the random walk~\cite{Cv80}
 \[
     \vecpi=\begin{pmatrix}
         \pi_1 & \pi_2 & \dots & \pi_n
@@ -207,14 +209,14 @@ It prompts us to similarly extend \thmref{thm:connection-single} to multi-node c
 \end{theorem}
 \begin{proof}
     To prove~\eqref{eq:connection-multiple}, we utilize the fundamental matrix \(\matfstar\) in the non-absorbing random walk model.
-    According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\allone\vecpi^\top)^{-1}\matpi^{-1}\).
-    Subsequently, the hitting time \(H_{i,j}\) can be represented by \(\matfstar\) as \(H_{i,j}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\).
+    According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\allone\vecpi^\top)^{-1}\matpi^{-1}\), where \(\matpi\) is defined as \(\rm{diag}\mypar{\vecpi}\).
+    Subsequently, the hitting time \(H_{i,j}\) can be represented by \(\matfstar\) as \(H_{i,j}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\)~\cite{BoRaZh11}.
     Then the right side of \eqref{eq:connection-multiple} can be rewritten as
     \begin{equation}\label{eq:detour}
         \begin{split}
             \sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)
             & =\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\vecpi_i\vecpi_j\matpdistr_{[i,k]}H_{k,j}  \\
-            & =\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\vecpi^\top\matpdistr(\matfstar_{[j,j]\allone-\matfstar_{[S,j]}})                        \\
+            & =\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\vecpi^\top\matpdistr\mypar{\matfstar_{[j,j]}\allone-\matfstar_{[S,j]}}                        \\
             & =\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\allone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
             & =\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1,
         \end{split}
@@ -353,20 +355,20 @@ In this part, we prove that the objective function \(\manc{\cdot}\) is monotone 
 \end{theorem}
 
 \begin{proof}
-    For a subset \(A\) of the probability space, we denote \(\allone_A\) as the indicator function of the event \(A\). Then we rewrite \(\manc{S}-\manc{S+u}\) by discussing the hitting node of random walker.
+    For a subset \(A\) of the probability space, we denote \(\indfunc{A}\) as the indicator function of the event \(A\). Then we rewrite \(\manc{S}-\manc{S+u}\) by discussing the hitting node of random walker.
     \begin{align*}
         \manc{S}-\manc{S+u}
         = & \sum_{v\in V}\vecpi_v\mypar{\mean{T_{v,S}}-\mean{\min\setof{T_{v,S},T_{v,u}}}}          \\
-        = & \sum_{v\in V}\vecpi_v(\mean{T_{v,S}}-\mean{T_{v,S}\allone_{\setof{T_{v,S}\le T_{v,u}}}} \\
-          & -\mean{T_{v,u}\allone_{\setof{T_{v,u}<T_{v,S}}}})                                       \\
-        = & \sum_{v\in V}\vecpi_v\mean{(T_{v,S}-T_{v,u})\allone_{\setof{T_{v,u}<T_{v,S}}}}.
+        = & \sum_{v\in V}\vecpi_v(\mean{T_{v,S}}-\mean{T_{v,S}\indfunc{\setof{T_{v,S}\le T_{v,u}}}} \\
+          & -\mean{T_{v,u}\indfunc{\setof{T_{v,u}<T_{v,S}}}})                                       \\
+        = & \sum_{v\in V}\vecpi_v\mean{(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}}.
     \end{align*}
     Similarly, we also have
-    \[\manc{T}-\manc{T+u}=\sum_{v\in V}\vecpi_v\mean{(T_{v,T}-T_{v,u})\allone_{\setof{T_{v,u}<T_{v,T}}}}.\]
+    \[\manc{T}-\manc{T+u}=\sum_{v\in V}\vecpi_v\mean{(T_{v,T}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,T}}}}.\]
     As is mentioned in proof of \thmref{thm:mono}, \(T_{v,S}\ge T_{v,T}\) holds for any node \(v\in V\).
-    It is also obvious that \(\allone_{\setof{T_{v,u}<T_{v,S}}}\ge\allone_{\setof{T_{v,u}<T_{v,T}}}\).
+    It is also obvious that \(\indfunc{\setof{T_{v,u}<T_{v,S}}}\ge\indfunc{\setof{T_{v,u}<T_{v,T}}}\).
     Combining the above two inequalities, we can prove that
-    \[(T_{v,S}-T_{v,u})\allone_{\setof{T_{v,u}<T_{v,S}}}\ge(T_{v,T}-T_{v,u})\allone_{\setof{T_{v,u}<T_{v,T}}}\]
+    \[(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}\ge(T_{v,T}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,T}}}\]
     holds for any node \(v\in V\), which completes our proof.
 \end{proof}
 
@@ -476,7 +478,7 @@ Despite the time complexity optimization made by proposing \algoref{algo:exact},
 \end{lemma}
 
 In \lemref{lem:solver}, \(\Abs{\vecx}_{\mats}\) is denoted as \(\sqrt{\vecx^\top\mats\vecx}\), and \(\mats^{-1}\) is denoted as the pseudoinverse of \(\mats\) when \(\mats\) is a Laplacian.
-The expected time complexity of algorithm \textsc{Solver} is \(\tilde{O}(m)\), where \(\tilde{O}(\cdot)\) hides the poly(\(\log n\)) factors.
+The expected time complexity of algorithm \textsc{Solve} is \(\tilde{O}(m)\), where \(\tilde{O}(\cdot)\) hides the poly(\(\log n\)) factors.
 
 Based on~\lemref{lem:JL} and~\lemref{lem:solver}, we are able to efficiently approximate the quantities in~\eqref{eq:margin-deriv} and~\eqref{eq:margin-empty} that are related to \(\lap^\dagger\) and \(\lap_{-S}^{-1}\).
 
@@ -652,7 +654,11 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
     which completes our proof in conjunction with \lemref{lem:JL}.
 \end{proof}
 
-Combining Lemmas \ref{lem:approx-numer} and \ref{lem:approx-denom}, we finally propose the approximate algorithm \textsc{ApproxDelta} of computing \(\Delta(u,S)\) when \(S\neq\varnothing\). Furthermore, we are able to provide its approximation guarantee.
+\subsection{Nearly Linear Time Approximation Algorithms}
+
+Combining Lemmas \ref{lem:approx-numer} and \ref{lem:approx-denom}, we finally propose the approximate algorithm \textsc{ApproxDelta} of computing \(\Delta(u,S)\) when \(S\neq\varnothing\).
+Because \textsc{ApproxDelta} calls algorithm \textsc{Solve} in \ref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, the complexity of \textsc{ApproxDelta} is \(\tilde{O}\mypar{m\epsilon^{-2}}\), where \(\tilde{O}(\cdot)\) hides the poly(\(\log n\)) factors.
+Furthermore, we are able to provide its approximation guarantee.
 
 \begin{algorithm}
     \caption{\textsc{ApproxDelta}\((\gr,S,\epsilon)\)}
@@ -695,7 +701,8 @@ Combining Lemmas \ref{lem:approx-numer} and \ref{lem:approx-denom}, we finally p
 
 % \end{proof}
 
-Combining \algoref{algo:approxh} and \algoref{algo:approxdelta}, we can give the faster greedy algorithm \textsc{Approx} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor and nearly linear running time.
+Combining \algoref{algo:approxh} and \algoref{algo:approxdelta}, we can give the faster greedy algorithm \textsc{Approx} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor.
+Since \textsc{Approx} calls \textsc{ApproxH} once and calls \textsc{ApproxDelta} \(k-1\) times, the complexity of \textsc{Approx} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear.
 
 \begin{algorithm}
     \caption{\textsc{Approx}\((\gr,k,\epsilon)\)}
@@ -835,7 +842,7 @@ We run these four algorithms on four different real networks, the results is sho
 \subsection{Running time of \textsc{Exact} and \textsc{Approx}}
 
 Finally, we prove that algorithm \textsc{Approx} is much more efficient than algorithm \textsc{Exact}, especially when applicated on large networks.
-We test both algorithms on a larger set of real networks,.
+We test both algorithms on a larger set of real networks.
 For each network, we use \textsc{Exact} and \textsc{Approx} separately to solve MANC minimization problem, setting \(k=10\).
 The running time of both algorithms is listed in \tabref{tab:info}.
 From \tabref{tab:info}, we can observe that the running time of \textsc{Approx} is proportional to the number of edges in the network, thus leading to an increase in the speedup ratio of \textsc{Approx} compared to \textsc{Exact}as the network size grows.
