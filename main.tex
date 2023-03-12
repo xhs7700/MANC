@@ -165,10 +165,20 @@ That is, \(D_{i,j}(u)= H_{i,u}+H_{u,j}\).
 \section{Related Work}
 
 Many researchers have noticed the connection between random detour time and their proposed centralities.
-Ranjan et al.~\cite{RaZh13} presented \textit{topological centrality} \(\cscr^*(u)\) as the reciprocal of \(\lap^\dagger_{uu}\), and found that \(\cscr^*(u)\) can be represented by random detour time and hitting time, that is, \({\cscr^*(u)}^{-1}\propto \sum_{i=1}^n\sum_{j=1}^n\mypar{D_{i,j}(u)-H_{i,j}}\).
+Ranjan et al.~\cite{RaZh13} presented \textit{topological centrality} \(\cscr^*(u)\) as the reciprocal of \(\lap^\dagger_{[u,u]}\), and found that \(\cscr^*(u)\) can be represented by random detour time and hitting time, that is, \({\cscr^*(u)}^{-1}\propto \sum_{i=1}^n\sum_{j=1}^n\mypar{D_{i,j}(u)-H_{i,j}}\).
 Gangemi et al.~\cite{GaLePaGoLiZh15} simply took variants of random detour time as components of \textit{pivotality}, which is the measure of node reachability.
 We prove that random detour time is also related to Kemeny constant and absorbing random-walk centrality.
 This connection also holds for the case of multiple nodes.
+
+There exist various random walk-based centralities, such as the \textit{Random Walk Decay Centrality}~\cite{WaRaSk19} and the \textit{Group-to-group random walk betweenness centrality}~\cite{GiBaRa21}, both of them are variants of existing centralities.
+Besides, Mavroforakis et al.~\cite{MaMaGi15} presented \textit{\(k\) absorbing random-walk centrality}, which is the most directly related to our work.
+We give new proofs on the monotonicity and supermodularity of MANC from the perspective of numerical analysis, which is more concise and intuitive.
+Moreover, we design and implement a nearly linear algorithm for MANC minimization problem, which is proved to have an approximation guarantee.
+
+Admittedly, many existing studies have focused on the notion of selecting \(k\) nodes in the network to optimize some quantities related to absorbing random walk, such as absorbing distance~\cite{LiYuHuCh14,MoBaZhPe20,ZhLuWaGu17} and absorbing probability~\cite{ZhLuWaGu17,RoGl16}.
+However, computing these quantities on infinite random walk models requires time-consuming matrix inversions.
+Most of researchers use finite random walk models to approximate the infinite case, except for Rosenfeld et al.~\cite{RoGl16}, who use LU decomposition to reduce the complexity of computing absorbing probability.
+Instead of constructing finite random walk models, our work focus on the infinite random walk model, use a nearly linear algorithm to minimize MANC, which has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any \(\epsilon\in(0,1)\).
 
 \section{Problem Formulation}\label{sec:prob-form}
 
@@ -325,7 +335,7 @@ Given a connected \(c\)-regular graph \(G=(V,E)\) and an integer \(k\), the goal
     Meanwhile, because \(S\) is not a vertex cover of \(\gr\), edge set \(E\) has at least one edge \((u',v')\) that is not covered by \(S\).
     When a walker starting from node \(u'\) moves to node \(v'\) with probability of at least \(\frac{1}{d_{\max}}>\frac{1}{n}\), its walking length is greater than \(1\).
     That is,
-    \[H_{u',S}=H_{v',S}>(1-\frac{1}{n})+\frac{2}{n}=1+\frac{1}{n}.\]
+    \[H_{u',S}=H_{v',S}>\mypar{1-\frac{1}{n}}+\frac{2}{n}=1+\frac{1}{n}.\]
 
     Therefore, if we denote \(S+u'+v'\) as \(S'\), then we are able to get the lower bound of MANC:
     \begin{align*}
