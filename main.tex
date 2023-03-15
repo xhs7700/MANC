@@ -10,13 +10,21 @@
 \sloppy
 \fancyhead{}
 \title{Absorbing Time of Random Walks as a Node Group Centrality}
-\author{Haisong Xia and Zhongzhi Zhang \footnotemark}
+\author{Haisong Xia}
+\author{Xiaotian Zhou}
+\author{Zhongzhi Zhang\footnotemark}
+\email{{hsxia18,20210240043,zhangzz}@fudan.edu.cn}
 \affiliation{
   \institution{Shanghai Key Laboratory of Intelligent Information Processing, Fudan University, Shanghai 200433, China\\
     School of Computer Science, Fudan University, Shanghai 200433, China}
   \city{}\country{}
 }
-\email{{hsxia18,zhangzz}@fudan.edu.cn}
+\author{Zhuoqing Song}
+\email{zqsong19@fudan.edu.cn}
+\affiliation{
+  \institution{Shanghai Center for Mathematical Sciences, Fudan University, Shanghai 200433, China}
+  \city{}\country{}
+}
 \begin{abstract}
   In the field of complex networks, the usage of random walk and its relevant quantities arises in many academic researches.
   In this paper, we consider the connection among Kemeny constant, absorbing random-walk centrality and random detour time, then subsequently extend it to the case of multiple nodes.
@@ -339,9 +347,8 @@ Given a connected \(c\)-regular graph \(G=(V,E)\) and an integer \(k\), the goal
 
   Therefore, if we denote \(S+u'+v'\) as \(S'\), then we are able to get the lower bound of MANC:
   \begin{align*}
-    \manc{S} & =\sum_{v\in V}\vecpi_vH_{v,S}                                                          \\
-             & =\sum_{v\in V\setminus S'}\vecpi_vH_{v,S}+\vecpi_{u'}H_{u',S}+\vecpi_{v'}H_{v',S}      \\
-             & >\vecpi_{-S'}\allone+\vecpi_{u'}\mypar{1+\frac{1}{n}}+\vecpi_{v'}\mypar{1+\frac{1}{n}} \\
+    \manc{S} & =\sum_{v\in V}\vecpi_vH_{v,S}=\sum_{v\in V\setminus S'}\vecpi_vH_{v,S}+\vecpi_{u'}H_{u',S}+\vecpi_{v'}H_{v',S} \\
+             & >\vecpi_{-S'}\allone+\vecpi_{u'}\mypar{1+\frac{1}{n}}+\vecpi_{v'}\mypar{1+\frac{1}{n}}                         \\
              & =\vecpi_{-S}^\top\allone+\frac{\vecpi_{u'}+\vecpi_{v'}}n
     >\vecpi_{-S}^\top\allone=(n-k)/n.
   \end{align*}
@@ -373,10 +380,9 @@ In this part, we prove that the objective function \(\manc{\cdot}\) is monotone 
 \begin{proof}
   For a subset \(A\) of the probability space, we denote \(\indfunc{A}\) as the indicator function of the event \(A\). Then we rewrite \(\manc{S}-\manc{S+u}\) by discussing the hitting node of random walker.
   \begin{align*}
-    \manc{S}-\manc{S+u}
-    = & \sum_{v\in V}\vecpi_v\mypar{\mean{T_{v,S}}-\mean{\min\setof{T_{v,S},T_{v,u}}}}          \\
-    = & \sum_{v\in V}\vecpi_v(\mean{T_{v,S}}-\mean{T_{v,S}\indfunc{\setof{T_{v,S}\le T_{v,u}}}} \\
-      & -\mean{T_{v,u}\indfunc{\setof{T_{v,u}<T_{v,S}}}})                                       \\
+      & \manc{S}-\manc{S+u}                                                                                                                      \\
+    = & \sum_{v\in V}\vecpi_v\mypar{\mean{T_{v,S}}-\mean{\min\setof{T_{v,S},T_{v,u}}}}                                                           \\
+    = & \sum_{v\in V}\vecpi_v(\mean{T_{v,S}}-\mean{T_{v,S}\indfunc{\setof{T_{v,S}\le T_{v,u}}}}-\mean{T_{v,u}\indfunc{\setof{T_{v,u}<T_{v,S}}}}) \\
     = & \sum_{v\in V}\vecpi_v\mean{(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}}.
   \end{align*}
   Similarly, we also have
@@ -468,9 +474,8 @@ Afterwards, we prove that \algoref{algo:exact} has a \(1-\frac{k}{k-1}\cdot\frac
   \[\manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1}{k}}\mypar{\manc{S_i}-\manc{S^*}}.\]
   Subsequently, we can further obtain that
   \begin{align*}
-        & \manc{S_k}-\manc{S^*}                                       \\
-    \le & \mypar{1-\frac{1}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}    \\
-    \le & \frac{k}{k-1}\cdot\frac{1}{e}\mypar{\manc{S_1}-\manc{S^*}},
+    \manc{S_k}-\manc{S^*}\le & \mypar{1-\frac{1}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}    \\
+    \le                      & \frac{k}{k-1}\cdot\frac{1}{e}\mypar{\manc{S_1}-\manc{S^*}},
   \end{align*}
   which completes our proof based on the fact that \(S_1=\setof{u^*}\).
 \end{proof}
@@ -568,10 +573,10 @@ Since \(\lap_{-S}\) is a SDDM matrix, we can use~\lemref{lem:solver} to avoid co
   Combining \lemref{lem:solver} and \lemref{lem:norm-ineq}, we can bound \((\vecx'_i-\vecx_i)^2\) as
   \begin{align*}
     (\vecx'_i-\vecx_i)^2
-     & \le nw_{\min}^{-1}\Abs{\vecx'-\vecx}^2_{\lap_{-S}}        \\
-     & \le nw_{\min}^{-1}\delta_1^2\Abs{\vecx}^2_{\lap_{-S}}     \\
-     & \le n^4w_{\min}^{-1}w_{\max}^2\delta_1^2\trace{\lap_{-S}} \\
-     & \le n^6w_{\min}^{-2}w_{\max}^2\delta_1^2,
+     & \le nw_{\min}^{-1}\Abs{\vecx'-\vecx}^2_{\lap_{-S}}
+    \le nw_{\min}^{-1}\delta_1^2\Abs{\vecx}^2_{\lap_{-S}}        \\
+     & \le n^4w_{\min}^{-1}w_{\max}^2\delta_1^2\trace{\lap_{-S}}
+    \le n^6w_{\min}^{-2}w_{\max}^2\delta_1^2,
   \end{align*}
   where the last inequality is due to \lemref{lem:trace-lap}.
   On the other hand, since \(\vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\) denotes the expected hitting time of a random walker starting from node \(i\), we have \(\vecx_i\ge1\).
@@ -582,7 +587,7 @@ Since \(\lap_{-S}\) is a SDDM matrix, we can use~\lemref{lem:solver} to avoid co
 Subsequently, we attempt to approximate the denominator of~\eqref{eq:margin-deriv}, which can be recast in an euclidian norm by using \lemref{lem:JL}:
 \begin{equation}\label{eq:denom-solver}
   \begin{split}
-    &\vece_i^\top\lap_{-S}^{-1}\vece_i\\
+    \vece_i^\top\lap_{-S}^{-1}\vece_i
     =&\vece_i^\top\lap_{-S}^{-1}(\matb'^\top\matw'\matb'+\matz)\lap_{-S}^{-1}\vece_i\\
     =&\vece_i^\top\lap_{-S}^{-1}\matb'^\top\matw'\matb'\lap_{-S}^{-1}\vece_i+\vece_i^\top\lap_{-S}^{-1}\matz\lap_{-S}^{-1}\vece_i\\
     =&\Abs{\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2.
@@ -777,11 +782,10 @@ Note that our algorithm works only for connected graphs, therefore for the origi
     \multirow{2}*{Network} & \multirow{2}*{\(n\)} & \multirow{2}*{\(m\)} & \multicolumn{2}{c}{Time (seconds)}                   \\
     \cmidrule(lr){4-5}     &                      &                      & \textsc{Exact}                     & \textsc{Approx} \\
     \midrule
-    Zebra                  & 23                   & 105                  & 0.0012                             & 0.021           \\
-    Zachary karate club    & 34                   & 78                   & 0.0020                             & 0.024           \\
-    Contiguous USA         & 49                   & 107                  & 0.0053                             & 0.061           \\
-    Les Misérables         & 77                   & 254                  & 0.0067                             & 0.061           \\
-    Jazz musicians         & 198                  & 2742                 & 0.031                              & 0.11            \\
+    % Zebra                  & 23                   & 105                  & 0.0012                             & 0.021           \\
+    % Zachary karate club    & 34                   & 78                   & 0.0020                             & 0.024           \\
+    % Contiguous USA         & 49                   & 107                  & 0.0053                             & 0.061           \\
+    % Les Misérables         & 77                   & 254                  & 0.0067                             & 0.061           \\
     Euroroads              & 1039                 & 1305                 & 0.95                               & 0.89            \\
     Hamsterster friends    & 1788                 & 12476                & 2.91                               & 0.97            \\
     ego-Facebook           & 4039                 & 88234                & 38.37                              & 4.63            \\
@@ -829,197 +833,189 @@ We run our programs on a Linux box equipped with 256GiB RAM and 3.5GHz AMD EPYC 
 
 \subsection{Performance of \textsc{Exact} and \textsc{Approx}}
 
-We show the performance of proposed algorithms by comparing them with optimum solution and two other algorithms: \textsc{Top-Absorb} and \textsc{Top-Degree} when solving MANC minimization problem.
-
-We first compare the performance of \textsc{Exact} and \textsc{Approx} with optimum solution on four small networks.
+We first compare the performance of \textsc{Exact} and \textsc{Approx} with optimum solution on four small networks~\cite{Ku13}: \textit{Zebra} with 23 nodes, \textit{Zachary karate club} with 34 nodes, \textit{Contiguous USA} with 49 nodes and \textit{Les Misérables} with 77 nodes.
 For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC value by enumerating all the \(k\)-element subsets of \(V\), then compare the minimum MANC value with solution given by \textsc{Exact} and \textsc{Approx}, whose results is shown in \figref{pic:compare-effect-optimum}.
 \figref{pic:compare-effect-optimum} demonstrates that the solutions given by our greedy algorithms are almost the same with each other, both of them are also quite close to the optimum solution, which indicates that the approximation ratio of our proposed algorithms are far better than the theorecical guarantees.
 
-% \begin{figure}
-%   \centering
-%   \includegraphics[width=0.475\textwidth]{compare_effects_optimum.eps}
-%   \caption{MANC \(\manc{S}\) of node set \(S\) computed by three different algorithms(\textsc{Exact},\textsc{Approx} and \textsc{Optimum})
-%     % on four networks: Zachary karate club (a), Les Misérables (b), Contiguous USA (c) and Zebra (d)
-%     .\label{pic:compare-effect-optimum}}
-% \end{figure}
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[scale=\scaleoptimum,baseline]
+    \begin{axis}[
+        xlabel={\(k\)},
+        ylabel={\(M(S)\)},
+        legend style={font=\huge},
+        legend entries={Approx,Exact,Optimum},
+      ]
+      \addplot+[
+        mark=pentagon*,
+        mark size = 3pt
+      ] table {compare_effects/optimum/Zebra/Approx.dat};
+      \addplot table {compare_effects/optimum/Zebra/Exact.dat};
+      \addplot table {compare_effects/optimum/Zebra/Optimum.dat};
+      \node [font=\huge] at (3.5,10) {Zebra};
+    \end{axis}
+  \end{tikzpicture}
+  \begin{tikzpicture}[scale=\scaleoptimum,baseline]
+    \begin{axis}[
+        xlabel={\(k\)},
+        ylabel={\(M(S)\)},
+        legend style={font=\huge},
+        legend entries={Approx,Exact,Optimum},
+      ]
+      \addplot+[
+        mark=pentagon*,
+        mark size = 3pt
+      ] table {compare_effects/optimum/Zachary karate club/Approx.dat};
+      \addplot table {compare_effects/optimum/Zachary karate club/Exact.dat};
+      \addplot table {compare_effects/optimum/Zachary karate club/Optimum.dat};
+      \node [font=\huge] at (3.5,7) {Zachary karate club};
+    \end{axis}
+  \end{tikzpicture}
 
-\begin{tikzpicture}[scale=0.25,baseline]
-  \begin{axis}[
-      xlabel={\(k\)},
-      ylabel={\(M(S)\)},
-      legend style={font=\huge},
-      legend entries={Approx,Exact,Optimum},
-    ]
-    \addplot+[
-      mark=pentagon*,
-      mark size = 3pt
-    ] table {compare_effects/optimum/Contiguous USA/Approx.dat};
-    \addplot table {compare_effects/optimum/Contiguous USA/Exact.dat};
-    \addplot table {compare_effects/optimum/Contiguous USA/Optimum.dat};
-    \node [font=\huge] at (3.5,25) {Contiguous USA};
-  \end{axis}
-\end{tikzpicture}
-\begin{tikzpicture}[scale=0.25,baseline]
-  \begin{axis}[
-      xlabel={\(k\)},
-      ylabel={\(M(S)\)},
-      legend style={font=\huge},
-      legend entries={Approx,Exact,Optimum},
-    ]
-    \addplot+[
-      mark=pentagon*,
-      mark size = 3pt
-    ] table {compare_effects/optimum/Les Misérables/Approx.dat};
-    \addplot table {compare_effects/optimum/Les Misérables/Exact.dat};
-    \addplot table {compare_effects/optimum/Les Misérables/Optimum.dat};
-    \node [font=\huge] at (3.5,9) {Les Misérables};
-  \end{axis}
-\end{tikzpicture}
-\begin{tikzpicture}[scale=0.25,baseline]
-  \begin{axis}[
-      xlabel={\(k\)},
-      ylabel={\(M(S)\)},
-      legend style={font=\huge},
-      legend entries={Approx,Exact,Optimum},
-    ]
-    \addplot+[
-      mark=pentagon*,
-      mark size = 3pt
-    ] table {compare_effects/optimum/Zachary karate club/Approx.dat};
-    \addplot table {compare_effects/optimum/Zachary karate club/Exact.dat};
-    \addplot table {compare_effects/optimum/Zachary karate club/Optimum.dat};
-    \node [font=\huge] at (3.5,7) {Zachary karate club};
-  \end{axis}
-\end{tikzpicture}
-\begin{tikzpicture}[scale=0.25,baseline]
-  \begin{axis}[
-      xlabel={\(k\)},
-      ylabel={\(M(S)\)},
-      legend style={font=\huge},
-      legend entries={Approx,Exact,Optimum},
-    ]
-    \addplot+[
-      mark=pentagon*,
-      mark size = 3pt
-    ] table {compare_effects/optimum/Zebra/Approx.dat};
-    \addplot table {compare_effects/optimum/Zebra/Exact.dat};
-    \addplot table {compare_effects/optimum/Zebra/Optimum.dat};
-    \node [font=\huge] at (3.5,10) {Zebra};
-  \end{axis}
-\end{tikzpicture}
-\captionof{figure}{MANC \(\manc{S}\) of node set \(S\) computed by three different algorithms(\textsc{Exact},\textsc{Approx} and \textsc{Optimum}).\label{pic:compare-effect-optimum}}
+  \begin{tikzpicture}[scale=\scaleoptimum,baseline]
+    \begin{axis}[
+        xlabel={\(k\)},
+        ylabel={\(M(S)\)},
+        legend style={font=\huge},
+        legend entries={Approx,Exact,Optimum},
+      ]
+      \addplot+[
+        mark=pentagon*,
+        mark size = 3pt
+      ] table {compare_effects/optimum/Contiguous USA/Approx.dat};
+      \addplot table {compare_effects/optimum/Contiguous USA/Exact.dat};
+      \addplot table {compare_effects/optimum/Contiguous USA/Optimum.dat};
+      \node [font=\huge] at (3.5,25) {Contiguous USA};
+    \end{axis}
+  \end{tikzpicture}
+  \begin{tikzpicture}[scale=\scaleoptimum,baseline]
+    \begin{axis}[
+        xlabel={\(k\)},
+        ylabel={\(M(S)\)},
+        legend style={font=\huge},
+        legend entries={Approx,Exact,Optimum},
+      ]
+      \addplot+[
+        mark=pentagon*,
+        mark size = 3pt
+      ] table {compare_effects/optimum/Les Misérables/Approx.dat};
+      \addplot table {compare_effects/optimum/Les Misérables/Exact.dat};
+      \addplot table {compare_effects/optimum/Les Misérables/Optimum.dat};
+      \node [font=\huge] at (3.5,9) {Les Misérables};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{MANC \(\manc{S}\) of node set \(S\) computed by three different algorithms(\textsc{Exact},\textsc{Approx} and \textsc{Optimum}).\label{pic:compare-effect-optimum}}
+\end{figure}
 
-\textsc{Top-Absorb} simply chooses \(k\) absorbing nodes with minimum absorbing random-walk centrality, while \textsc{Top-Degree} chooses them with biggest degrees.
-We run these four algorithms on four different real networks, the results is shown in \figref{pic:compare-effect}.
+We subsequently compare the performance of \textsc{Exact} and \textsc{Approx} with three other algorithms: \textsc{Top-Absorb}, \textsc{Top-Degree} and \textsc{Top-PageRank}.
+\textsc{Top-Absorb} simply chooses \(k\) absorbing nodes with minimum absorbing random-walk centrality, while \textsc{Top-Degree} and \textsc{Top-PageRank} chooses them with biggest degrees and biggest PageRank value respectively.
+We run these four algorithms on four medium-sized networks, the results is shown in \figref{pic:compare-effect}.
 \figref{pic:compare-effect} demonstrates that both of our algorithms also get similar approximate solutions in larger networks, which outperform the solutions of other algorithms.
 
-% \begin{figure}
-%   \centering
-%   \includegraphics[width=0.475\textwidth]{compare_effects_exact.eps}
-%   \caption{MANC \(\manc{S}\) of node set \(S\) computed by four different algorithms(\textsc{Exact},\textsc{Approx},\textsc{Top-Absorb} and \textsc{Top-Degree})
-%     % on four networks: US power grid (a), ego-Facebook (b), CA-GrQc (c) and Euroroads (d)
-%     .\label{pic:compare-effect}}
-% \end{figure}
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[scale=\scaleexact,baseline]
+    \begin{semilogyaxis}[
+        xlabel={\(k\)},
+        ylabel={\(M(S)\)},
+        minor x tick num=1,
+        minor y tick num=4,
+        legend style={
+            font=\footnotesize,
+            legend columns=2,
+          },
+        legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
+        ymax=800,
+      ]
+      \addplot+[
+        mark=pentagon*,
+        mark size = 3pt
+      ] table {compare_effects/exact/CA-GrQc/Approx.dat};
+      \addplot table {compare_effects/exact/CA-GrQc/Exact.dat};
+      \addplot table {compare_effects/exact/CA-GrQc/Top-Absorb.dat};
+      \addplot table {compare_effects/exact/CA-GrQc/Top-Degree.dat};
+      \addplot table {compare_effects/exact/CA-GrQc/Top-PageRank.dat};
+      \node [font=\large] at (15,30) {CA-GrQc};
+    \end{semilogyaxis}
+  \end{tikzpicture}
+  \begin{tikzpicture}[scale=\scaleexact,baseline]
+    \begin{semilogyaxis}[
+        xlabel={\(k\)},
+        ylabel={\(M(S)\)},
+        minor x tick num=1,
+        minor y tick num=4,
+        legend style={
+            font=\footnotesize,
+            legend columns=2,
+          },
+        legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
+        ymax=4500,
+      ]
+      \addplot+[
+        mark=pentagon*,
+        mark size = 3pt
+      ] table {compare_effects/exact/ego-Facebook/Approx.dat};
+      \addplot table {compare_effects/exact/ego-Facebook/Exact.dat};
+      \addplot table {compare_effects/exact/ego-Facebook/Top-Absorb.dat};
+      \addplot table {compare_effects/exact/ego-Facebook/Top-Degree.dat};
+      \addplot table {compare_effects/exact/ego-Facebook/Top-PageRank.dat};
+      \node [font=\large] at (20,200) {ego-Facebook};
+    \end{semilogyaxis}
+  \end{tikzpicture}
 
-\begin{tikzpicture}[scale=0.45,baseline]
-  \begin{semilogyaxis}[
-      xlabel={\(k\)},
-      ylabel={\(M(S)\)},
-      minor x tick num=1,
-      minor y tick num=4,
-      legend style={
-          font=\footnotesize,
-          legend columns=2,
-        },
-      legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
-      ymax=800,
-    ]
-    \addplot+[
-      mark=pentagon*,
-      mark size = 3pt
-    ] table {compare_effects/exact/CA-GrQc/Approx.dat};
-    \addplot table {compare_effects/exact/CA-GrQc/Exact.dat};
-    \addplot table {compare_effects/exact/CA-GrQc/Top-Absorb.dat};
-    \addplot table {compare_effects/exact/CA-GrQc/Top-Degree.dat};
-    \addplot table {compare_effects/exact/CA-GrQc/Top-PageRank.dat};
-    \node [font=\large] at (15,30) {CA-GrQc};
-  \end{semilogyaxis}
-\end{tikzpicture}
-\begin{tikzpicture}[scale=0.45,baseline]
-  \begin{semilogyaxis}[
-      xlabel={\(k\)},
-      ylabel={\(M(S)\)},
-      minor x tick num=1,
-      minor y tick num=4,
-      legend style={
-          font=\footnotesize,
-          legend columns=2,
-        },
-      legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
-      ymax=4500,
-    ]
-    \addplot+[
-      mark=pentagon*,
-      mark size = 3pt
-    ] table {compare_effects/exact/ego-Facebook/Approx.dat};
-    \addplot table {compare_effects/exact/ego-Facebook/Exact.dat};
-    \addplot table {compare_effects/exact/ego-Facebook/Top-Absorb.dat};
-    \addplot table {compare_effects/exact/ego-Facebook/Top-Degree.dat};
-    \addplot table {compare_effects/exact/ego-Facebook/Top-PageRank.dat};
-    \node [font=\large] at (20,200) {ego-Facebook};
-  \end{semilogyaxis}
-\end{tikzpicture}
+  \begin{tikzpicture}[scale=\scaleexact,baseline]
+    \begin{semilogyaxis}[
+        xlabel={\(k\)},
+        ylabel={\(M(S)\)},
+        ytick distance=10^1,
+        minor x tick num=1,
+        minor y tick num=4,
+        legend style={
+            font=\footnotesize,
+            legend columns=2,
+          },
+        legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
+        ymax=1600,
+      ]
+      \addplot+[
+        mark=pentagon*,
+        mark size = 3pt
+      ] table {compare_effects/exact/Euroroads/Approx.dat};
+      \addplot table {compare_effects/exact/Euroroads/Exact.dat};
+      \addplot table {compare_effects/exact/Euroroads/Top-Absorb.dat};
+      \addplot table {compare_effects/exact/Euroroads/Top-Degree.dat};
+      \addplot table {compare_effects/exact/Euroroads/Top-PageRank.dat};
+      \node [font=\Large] at (15,25) {Euroroads};
+    \end{semilogyaxis}
+  \end{tikzpicture}
+  \begin{tikzpicture}[scale=\scaleexact,baseline]
+    \begin{semilogyaxis}[
+        xlabel={\(k\)},
+        ylabel={\(M(S)\)},
+        minor x tick num=1,
+        minor y tick num=4,
+        legend style={
+            font=\footnotesize,
+            legend columns=2,
+          },
+        legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
+        ymax=12000,
+      ]
+      \addplot+[
+        mark=pentagon*,
+        mark size = 3pt
+      ] table {compare_effects/exact/US power grid/Approx.dat};
+      \addplot table {compare_effects/exact/US power grid/Exact.dat};
+      \addplot table {compare_effects/exact/US power grid/Top-Absorb.dat};
+      \addplot table {compare_effects/exact/US power grid/Top-Degree.dat};
+      \addplot table {compare_effects/exact/US power grid/Top-PageRank.dat};
+      \node [font=\Large] at (15,90) {US power grid};
+    \end{semilogyaxis}
+  \end{tikzpicture}
+  \caption{MANC \(\manc{S}\) of node set \(S\) computed by four different algorithms(\textsc{Exact},\textsc{Approx},\textsc{Top-Absorb} and \textsc{Top-Degree}).\label{pic:compare-effect}}
+\end{figure}
 
-\begin{tikzpicture}[scale=0.45,baseline]
-  \begin{semilogyaxis}[
-      xlabel={\(k\)},
-      ylabel={\(M(S)\)},
-      ytick distance=10^1,
-      minor x tick num=1,
-      minor y tick num=4,
-      legend style={
-          font=\footnotesize,
-          legend columns=2,
-        },
-      legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
-      ymax=1600,
-    ]
-    \addplot+[
-      mark=pentagon*,
-      mark size = 3pt
-    ] table {compare_effects/exact/Euroroads/Approx.dat};
-    \addplot table {compare_effects/exact/Euroroads/Exact.dat};
-    \addplot table {compare_effects/exact/Euroroads/Top-Absorb.dat};
-    \addplot table {compare_effects/exact/Euroroads/Top-Degree.dat};
-    \addplot table {compare_effects/exact/Euroroads/Top-PageRank.dat};
-    \node [font=\Large] at (15,25) {Euroroads};
-  \end{semilogyaxis}
-\end{tikzpicture}
-\begin{tikzpicture}[scale=0.45,baseline]
-  \begin{semilogyaxis}[
-      xlabel={\(k\)},
-      ylabel={\(M(S)\)},
-      minor x tick num=1,
-      minor y tick num=4,
-      legend style={
-          font=\footnotesize,
-          legend columns=2,
-        },
-      legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
-      ymax=12000,
-    ]
-    \addplot+[
-      mark=pentagon*,
-      mark size = 3pt
-    ] table {compare_effects/exact/US power grid/Approx.dat};
-    \addplot table {compare_effects/exact/US power grid/Exact.dat};
-    \addplot table {compare_effects/exact/US power grid/Top-Absorb.dat};
-    \addplot table {compare_effects/exact/US power grid/Top-Degree.dat};
-    \addplot table {compare_effects/exact/US power grid/Top-PageRank.dat};
-    \node [font=\Large] at (15,90) {US power grid};
-  \end{semilogyaxis}
-\end{tikzpicture}
-\captionof{figure}{MANC \(\manc{S}\) of node set \(S\) computed by four different algorithms(\textsc{Exact},\textsc{Approx},\textsc{Top-Absorb} and \textsc{Top-Degree}).\label{pic:compare-effect}}
+% \captionof{figure}{MANC \(\manc{S}\) of node set \(S\) computed by four different algorithms(\textsc{Exact},\textsc{Approx},\textsc{Top-Absorb} and \textsc{Top-Degree}).\label{pic:compare-effect}}
 
 \subsection{Running time of \textsc{Exact} and \textsc{Approx}}
 
