@@ -9,7 +9,7 @@
 \begin{document}
 \sloppy
 \fancyhead{}
-\title{MANC: A Node Group Centrality Based on Absorbing Random Walk}
+\title{Absorbing Time of Random Walks as a Node Group Centrality}
 \author{Haisong Xia and Zhongzhi Zhang \footnotemark}
 \affiliation{
   \institution{Shanghai Key Laboratory of Intelligent Information Processing, Fudan University, Shanghai 200433, China\\
@@ -54,7 +54,7 @@ Subsequently, we use the monotonicity and supermodularity of MANC to design gree
 However, the inevitable matrix inversion in the greedy algorithm leads to a complexity of \(O(kn^3)\) for networks containing \(n\) nodes, which cannot be employed in large networks.
 Then, we attempt to reformulate MANC as the quadratic form of either the pseudoinverse of Laplacian matrix or the inverse of a SDDM matrix so that we can approximate it by using SDD solver~\cite{CoKyMiPaJaPeRaXu14,SpTe14,GaKySp23} and Johnson-Lindenstrauss Lemma~\cite{JoLi84}.
 For a network with \(n\) nodes and \(m\) edges, our proposed fast greedy algorithm \textsc{Approx} has a \(\tilde{O}(km)\) time complexity.
-In order to verify the accuracy and efficiency of \textsc{Approx}, we perform extensive numerical experiments on networks of different sizes。
+In order to verify the accuracy and efficiency of \textsc{Approx}, we perform extensive numerical experiments on networks of different sizes.
 The result demonstrates that \textsc{Approx} is still well scalable while maintaining the approximation error and can be applicated in large networks with millions of nodes.
 
 \section{Preliminary}\label{sec:prelim}
