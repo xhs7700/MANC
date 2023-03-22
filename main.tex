@@ -11,33 +11,33 @@
 \fancyhead{}
 \title{Absorbing Time of Random Walks as a Node Group Centrality}
 \author{Haisong Xia}
+\affiliation{
+  \institution{Fudan University}
+  \city{Shanghai 200433}
+  \country{China}
+}
 \email{hsxia22@m.fudan.edu.cn}
-\affiliation{
-  \institution{Fudan University}
-  \city{Shanghai 200433}
-  \country{China}
-}
 \author{Xiaotian Zhou}
+\affiliation{
+  \institution{Fudan University}
+  \city{Shanghai 200433}
+  \country{China}
+}
 \email{20210240043@fudan.edu.cn}
-\affiliation{
-  \institution{Fudan University}
-  \city{Shanghai 200433}
-  \country{China}
-}
 \author{Zhuoqing Song}
+\affiliation{
+  \institution{Fudan University}
+  \city{Shanghai 200433}
+  \country{China}
+}
 \email{zqsong19@fudan.edu.cn}
-\affiliation{
-  \institution{Fudan University}
-  \city{Shanghai 200433}
-  \country{China}
-}
 \author{Zhongzhi Zhang\footnotemark}
-\email{zhangzz@fudan.edu.cn}
 \affiliation{
   \institution{Fudan University}
   \city{Shanghai 200433}
   \country{China}
 }
+\email{zhangzz@fudan.edu.cn}
 % \email{{hsxia18,20210240043,zhangzz}@fudan.edu.cn}
 % \affiliation{
 %   \institution{Shanghai Key Laboratory of Intelligent Information Processing, Fudan University, Shanghai 200433, China\\
@@ -866,9 +866,10 @@ For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC 
   \centering
   \begin{tikzpicture}[scale=\scaleoptimum,baseline]
     \begin{axis}[
-        xlabel={\(k\)},
-        ylabel={\(M(S)\)},
-        legend style={font=\huge},
+        title=\huge{Zebra},
+        xlabel=\Large{\(k\)},
+        ylabel=\Large{\(M(S)\)},
+        legend style={font=\Large},
         legend entries={Approx,Exact,Optimum},
       ]
       \addplot+[
@@ -877,14 +878,15 @@ For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC 
       ] table {compare_effects/optimum/Zebra/Approx.dat};
       \addplot table {compare_effects/optimum/Zebra/Exact.dat};
       \addplot table {compare_effects/optimum/Zebra/Optimum.dat};
-      \node [font=\huge] at (3.5,10) {Zebra};
+      \node [font=\huge] at (3.5,10) {(a)};
     \end{axis}
   \end{tikzpicture}
   \begin{tikzpicture}[scale=\scaleoptimum,baseline]
     \begin{axis}[
-        xlabel={\(k\)},
-        ylabel={\(M(S)\)},
-        legend style={font=\huge},
+        title=\huge{Zachary karate club},
+        xlabel=\Large{\(k\)},
+        ylabel=\Large{\(M(S)\)},
+        legend style={font=\Large},
         legend entries={Approx,Exact,Optimum},
       ]
       \addplot+[
@@ -893,15 +895,16 @@ For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC 
       ] table {compare_effects/optimum/Zachary karate club/Approx.dat};
       \addplot table {compare_effects/optimum/Zachary karate club/Exact.dat};
       \addplot table {compare_effects/optimum/Zachary karate club/Optimum.dat};
-      \node [font=\huge] at (3.5,7) {Zachary karate club};
+      \node [font=\huge] at (3.5,7) {(b)};
     \end{axis}
   \end{tikzpicture}
 
   \begin{tikzpicture}[scale=\scaleoptimum,baseline]
     \begin{axis}[
-        xlabel={\(k\)},
-        ylabel={\(M(S)\)},
-        legend style={font=\huge},
+        title=\huge{Contiguous USA},
+        xlabel=\Large{\(k\)},
+        ylabel=\Large{\(M(S)\)},
+        legend style={font=\Large},
         legend entries={Approx,Exact,Optimum},
       ]
       \addplot+[
@@ -910,14 +913,15 @@ For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC 
       ] table {compare_effects/optimum/Contiguous USA/Approx.dat};
       \addplot table {compare_effects/optimum/Contiguous USA/Exact.dat};
       \addplot table {compare_effects/optimum/Contiguous USA/Optimum.dat};
-      \node [font=\huge] at (3.5,25) {Contiguous USA};
+      \node [font=\huge] at (3.5,25) {(c)};
     \end{axis}
   \end{tikzpicture}
   \begin{tikzpicture}[scale=\scaleoptimum,baseline]
     \begin{axis}[
-        xlabel={\(k\)},
-        ylabel={\(M(S)\)},
-        legend style={font=\huge},
+        title=\huge{Les Misérables},
+        xlabel=\Large{\(k\)},
+        ylabel=\Large{\(M(S)\)},
+        legend style={font=\Large},
         legend entries={Approx,Exact,Optimum},
       ]
       \addplot+[
@@ -926,7 +930,7 @@ For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC 
       ] table {compare_effects/optimum/Les Misérables/Approx.dat};
       \addplot table {compare_effects/optimum/Les Misérables/Exact.dat};
       \addplot table {compare_effects/optimum/Les Misérables/Optimum.dat};
-      \node [font=\huge] at (3.5,9) {Les Misérables};
+      \node [font=\huge] at (3.5,9) {(d)};
     \end{axis}
   \end{tikzpicture}
   \caption{MANC \(\manc{S}\) of node set \(S\) computed by three different algorithms(\textsc{Exact},\textsc{Approx} and \textsc{Optimum}).\label{pic:compare-effect-optimum}}
@@ -941,8 +945,9 @@ We run these four algorithms on four medium-sized networks, the results is shown
   \centering
   \begin{tikzpicture}[scale=\scaleexact,baseline]
     \begin{semilogyaxis}[
-        xlabel={\(k\)},
-        ylabel={\(M(S)\)},
+        title=\huge{CA-GrQc},
+        xlabel=\Large{\(k\)},
+        ylabel=\Large{\(M(S)\)},
         minor x tick num=1,
         minor y tick num=4,
         legend style={
@@ -960,13 +965,14 @@ We run these four algorithms on four medium-sized networks, the results is shown
       \addplot table {compare_effects/exact/CA-GrQc/Top-Absorb.dat};
       \addplot table {compare_effects/exact/CA-GrQc/Top-Degree.dat};
       \addplot table {compare_effects/exact/CA-GrQc/Top-PageRank.dat};
-      \node [font=\large] at (15,30) {CA-GrQc};
+      \node [font=\huge] at (10,30) {(a)};
     \end{semilogyaxis}
   \end{tikzpicture}
   \begin{tikzpicture}[scale=\scaleexact,baseline]
     \begin{semilogyaxis}[
-        xlabel={\(k\)},
-        ylabel={\(M(S)\)},
+        title=\huge{ego-Facebook},
+        xlabel=\Large{\(k\)},
+        ylabel=\Large{\(M(S)\)},
         minor x tick num=1,
         minor y tick num=4,
         legend style={
@@ -984,14 +990,15 @@ We run these four algorithms on four medium-sized networks, the results is shown
       \addplot table {compare_effects/exact/ego-Facebook/Top-Absorb.dat};
       \addplot table {compare_effects/exact/ego-Facebook/Top-Degree.dat};
       \addplot table {compare_effects/exact/ego-Facebook/Top-PageRank.dat};
-      \node [font=\large] at (20,200) {ego-Facebook};
+      \node [font=\huge] at (10,20) {(b)};
     \end{semilogyaxis}
   \end{tikzpicture}
 
   \begin{tikzpicture}[scale=\scaleexact,baseline]
     \begin{semilogyaxis}[
-        xlabel={\(k\)},
-        ylabel={\(M(S)\)},
+        title=\huge{Euroroads},
+        xlabel=\Large{\(k\)},
+        ylabel=\Large{\(M(S)\)},
         ytick distance=10^1,
         minor x tick num=1,
         minor y tick num=4,
@@ -1010,13 +1017,14 @@ We run these four algorithms on four medium-sized networks, the results is shown
       \addplot table {compare_effects/exact/Euroroads/Top-Absorb.dat};
       \addplot table {compare_effects/exact/Euroroads/Top-Degree.dat};
       \addplot table {compare_effects/exact/Euroroads/Top-PageRank.dat};
-      \node [font=\Large] at (15,25) {Euroroads};
+      \node [font=\huge] at (10,25) {(c)};
     \end{semilogyaxis}
   \end{tikzpicture}
   \begin{tikzpicture}[scale=\scaleexact,baseline]
     \begin{semilogyaxis}[
-        xlabel={\(k\)},
-        ylabel={\(M(S)\)},
+        title=\huge{US power grid},
+        xlabel=\Large{\(k\)},
+        ylabel=\Large{\(M(S)\)},
         minor x tick num=1,
         minor y tick num=4,
         legend style={
@@ -1034,7 +1042,7 @@ We run these four algorithms on four medium-sized networks, the results is shown
       \addplot table {compare_effects/exact/US power grid/Top-Absorb.dat};
       \addplot table {compare_effects/exact/US power grid/Top-Degree.dat};
       \addplot table {compare_effects/exact/US power grid/Top-PageRank.dat};
-      \node [font=\Large] at (15,90) {US power grid};
+      \node [font=\huge] at (10,90) {(d)};
     \end{semilogyaxis}
   \end{tikzpicture}
   \caption{MANC \(\manc{S}\) of node set \(S\) computed by four different algorithms(\textsc{Exact},\textsc{Approx},\textsc{Top-Absorb} and \textsc{Top-Degree}).\label{pic:compare-effect}}
