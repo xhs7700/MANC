@@ -263,11 +263,11 @@ It prompts us to similarly extend \thmref{thm:connection-single} to multi-node c
   Then the right side of \eqref{eq:connection-multiple} can be rewritten as
   \begin{equation}\label{eq:detour}
     \begin{split}
-      \sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)
-      & =\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\vecpi_i\vecpi_j\matpdistr_{[i,k]}H_{k,j}  \\
-      & =\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\vecpi^\top\matpdistr\mypar{\matfstar_{[j,j]}\allone-\matfstar_{[S,j]}}                        \\
-      & =\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\allone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
-      & =\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1,
+      &\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)\\
+      =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\vecpi_i\vecpi_j\matpdistr_{[i,k]}H_{k,j}  \\
+      =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\vecpi^\top\matpdistr\mypar{\matfstar_{[j,j]}\allone-\matfstar_{[S,j]}}                        \\
+      =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\allone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
+      =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1,
     \end{split}
   \end{equation}
   where the last equality is due to the fact that \(\matpdistr\allone=\allone\) and \(\matfstar\vecpi=\allone\).
@@ -322,11 +322,9 @@ Considering the above case, MANC \(\manc{S}\) can be written as
 Furthermore, after simplification using~\eqref{eq:trs}, we get the formula of \(\manc{S}\):
 \begin{equation}\label{eq:MANC}
   \begin{split}
-    \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\matp}_{-S}^{-1}\allone                                    \\
-    & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\allone                          \\
+    \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\matp}_{-S}^{-1}\allone=\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\allone                          \\
     & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\matd_{-S}^{-1}\matd_{-S}\allone \\
-    & =\vecpi_{-S}^\top\mypar{\matd-\mata}_{-S}^{-1}\vecd_{-S}                                \\
-    & =\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}.
+    & =\vecpi_{-S}^\top\mypar{\matd-\mata}_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}.
   \end{split}
 \end{equation}
 
@@ -786,9 +784,8 @@ Since \textsc{Approx} calls \textsc{ApproxH} once and calls \textsc{ApproxDelta}
   \[\manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1-\epsilon}{k}}\mypar{\manc{S_i}-\manc{S^*}}.\]
   Subsequently, we can further obtain that
   \begin{align*}
-        & \manc{S_k}-\manc{S^*}                                                        \\
-    \le & \mypar{1-\frac{1-\epsilon}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}            \\
-    \le & \mypar{\frac{k}{k-1}\cdot\frac{1}{e}+\epsilon}\mypar{\manc{S_1}-\manc{S^*}},
+    \manc{S_k}-\manc{S^*} \le & \mypar{1-\frac{1-\epsilon}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}            \\
+    \le                       & \mypar{\frac{k}{k-1}\cdot\frac{1}{e}+\epsilon}\mypar{\manc{S_1}-\manc{S^*}},
   \end{align*}
   which completes our proof based on the fact that \(\manc{S_1}\le\mypar{1+\epsilon}\manc{\setof{u^*}}\).
 \end{proof}
@@ -866,7 +863,6 @@ For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC 
   \centering
   \begin{tikzpicture}[scale=\scaleoptimum,baseline]
     \begin{axis}[
-        title=\huge{Zebra},
         xlabel=\Large{\(k\)},
         ylabel=\Large{\(M(S)\)},
         legend style={font=\Large},
@@ -883,7 +879,6 @@ For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC 
   \end{tikzpicture}
   \begin{tikzpicture}[scale=\scaleoptimum,baseline]
     \begin{axis}[
-        title=\huge{Zachary karate club},
         xlabel=\Large{\(k\)},
         ylabel=\Large{\(M(S)\)},
         legend style={font=\Large},
@@ -901,7 +896,6 @@ For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC 
 
   \begin{tikzpicture}[scale=\scaleoptimum,baseline]
     \begin{axis}[
-        title=\huge{Contiguous USA},
         xlabel=\Large{\(k\)},
         ylabel=\Large{\(M(S)\)},
         legend style={font=\Large},
@@ -918,7 +912,6 @@ For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC 
   \end{tikzpicture}
   \begin{tikzpicture}[scale=\scaleoptimum,baseline]
     \begin{axis}[
-        title=\huge{Les Misérables},
         xlabel=\Large{\(k\)},
         ylabel=\Large{\(M(S)\)},
         legend style={font=\Large},
@@ -933,7 +926,7 @@ For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC 
       \node [font=\huge] at (3.5,9) {(d)};
     \end{axis}
   \end{tikzpicture}
-  \caption{MANC \(\manc{S}\) of node set \(S\) computed by three different algorithms(\textsc{Exact},\textsc{Approx} and \textsc{Optimum}).\label{pic:compare-effect-optimum}}
+  \caption{MANC \(\manc{S}\) of node set \(S\) computed by three different algorithms(\textsc{Exact},\textsc{Approx} and \textsc{Optimum}) on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c) and Les Misérables (d).\label{pic:compare-effect-optimum}}
 \end{figure}
 
 We subsequently compare the performance of \textsc{Exact} and \textsc{Approx} with three other algorithms: \textsc{Top-Absorb}, \textsc{Top-Degree} and \textsc{Top-PageRank}.
@@ -945,7 +938,6 @@ We run these four algorithms on four medium-sized networks, the results is shown
   \centering
   \begin{tikzpicture}[scale=\scaleexact,baseline]
     \begin{semilogyaxis}[
-        title=\huge{CA-GrQc},
         xlabel=\Large{\(k\)},
         ylabel=\Large{\(M(S)\)},
         minor x tick num=1,
@@ -970,7 +962,6 @@ We run these four algorithms on four medium-sized networks, the results is shown
   \end{tikzpicture}
   \begin{tikzpicture}[scale=\scaleexact,baseline]
     \begin{semilogyaxis}[
-        title=\huge{ego-Facebook},
         xlabel=\Large{\(k\)},
         ylabel=\Large{\(M(S)\)},
         minor x tick num=1,
@@ -996,7 +987,6 @@ We run these four algorithms on four medium-sized networks, the results is shown
 
   \begin{tikzpicture}[scale=\scaleexact,baseline]
     \begin{semilogyaxis}[
-        title=\huge{Euroroads},
         xlabel=\Large{\(k\)},
         ylabel=\Large{\(M(S)\)},
         ytick distance=10^1,
@@ -1022,7 +1012,6 @@ We run these four algorithms on four medium-sized networks, the results is shown
   \end{tikzpicture}
   \begin{tikzpicture}[scale=\scaleexact,baseline]
     \begin{semilogyaxis}[
-        title=\huge{US power grid},
         xlabel=\Large{\(k\)},
         ylabel=\Large{\(M(S)\)},
         minor x tick num=1,
@@ -1045,7 +1034,7 @@ We run these four algorithms on four medium-sized networks, the results is shown
       \node [font=\huge] at (10,90) {(d)};
     \end{semilogyaxis}
   \end{tikzpicture}
-  \caption{MANC \(\manc{S}\) of node set \(S\) computed by four different algorithms(\textsc{Exact},\textsc{Approx},\textsc{Top-Absorb} and \textsc{Top-Degree}).\label{pic:compare-effect}}
+  \caption{MANC \(\manc{S}\) of node set \(S\) computed by four different algorithms(\textsc{Exact},\textsc{Approx},\textsc{Top-Absorb} and \textsc{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d).\label{pic:compare-effect}}
 \end{figure}
 
 % \captionof{figure}{MANC \(\manc{S}\) of node set \(S\) computed by four different algorithms(\textsc{Exact},\textsc{Approx},\textsc{Top-Absorb} and \textsc{Top-Degree}).\label{pic:compare-effect}}
