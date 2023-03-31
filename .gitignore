@@ -6,4 +6,6 @@
 *.pdf
 *.synctex.gz
 !acmart.pdf
+!Koch-eps-converted-to.pdf
+!Pseudofractal-eps-converted-to.pdf
 MANC.pdf

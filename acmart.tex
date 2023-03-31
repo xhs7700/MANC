@@ -1,64 +1,94 @@
-\documentclass[journal]{IEEEtran}
-\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
-    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\documentclass[sigconf]{acmart}
+
+\settopmatter{printacmref=false}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\pagestyle{plain}
 
 \input{headers.tex}
 
 \begin{document}
-
+\sloppy
+\fancyhead{}
 \title{Absorbing Time of Random Walks as a Node Group Centrality}
-\author{Haisong~Xia,
-    Zuobai~Zhang,
-    Xiaotian~Zhou,
-    Zhuoqing~Song,
-    Zhongzhi~Zhang~\IEEEmembership{Member,~IEEE}
-    \thanks{Haisong Xia, Xiaotian Zhou and Zhongzhi Zhang are with the Shanghai Key Laboratory of Intelligent Information Processing, School of Computer Science, Fudan University, Shanghai 200433, China;Zhongzhi Zhang and Haibin Kan are also with the Shanghai Engineering Research Institute of Blockchain, Shanghai 200433, China.}
+\author{Haisong Xia}
+\affiliation{
+    \institution{Fudan University}
+    \city{Shanghai 200433}
+    \country{China}
 }
-
-\maketitle
-
+\email{hsxia22@m.fudan.edu.cn}
+\author{Xiaotian Zhou}
+\affiliation{
+    \institution{Fudan University}
+    \city{Shanghai 200433}
+    \country{China}
+}
+\email{20210240043@fudan.edu.cn}
+\author{Zhuoqing Song}
+\affiliation{
+    \institution{Fudan University}
+    \city{Shanghai 200433}
+    \country{China}
+}
+\email{zqsong19@fudan.edu.cn}
+\author{Zhongzhi Zhang\footnotemark}
+\affiliation{
+    \institution{Fudan University}
+    \city{Shanghai 200433}
+    \country{China}
+}
+\email{zhangzz@fudan.edu.cn}
+% \email{{hsxia18,20210240043,zhangzz}@fudan.edu.cn}
+% \affiliation{
+%   \institution{Shanghai Key Laboratory of Intelligent Information Processing, Fudan University, Shanghai 200433, China\\
+%     School of Computer Science, Fudan University, Shanghai 200433, China}
+%   \city{}\country{}
+% }
+% \author{Zhuoqing Song}
+% \email{zqsong19@fudan.edu.cn}
+% \affiliation{
+%   \institution{Shanghai Center for Mathematical Sciences, Fudan University, Shanghai 200433, China}
+%   \city{}\country{}
+% }
 \begin{abstract}
-    In the field of complex networks, the usage of random walk and its relevant quantities arises in many academic research studies.
-    In this paper, we explore the relationship between absorbing random-walk centrality, Kemeny constant, and random detour time.
-    We then expand this relationship to the case of multiple nodes.
-    Building on this newly discovered connection, we propose a new centrality measure called Multiple Absorbing Node Centrality (MANC), which is essentially the multi-node version of absorbing random-walk centrality.
-    Using this new centrality measure, we investigate the MANC minimization problem, which involves finding the optimal set \(S^*\) of absorbing nodes with capacity \(k\) that minimize its MANC \(\manc{S^*}\).
+    In the field of complex networks, the usage of random walk and its relevant quantities arises in many academic researches.
+    In this paper, we consider the connection among Kemeny constant, absorbing random-walk centrality and random detour time, then subsequently extend it to the case of multiple nodes.
+    Inspired by this newly discovered connection, we propose a new centrality that happens to be Multiple Absorbing Node Centrality(MANC).
+    For undirected graphs, MANC for a node set \(S\) is defined as the weighted sum of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
+    Based on the new centrality, we investigate MANC minimization problem: return the optimal set \(S^*\) of absorbing nodes with capacity \(k\), which minimize its MANC \(\manc{S^*}\).
     In this paper, we prove that this problem is NP-hard.
-    However, due to the monotonicity and supermodularity of MANC, we provide greedy algorithms with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximate factor and cubic running time.
-    To circumvent the time-consuming matrix inversion, we provide a faster algorithm with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor and nearly linear running time for any \(\epsilon\in(0,1)\).
-    Numerical experiments on large-scale real networks demonstrate that our second algorithm remains scalable while maintaining a low approximation error.
+    However, thanks to the monotonicity and supermodularity of MANC, we give greedy algorithms with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximate factor and cubic running time.
+    To further accelerate the computation of MANC, we give a faster algorithm with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor and nearly linear running time for any \(\epsilon\in(0,1)\).
+    Numerical experiments on large-scale real networks demonstrate that our second algorithm is still well scalable while maintaining the approximation error.
 \end{abstract}
-
-\begin{IEEEkeywords}
-    Random walk, Kemeny constant, node centrality, complex network, graph algorithm.
-\end{IEEEkeywords}
+\keywords{social network, random walk, graph algorithm, Laplacian solver}
+\maketitle
+\renewcommand{\thefootnote}{*}
+\footnotetext[1]{Corresponding author. Zhongzhi Zhang is also with Shanghai Blockchain Engineering Research Center, as well as Research Institute of Intelligent Complex Systems, Fudan University, Shanghai 200433.}
 
 \section{Introduction}\label{sec:intro}
 
-\IEEEPARstart{R}{andom} walk on graphs is a useful method or model widely applied in many fields. It is used in link prediction~\cite{YiGuWeTiHa10}, improving search results~\cite{LiPeMaQiWeQi10}, object detection~\cite{GoViHuRa10}, image background extraction~\cite{HuWaYeChLa16}, image annotation refinement~\cite{WaJiZhZh10}, DDoS attack detection~\cite{XuZhXiYu14} and clone attack detection~\cite{ZeCaZhGuXi10}.
-A fundamental quantity relevant to random walks is hitting time~\cite{Lo93}, also known as first passage time~\cite{CoBeTeVoKl07}.
+As a useful method or model, random walk on graphs is widely applicated in many fields: from link prediction~\cite{YiGuWeTiHa10} and improving search results~\cite{LiPeMaQiWeQi10}, which are closely related to complex networks, to object detection~\cite{GoViHuRa10}, image background extraction~\cite{HuWaYeChLa16} and image annotation refinement~\cite{WaJiZhZh10} in the field of image processing, to DDoS attack detection~\cite{XuZhXiYu14} and clone attack detection~\cite{ZeCaZhGuXi10} in the field of information security.
+A fundamental quantity relevant to random walks is hitting time.
 The hitting time \(H_{u,v}\) is the expected number of time steps for a walker starting from node \(u\) to first reach node \(v\).
-It has been successfully applied to diverse areas, such as the Hanoi problem with random move~\cite{WuZhCh11}, query suggestions~\cite{MeZhCh08}, and clustering algorithm~\cite{ChLiTa08}.
 Hitting time can be used to define other interesting quantities like Kemeny constant, absorbing random-walk centrality and random detour time~\cite{RaZh13}.
 
-In this paper, we establish a connection between Kemeny constant, absorbing random-walk centrality and random detour time.
-This connection prompts us to extend it further to the case of multiple nodes.
-Inspired by this newly discovered connection, we propose a centrality relevant to node groups: Multiple Absorbing Node Centrality (MANC).
-We define MANC through an absorbing random walk model on graphs: for a connected undirected graph, the MANC \(\manc{S}\) of a node set \(S\) is defined as the weighted sum of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
+In this paper, we first establish a connection among Kemeny constant, absorbing random-walk centrality and random detour time, which prompts us to further extend it to the case of multiple nodes.
+Inspired by the newly discovered connection, we propose a centrality relevant to node groups: Multiple Absorbing Node Centrality (MANC) through an absorbing random walk model on graphs.
+For a connected undirected graph, the MANC \(\manc{S}\) of a node set \(S\) is defined as the weighted sum of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
 
 Due to the definition of MANC, this centrality can be directly applied to the search engine ranking systems.
-If we consider web pages that contain the search keywords as nodes, and hyperlinks between web pages as edges, the selected set of web pages should be close enough to all candidate pages and cover as many candidate pages as possible.
-The traditional method of ranking important nodes cannot meet these requirements, while MANC can theoretically achieve better results because it is defined directly according to the hitting time of node groups.
-Consequently, we further construct the MANC minimization problem as finding the node set \(S^*\) with capacity \(k\) that minimizes MANC \(\manc{S^*}\).
+If we denote web pages that satisfy the search keywords as nodes, then denote hyperlinks between web pages as edges, the selected set of web pages should be close enough to all candidate pages, i.e. cover all candidate pages as much as possible.
+The traditional method of ranking important nodes cannot meet the above requirements, while MANC can theoretically achieve better application results because it is defined directly according to the hitting time of node groups.
+Consequently, we further construct the MANC minimization problem: finding the node set \(S^*\) with capacity \(k\) that minimizes MANC \(\manc{S^*}\).
 
 In this paper, we prove that the MANC minimization problem is NP-hard.
-Subsequently, we utilize the monotonicity and supermodularity of MANC to design greedy algorithms with approximation guarantees for solving the problem.
-However, the greedy algorithm's inevitable matrix inversion results in a \(O(kn^3)\) complexity for networks with \(n\) nodes, making it unsuitable for large networks.
-Thus, we attempt to reformulate MANC as the quadratic form of either the pseudoinverse of the Laplacian matrix or the inverse of a SDDM matrix.
-This approach enables us to approximate it by using an SDD solver and the Johnson-Lindenstrauss Lemma~\cite{JoLi84}.
-For a network with \(n\) nodes and \(m\) edges, our proposed fast greedy algorithm \textsc{Approx} has a time complexity of \(\tilde{O}(km)\).
-We conduct extensive numerical experiments on networks of various sizes to verify the accuracy and efficiency of \textsc{Approx}.
-The results demonstrate that \textsc{Approx} remains scalable while maintaining the approximation error and can be used for large networks with millions of nodes.
+Subsequently, we use the monotonicity and supermodularity of MANC to design greedy algorithms with approximation guarantees to solve this problem.
+However, the inevitable matrix inversion in the greedy algorithm leads to a complexity of \(O(kn^3)\) for networks containing \(n\) nodes, which cannot be employed in large networks.
+Then, we attempt to reformulate MANC as the quadratic form of either the pseudoinverse of Laplacian matrix or the inverse of a SDDM matrix so that we can approximate it by using SDD solver~\cite{CoKyMiPaJaPeRaXu14,SpTe14,GaKySp23} and Johnson-Lindenstrauss Lemma~\cite{JoLi84}.
+For a network with \(n\) nodes and \(m\) edges, our proposed fast greedy algorithm \textsc{Approx} has a \(\tilde{O}(km)\) time complexity.
+In order to verify the accuracy and efficiency of \textsc{Approx}, we perform extensive numerical experiments on networks of different sizes.
+The result demonstrates that \textsc{Approx} is still well scalable while maintaining the approximation error and can be applicated in large networks with millions of nodes.
 
 \section{Preliminary}\label{sec:prelim}
 
@@ -66,36 +96,37 @@ In this section, we briefly indroduce some notations as well as some basic conce
 
 \subsection{Notations}
 
-We use regular lowercase letters like \(a,b,c\) to represent scalars in \(\rea\), bold lowercase letters such as \(\veca,\vecb,\bsym{c}\) to denote vectors, and bold uppercase letters like \(\mata,\bsym{B},\bsym{C}\) to represent matrices.
+We use normal regular lowercase letters like \(a,b,c\) to denote scalars in \(\rea\), use bold lowercase letters like \(\veca,\vecb,\bsym{c}\) to denote vectors, and use bold uppercase letters like \(\mata,\bsym{B},\bsym{C}\) to denote matrices.
 
-To represent specific elements in vectors and matrices, we use \(\veca_{i}\) to denote the \(\myord{i}\) element of vector \(\bsym a\) and use \(\bsym A_{[i,j]}\) to denote the entry at position \((i,j)\) of matrix \(\bsym A\).
+For the convenience of representing specific element in vectors and matrices, we use \(\veca_{i}\) to denote the \(\myord{i}\) element of vector \(\bsym a\) and use \(\bsym A_{[i,j]}\) to denote entry \((i,j)\) of matrix \(\bsym A\).
 We also use \(\mata_{[i,:]}\) and \(\mata_{[:,j]}\) to respectively denote the \(\myord{i}\) row and the \(\myord{j}\) column of matrix \(\mata\).
 
-Additionally, we write sets in subscripts to indicate subvectors and submatrices.
-For instance, \(\veca_{-S}\) represents the subvector of \(\veca\) created by removing the elements with indices in set \(S\), and \(\mata_{-S}\) represents the submatrix of \(\mata\) obtained by removing the elements with row indices or column indices in set \(S\).
+Moreover, we write sets in subscripts to denote subvectors and submatrices.
+For example, \(\veca_{-S}\) represents the subvector of \(\veca\) obtained by removing elements with indices in set \(S\), \(\mata_{-S}\) represents the submatrix of \(\mata\) obtained by removing elements with row indices or column indices in set \(S\).
 Note that the subscript takes precedence over the superscript, thus \(\mata_{-S}^{-1}\) denotes the inverse of \(\mata_{-S}\) rather than the submatrix of \(\mata^{-1}\).
 
-Finally, we use \(\bsym{e}_i\) to denote the \(\myord{i}\) standard basis vector of specific dimensions, and \(\allone_n\in \rea^n\) to represent a vector of \(n\) dimensions with all elements equal to \(1\).
+Finally, we use \(\bsym{e}_i\) to denote the \(\myord{i}\) standard basis vector of particular dimensions, and \(\allone_n\in \rea^n\) to denote a vector of \(n\) dimensions with all elements being \(1\).
 Sometimes we omit subscripts where there is no ambiguity.
 
 For a matrix \(\mata\in\rea^{m\times n}\), its Frobenius form is \(\Abs{\mata}_F=\sqrt{\trace{\mata^\top\mata}}\).
 
-Since we prove the approximation guarantee of our algorithms in \secref{sec:faster-greedy}, it is necessary to provide the definition of approximate factor.
+Since we prove the approximation guarantee of our algorithms in \secref{sec:faster-greedy}, it is necessary to give the definition of approximate factor.
 
 \begin{definition}[\(\epsilon\)-approximation]
-    Assuming \(x\) and \(\tilde{x}\) are positive scalars, and \(\epsilon\) is an error parameter that satisfies \(\epsilon\in(0,1)\), we define \(\tilde{x}\) as an \(\epsilon\)-approximation of \(x\) if \((1-\epsilon)\tilde{x}\le x\le(1+\epsilon)\tilde{x}\) holds. We denote this relationship as \(x\approx_{\epsilon}\tilde{x}\) for the sake of brevity.
+    Let \(x,\tilde{x}\) be positive scalars, \(\epsilon\) be an error parameter satisfying \(\epsilon\in(0,1)\).
+    Then \(\tilde{x}\) is called an \(\epsilon\)-approximation of \(x\) if \((1-\epsilon)\tilde{x}\le x\le(1+\epsilon)\tilde{x}\) holds, which we denote as \(x\approx_{\epsilon}\tilde{x}\) for the convenience of writing.
 \end{definition}
 
 \subsection{Supermodular Functions}
 
-Subsequently, we give the definitions of monotone and supermodular set functions. For simplicity, we use the notation \(S+u\) to represent \(S\cup\setof{u}\).
+Subsequently, we give the definitions of monotone and supermodular set functions. For simplicity, we denote \(S\cup\setof{u}\) as \(S+u\).
 
 \begin{definition}[Monotonicity]
-    A set function \(f:2^{V}\to\rea^+\) is considered monotone if and only if, for any non-empty sets \(X\) and \(Y\) that satisfy \(X\subseteq Y\subseteq V\), the inequality \(f(X)\ge f(Y)\) holds.
+    The set function \(f:2^{V}\to\rea^+\) is monotone if and only if for any nonempty set \(X,Y\) that satisfies \(X\subseteq Y\subseteq V\), the inequality \(f(X)\ge f(Y)\) holds.
 \end{definition}
 
 \begin{definition}[Supermodularity]
-    A set function \(f:2^{V}\to\rea^+\) is considered supermodular if and only if, for any non-empty sets \(X\) and \(Y\) that satisfy \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\), the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds.
+    The set function \(f:2^{V}\to\rea^+\) is supermodular if and only if for any nonempty set \(X,Y\) that satisfies \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\), the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds.
 \end{definition}
 
 \subsection{Graphs and Laplacian Matrices}\label{sub:lap}
@@ -194,14 +225,14 @@ Actually, it is easy to prove the following theorem, establishing connection amo
         H_u+\kem=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(u).
     \end{equation}
 \end{theorem}
-\begin{IEEEproof}
+\begin{proof}
     According to definitions in \secref{subsec:random-walk}, the right side of~\eqref{eq:detour-single} can be rewritten as
     \begin{align*}
         \sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(u) & =\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_j\mypar{H_{i,u}+H_{u,j}} \\
                                                            & =\sum_{i=1}^n\vecpi_iH_{i,u}+\sum_{j=1}^n\vecpi_jH_{u,j}         \\
                                                            & =H_u+\kem.
     \end{align*}
-\end{IEEEproof}
+\end{proof}
 
 Inspired by this single-node version of theorem, we try to extend it to the case of multiple nodes.
 To begin with, we need to extend the definition of absorbing random-walk centrality and random detour time to multi-node case.
@@ -225,7 +256,7 @@ It prompts us to similarly extend \thmref{thm:connection-single} to multi-node c
         \sum_{i=1}^n\vecpi_iH_{i,S}+\kem=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S).
     \end{equation}
 \end{theorem}
-\begin{IEEEproof}
+\begin{proof}
     To prove~\eqref{eq:connection-multiple}, we utilize the fundamental matrix \(\matfstar\) in the non-absorbing random walk model.
     According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\allone\vecpi^\top)^{-1}\matpi^{-1}\), where \(\matpi\) is defined as \(\rm{diag}\mypar{\vecpi}\).
     Subsequently, the hitting time \(H_{i,j}\) can be represented by \(\matfstar\) as \(H_{i,j}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\)~\cite{BoRaZh11}.
@@ -251,7 +282,7 @@ It prompts us to similarly extend \thmref{thm:connection-single} to multi-node c
     \end{equation}
     where the last equality is due to the fact that \(\matfstar\vecpi=\allone\) and \(\vecpi^\top\allone=1\).
     Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes our proof.
-\end{IEEEproof}
+\end{proof}
 
 Since \(D_{i,j}(S)\) is a multi-node extension from \(D_{i,j}(u)\), it is natural to view the term \(\sum_{i=1}^n\vecpi_iH_{i,S}\) in~\eqref{eq:connection-multiple} as the multi-node extension of absorbing random-walk centrality \(H_u=\sum_{i=1}^n\vecpi_iH_{i,u}\), which means that it can be defined as a new form of group node centrality.
 
@@ -320,7 +351,7 @@ Given a connected \(c\)-regular graph \(G=(V,E)\) and an integer \(k\), the goal
 \begin{theorem}\label{thm:np-hard}
     MANCM is NP-hard.
 \end{theorem}
-\begin{IEEEproof}
+\begin{proof}
     For an arbitary connected \(c\)-regular graph \(\gr=(V,E,w)\), where the weights of all edges are equal to \(1\).
     Let \(S\subseteq V\) be a nonempty node set with capacity \(k\), then we attempt to prove that \(\manc{S}\ge (n-k)/n\), the equality holds if and only if \(S\) is a vertex cover of \(\gr\).
 
@@ -339,16 +370,15 @@ Given a connected \(c\)-regular graph \(G=(V,E)\) and an integer \(k\), the goal
 
     Therefore, if we denote \(S+u'+v'\) as \(S'\), then we are able to get the lower bound of MANC:
     \begin{align*}
-        \manc{S} & =\sum_{v\in V}\vecpi_vH_{v,S}                                                          \\
-                 & =\sum_{v\in V\setminus S'}\vecpi_vH_{v,S}+\vecpi_{u'}H_{u',S}+\vecpi_{v'}H_{v',S}      \\
-                 & >\vecpi_{-S'}\allone+\vecpi_{u'}\mypar{1+\frac{1}{n}}+\vecpi_{v'}\mypar{1+\frac{1}{n}} \\
+        \manc{S} & =\sum_{v\in V}\vecpi_vH_{v,S}=\sum_{v\in V\setminus S'}\vecpi_vH_{v,S}+\vecpi_{u'}H_{u',S}+\vecpi_{v'}H_{v',S} \\
+                 & >\vecpi_{-S'}\allone+\vecpi_{u'}\mypar{1+\frac{1}{n}}+\vecpi_{v'}\mypar{1+\frac{1}{n}}                         \\
                  & =\vecpi_{-S}^\top\allone+\frac{\vecpi_{u'}+\vecpi_{v'}}n
         >\vecpi_{-S}^\top\allone=(n-k)/n.
     \end{align*}
 
     Based on the above proposition, we can easily construct a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of MANCM, which completes our proof of the NP-hardness of MANCM.
 
-\end{IEEEproof}
+\end{proof}
 
 \subsubsection{Monotonicity and Supermodularity}
 
@@ -360,17 +390,17 @@ In this part, we prove that the objective function \(\manc{\cdot}\) is monotone 
     \[\manc{S}\ge \manc{S+u}.\]
 \end{theorem}
 
-\begin{IEEEproof}
+\begin{proof}
     According to \defref{def:manc}, \(\manc{S}=\sum_{v\in V}\vecpi_vH_{v,S}\).
     Since \(S\) is a subset of \(S+u\), when a random walker reaches nodes in \(S\), it must have reached nodes in \(S+u\). Therefore \(H_{v,S}\ge H_{v,S+u}\) holds for any node \(v\in V\), which completes our proof.
-\end{IEEEproof}
+\end{proof}
 
 \begin{theorem}[Supermodularity]\label{thm:supermod}
     Let \(S,T\) be arbitary nonempty node sets of connected weighted graph \(\gr=(V,E,w)\) such that \(S\subseteq T\subsetneq V\), then for node \(u\in V\setminus T\),
     \[\manc{S}-\manc{S+u}\ge \manc{T}-\manc{T+u}.\]
 \end{theorem}
 
-\begin{IEEEproof}
+\begin{proof}
     For a subset \(A\) of the probability space, we denote \(\indfunc{A}\) as the indicator function of the event \(A\). Then we rewrite \(\manc{S}-\manc{S+u}\) by discussing the hitting node of random walker.
     \begin{align*}
           & \manc{S}-\manc{S+u}                                                                                                                      \\
@@ -385,7 +415,7 @@ In this part, we prove that the objective function \(\manc{\cdot}\) is monotone 
     Combining the above two inequalities, we can prove that
     \[(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}\ge(T_{v,T}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,T}}}\]
     holds for any node \(v\in V\), which completes our proof.
-\end{IEEEproof}
+\end{proof}
 
 \section{Simple Greedy Algorithm}\label{sec:simple-greedy}
 
@@ -460,7 +490,7 @@ Afterwards, we prove that \algoref{algo:exact} has a \(1-\frac{k}{k-1}\cdot\frac
     where
     \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}},S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
 \end{theorem}
-\begin{IEEEproof}
+\begin{proof}
     According to the supermodularity of \(\manc{\cdot}\),
     \[\manc{S_i}-\manc{S_{i+1}}\ge\frac{1}{k}\mypar{\manc{S_i}-\manc{S^*}}\]
     holds for any positive integer \(i\), which indicates that
@@ -471,7 +501,7 @@ Afterwards, we prove that \algoref{algo:exact} has a \(1-\frac{k}{k-1}\cdot\frac
         \le                      & \frac{k}{k-1}\cdot\frac{1}{e}\mypar{\manc{S_1}-\manc{S^*}},
     \end{align*}
     which completes our proof based on the fact that \(S_1=\setof{u^*}\).
-\end{IEEEproof}
+\end{proof}
 
 \section{Faster Greedy Algorithm}\label{sec:faster-greedy}
 
@@ -537,7 +567,7 @@ Before proposing the approximations of~\eqref{eq:margin-deriv}, the proof of the
     Then for an arbitary node set \(S\subseteq V\) and an arbitary vector \(\vecv\in\rea^{n-\abs{S}}\), \(\vecv_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\) holds.
 \end{lemma}
 
-\begin{IEEEproof}
+\begin{proof}
     As is mentioned in~\secref{sub:lap}, we can decompose Laplacian matrix as \(\lap=\matb^\top\matw\matb\).
     Similarly, we can decompose SDDM matrix \(\lap_{-S}\) as \(\lap_{-S}=\lap'+\matz=\matb'^\top\matw'\matb'+\matz\), where \(\lap'\) denotes the Laplacian matrix of another graph, \(\matz\) denotes a diagonal matrix.
 
@@ -551,7 +581,7 @@ Before proposing the approximations of~\eqref{eq:margin-deriv}, the proof of the
         \ge w_{\min}n^{-1}\vecv_i^2,
     \end{align*}
     which completes our proof.
-\end{IEEEproof}
+\end{proof}
 
 We first approximate the numerator of~\eqref{eq:margin-deriv}, which requires the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}\).
 Since \(\lap_{-S}\) is a SDDM matrix, we can use~\lemref{lem:solver} to avoid computing matrix inverse \(\lap_{-S}^{-1}\).
@@ -561,7 +591,7 @@ Since \(\lap_{-S}\) is a SDDM matrix, we can use~\lemref{lem:solver} to avoid co
         \vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\approx_{\epsilon/7}\vecx'_i.
     \end{equation}
 \end{lemma}
-\begin{IEEEproof}
+\begin{proof}
 
     Combining \lemref{lem:solver} and \lemref{lem:norm-ineq}, we can bound \((\vecx'_i-\vecx_i)^2\) as
     \begin{align*}
@@ -575,7 +605,7 @@ Since \(\lap_{-S}\) is a SDDM matrix, we can use~\lemref{lem:solver} to avoid co
     On the other hand, since \(\vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\) denotes the expected hitting time of a random walker starting from node \(i\), we have \(\vecx_i\ge1\).
     Finally, we are able to give the approximation of \(\vecx_i\) as
     \[\frac{\abs{\vecx'_i-\vecx_i}}{\vecx_i}\le n^3w_{\max}w_{\min}^{-1}\delta_1=\epsilon/7.\]
-\end{IEEEproof}
+\end{proof}
 
 Subsequently, we attempt to approximate the denominator of~\eqref{eq:margin-deriv}, which can be recast in an euclidian norm by using \lemref{lem:JL}:
 \begin{equation}\label{eq:denom-solver}
@@ -616,7 +646,7 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
         \Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2=\vece_i^\top\lap_{-S}^{-1}\vece_i\approx_{\epsilon/3}\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2.
     \end{equation}
 \end{lemma}
-\begin{IEEEproof}
+\begin{proof}
     According to triangle inequality, we have
     \begin{align*}
             & \abs{\Abs{\tilde{\matx}\vece_i}-\Abs{\matx'\vece_i}}\le\Abs{(\tilde{\matx}-\matx)\vece_i}\le\Abs{\tilde{\matx}-\matx'}_{F}                                  \\
@@ -666,7 +696,7 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
         \le & \frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}+\abs{\Abs{\tilde{\maty}\vece_i}^2-\Abs{\maty'\vece_i}^2}}{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}\le\frac{\epsilon}{7},
     \end{align*}
     which completes our proof in conjunction with \lemref{lem:JL}.
-\end{IEEEproof}
+\end{proof}
 
 \subsection{Nearly Linear Time Approximation Algorithms}
 
@@ -711,9 +741,9 @@ Furthermore, we are able to provide its approximation guarantee.
     \[\Delta(u,S)\approx_\epsilon \Delta'(u,S)\]
     with high probability.
 \end{lemma}
-% \begin{IEEEproof}
+% \begin{proof}
 
-% \end{IEEEproof}
+% \end{proof}
 
 Combining \algoref{algo:approxh} and \algoref{algo:approxdelta}, we can give the faster greedy algorithm \textsc{Approx} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor.
 Since \textsc{Approx} calls \textsc{ApproxH} once and calls \textsc{ApproxDelta} \(k-1\) times, the complexity of \textsc{Approx} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear.
@@ -747,7 +777,7 @@ Since \textsc{Approx} calls \textsc{ApproxH} once and calls \textsc{ApproxDelta}
     where
     \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}},S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
 \end{theorem}
-\begin{IEEEproof}
+\begin{proof}
     Since \algoref{algo:approx} use \(\Delta'(u,S)\) computed by \algoref{algo:approxdelta} instead of \(\Delta(u,S)\), combining \lemref{lem:approx-marginest} and supermodularity, we are able to obtain that
     \[\manc{S_i}-\manc{S_{i+1}}\ge\frac{1-\epsilon}{k}\mypar{\manc{S_i}-\manc{S^*}}\]
     holds for any positive integer \(i\), which indicates that
@@ -758,7 +788,7 @@ Since \textsc{Approx} calls \textsc{ApproxH} once and calls \textsc{ApproxDelta}
         \le                       & \mypar{\frac{k}{k-1}\cdot\frac{1}{e}+\epsilon}\mypar{\manc{S_1}-\manc{S^*}},
     \end{align*}
     which completes our proof based on the fact that \(\manc{S_1}\le\mypar{1+\epsilon}\manc{\setof{u^*}}\).
-\end{IEEEproof}
+\end{proof}
 
 \section{Experiments}\label{sec:experiments}
 
@@ -1055,8 +1085,8 @@ Due to these properties of MANC, we designed two approximate greedy algorithm, t
 Numerical experiments on real-world networks illustrate that both of the algorithms can provide solutions that are quite close to the optimal.
 Specifically, numerical experiments on large networks incidate that the latter algorithm \textsc{Approx} is still well scalable while maintaining the approximation error and can be applicated in large networks with millions of nodes.
 
-\bibliographystyle{IEEEtran}
+\bibliographystyle{ACM-Reference-Format}
 \balance
-\bibliography{refs}
+\bibliography{main}
 
 \end{document}
