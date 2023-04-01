@@ -3,6 +3,7 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
 \input{headers.tex}
+\newcommand{\todo}[1]{{\bf \color{red} TODO: #1}}
 
 \begin{document}
 
@@ -18,1042 +19,644 @@
 \maketitle
 
 \begin{abstract}
-    In the field of complex networks, the usage of random walk and its relevant quantities arises in many academic research studies.
-    In this paper, we explore the relationship between absorbing random-walk centrality, Kemeny constant, and random detour time.
-    We then expand this relationship to the case of multiple nodes.
-    Building on this newly discovered connection, we propose a new centrality measure called Multiple Absorbing Node Centrality (MANC), which is essentially the multi-node version of absorbing random-walk centrality.
-    Using this new centrality measure, we investigate the MANC minimization problem, which involves finding the optimal set \(S^*\) of absorbing nodes with capacity \(k\) that minimize its MANC \(\manc{S^*}\).
-    In this paper, we prove that this problem is NP-hard.
-    However, due to the monotonicity and supermodularity of MANC, we provide greedy algorithms with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximate factor and cubic running time.
-    To circumvent the time-consuming matrix inversion, we provide a faster algorithm with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor and nearly linear running time for any \(\epsilon\in(0,1)\).
-    Numerical experiments on large-scale real networks demonstrate that our second algorithm remains scalable while maintaining a low approximation error.
+    For random walks on a graph, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex  \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution. Both quantities have found a large variety of applications in different areas. However, their high computational complexity limits their applications, especially for large networks with millions of vertices. In this paper, we first establish a connection between the two quantities, representing \(K\) in terms of \(H_j\) for all vertices. We then express both quantities in terms of quadratic forms of the pseudoinverse for graph Laplacian, based on which we develop an efficient algorithm that provides an approximation of \(H_j\) for all vertices and \(K\) in nearly linear time with respect to  the edge number, with  high probability. Extensive experiment results on real-life and model networks validate both the efficiency and accuracy of the proposed algorithm.
 \end{abstract}
 
 \begin{IEEEkeywords}
-    Random walk, Kemeny constant, node centrality, complex network, graph algorithm.
+    Random walk, hitting time, Kemeny constant, spectral algorithm, complex network, node centrality.
 \end{IEEEkeywords}
 
-\section{Introduction}\label{sec:intro}
+\section{Introduction}
 
-\IEEEPARstart{R}{andom} walk on graphs is a useful method or model widely applied in many fields. It is used in link prediction~\cite{YiGuWeTiHa10}, improving search results~\cite{LiPeMaQiWeQi10}, object detection~\cite{GoViHuRa10}, image background extraction~\cite{HuWaYeChLa16}, image annotation refinement~\cite{WaJiZhZh10}, DDoS attack detection~\cite{XuZhXiYu14} and clone attack detection~\cite{ZeCaZhGuXi10}.
-A fundamental quantity relevant to random walks is hitting time~\cite{Lo93}, also known as first passage time~\cite{CoBeTeVoKl07}.
-The hitting time \(H_{u,v}\) is the expected number of time steps for a walker starting from node \(u\) to first reach node \(v\).
-It has been successfully applied to diverse areas, such as the Hanoi problem with random move~\cite{WuZhCh11}, query suggestions~\cite{MeZhCh08}, and clustering algorithm~\cite{ChLiTa08}.
-Hitting time can be used to define other interesting quantities like Kemeny constant, absorbing random-walk centrality and random detour time~\cite{RaZh13}.
+As a powerful tool and method, random walks have found broad applications in various aspects. Frequently cited examples include image segmentation~\cite{Le06}, random algorithm design~\cite{SaDi12}, collaborative recommendation~\cite{FoPiReSa07}, community detection~\cite{LaDeBa14}, among others. A fundamental quantity related to random walks is hitting time~\cite{Lo93}, also called first-passage time~\cite{CoBeTeVoKl07}. For a random walk on a graph, the hitting time \(H_{ij}\) from a vertex \(i\) to another vertex \(j\) is the expected time for the walker starting from \(i\) to visit \(j\) for the first time. Hitting time is related to many problems and has been successfully applied to diverse areas, such as Hanoi problem with random move~\cite{WuZhCh11}, query suggestion~\cite{MeZhCh08}, and clustering algorithm~\cite{ChLiTa08}.
 
-In this paper, we establish a connection between Kemeny constant, absorbing random-walk centrality and random detour time.
-This connection prompts us to extend it further to the case of multiple nodes.
-Inspired by this newly discovered connection, we propose a centrality relevant to node groups: Multiple Absorbing Node Centrality (MANC).
-We define MANC through an absorbing random walk model on graphs: for a connected undirected graph, the MANC \(\manc{S}\) of a node set \(S\) is defined as the weighted sum of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
+Except for the intrinsic interest of hitting time itself and its direct applications, many other relevant quantities related to random walks are encoded in or expressed in terms of this crucial quantity, for example, absorbing random-walk centrality~\cite{MaMagi15} (or Markov centrality~\cite{WhSm03}) and Kemeny constant~\cite{Hu14}, both of which are a partial average of hitting times. As the name implies, the absorbing random-walk centrality is a measure for the importance of vertices on a graph. For a vertex \(j\), its absorbing random-walk centrality \(H_j\) is defined by \(H_j=\sum_{i} \rho(i) H_{ij}\), where \(\rho(\cdot)\) is the starting probability distribution over all vertices. Different from the shortest-path based centrality measures, random-walk based centrality metrics include the contributions from essentially all paths~\cite{Ne05}, and thus have a better discriminating power.
 
-Due to the definition of MANC, this centrality can be directly applied to the search engine ranking systems.
-If we consider web pages that contain the search keywords as nodes, and hyperlinks between web pages as edges, the selected set of web pages should be close enough to all candidate pages and cover as many candidate pages as possible.
-The traditional method of ranking important nodes cannot meet these requirements, while MANC can theoretically achieve better results because it is defined directly according to the hitting time of node groups.
-Consequently, we further construct the MANC minimization problem as finding the node set \(S^*\) with capacity \(k\) that minimizes MANC \(\manc{S^*}\).
+For random walks on a graph with \(n\) vertices, the Kemeny constant \(K\) is defined as the expected time for the walker starting from one vertex to second vertex selected randomly from the graph according to the stationary distribution \(\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}\) of the random walk, that is, \(K=\sum_{j} \pi_j H_{ij}\). The Kemeny constant has also found a wealth of applications in different fields~\cite{Hu14}. It can be utilized to gauge the efficiency of user navigation through the World Wide Web (WWW)~\cite{LeLo02}. Moreover, the Kemeny constant is related to the mixing rate of an irreducible Markov chain~\cite{LePeWi09}, by regarding it as the expected time to mixing of the Markov chain~\cite{Hu06}. Recently, the Kemeny constant has been applied to measure the efficiency of robotic surveillance in network environments~\cite{PaAgBu15} and to characterize the noise robustness of a class of protocols for formation control~\cite{JaOl15}.
 
-In this paper, we prove that the MANC minimization problem is NP-hard.
-Subsequently, we utilize the monotonicity and supermodularity of MANC to design greedy algorithms with approximation guarantees for solving the problem.
-However, the greedy algorithm's inevitable matrix inversion results in a \(O(kn^3)\) complexity for networks with \(n\) nodes, making it unsuitable for large networks.
-Thus, we attempt to reformulate MANC as the quadratic form of either the pseudoinverse of the Laplacian matrix or the inverse of a SDDM matrix.
-This approach enables us to approximate it by using an SDD solver and the Johnson-Lindenstrauss Lemma~\cite{JoLi84}.
-For a network with \(n\) nodes and \(m\) edges, our proposed fast greedy algorithm \textsc{Approx} has a time complexity of \(\tilde{O}(km)\).
-We conduct extensive numerical experiments on networks of various sizes to verify the accuracy and efficiency of \textsc{Approx}.
-The results demonstrate that \textsc{Approx} remains scalable while maintaining the approximation error and can be used for large networks with millions of nodes.
 
-\section{Preliminary}\label{sec:prelim}
+Despite the wide range of applications of the absorbing random-walk centrality and the Kemeny constant, it is a computational challenge to obtain their exact values. By definition, both the absorbing random-walk centrality and the Kemeny constant are a partial average of some hitting times. However, the exact value of hitting time between any pair of vertices in a graph involves all eigenvalues and eigenvectors of (normalized) Laplacian matrix associated with the graph~\cite{Lo93,LiZh13PRE}, the computation complexity of which is the cube of the vertex number. Thus, for large realistic networks with millions of vertices, we cannot obtain their absorbing random-walk centrality and the Kemeny constant by resorting this straightforward method for computing hitting time.  It is then of theoretical and practical interest to seek for alternative approximate approaches that scale to large networks.
 
-In this section, we briefly indroduce some notations as well as some basic concepts on special functions, graphs and random walks.
+In this paper, we propose a nearly linear time algorithm to address the computation issue for absorbing random-walk centrality  \(H_j\) and Kemeny constant \(K\) in large networks. We focus on a special absorbing random-walk centrality \(H_j=\sum_{i} \rho(i) H_{ij}\), with the starting probability distribution \(\rho(\cdot)\) being the stationary distribution \(\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}\) of the random walk. In other words,  we study \(H_j=\sum_{i} \pi_i H_{ij}\), which has received considerable attention~\cite{TeBeVo09,Be09,Be16}. We first  express \(K\) in terms of \(H_j\) for all vertices, and further  express \(H_j\) and \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix. We then propose a fast algorithm to compute approximate \(H_j\) for all vertices and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16}. Finally, we experimentally demonstrate that our algorithm is accurate and is significantly faster than the direct exact computation of related quantities according to their definitions.
 
-\subsection{Notations}
+\section{Preliminary}
 
-We use regular lowercase letters like \(a,b,c\) to represent scalars in \(\rea\), bold lowercase letters such as \(\veca,\vecb,\bsym{c}\) to denote vectors, and bold uppercase letters like \(\mata,\bsym{B},\bsym{C}\) to represent matrices.
+In this section, we give a brief introduction to some basic concepts about graphs, Laplacian matrix, resistance distance, random walks, hitting times and some quantities derived from hitting times. %, some quantitelectrical networks and biharmonic distance.
 
-To represent specific elements in vectors and matrices, we use \(\veca_{i}\) to denote the \(\myord{i}\) element of vector \(\bsym a\) and use \(\bsym A_{[i,j]}\) to denote the entry at position \((i,j)\) of matrix \(\bsym A\).
-We also use \(\mata_{[i,:]}\) and \(\mata_{[:,j]}\) to respectively denote the \(\myord{i}\) row and the \(\myord{j}\) column of matrix \(\mata\).
+\subsection{Graph and  Laplacian Matrix}
 
-Additionally, we write sets in subscripts to indicate subvectors and submatrices.
-For instance, \(\veca_{-S}\) represents the subvector of \(\veca\) created by removing the elements with indices in set \(S\), and \(\mata_{-S}\) represents the submatrix of \(\mata\) obtained by removing the elements with row indices or column indices in set \(S\).
-Note that the subscript takes precedence over the superscript, thus \(\mata_{-S}^{-1}\) denotes the inverse of \(\mata_{-S}\) rather than the submatrix of \(\mata^{-1}\).
+Let \(\gr=(V,E,w)\) denote a connected undirected weighted graph or network,  where \(V\) is the set of vertices,  \(E\) is the set of edges, and  \(w: E\to \mathbb{R}_{+}\) is the positive edge weight function, with \(w_e\) being the weight for edge \(e\). Then, there are total \(n=|V|\) vertices and \(m=|E|\) edges in graph \(\gr\). We use \(u \sim v\) to indicate that two vertices \(u\) and \(v\) are connected by an edge. Let \(w_{\max}\) and \(w_{\min}\) denote the maximum edge weight and minimum edge weight, respectively. Namely, \(w_{\max}=\max_{e\in E} w_e \) and \(w_{\min}=\min_{e\in E} w_e\).
 
-Finally, we use \(\bsym{e}_i\) to denote the \(\myord{i}\) standard basis vector of specific dimensions, and \(\allone_n\in \rea^n\) to represent a vector of \(n\) dimensions with all elements equal to \(1\).
-Sometimes we omit subscripts where there is no ambiguity.
+Mathematically, the topological and weighted properties of a graph \(\gr\) are encoded in its generalized adjacency matrix \(\mata\) with the entry \(a_{ij}\) denoting the adjacency relation between vertices \(i\) and \(j\). If vertices \(i\) and \(j\) are linked to each other by an edge \(e\), then \(a_{ij}= a_{ji}=w_{e}> 0\). Otherwise, \(a_{ij}=a_{ji}=0\) indicating that vertices \(i\) and \(j\) are not adjacent. In a weighted graph \(\gr\), the strength  \(s_i\) of a vertex \(i\) is defined by \(s_i=\sum_{j=1}^n a_{ij}\)~\cite{BaBaPaVe04}. The diagonal strength matrix of graph \(\gr\) is defined to be \({\mats} = {\rm diag}(s_1, s_2, \ldots, s_n)\), and the Laplacian matrix of \(\gr\) is \({\lap}={\mats}-{\mata}\).
 
-For a matrix \(\mata\in\rea^{m\times n}\), its Frobenius form is \(\Abs{\mata}_F=\sqrt{\trace{\mata^\top\mata}}\).
+Let \(\matb \in \mathbb{R}^{|E| \times |V|}\) be the incidence matrix of \(\gr\). For each edge \(e\) with two end vertices \(i\) and \(j\), a direction is assigned arbitrarily. Let \(\vecb_e^\top\) be the row of matrix \(\matb\) associated with edge \(e\). Then the element \(b_{eu}\) at row corresponding to edge \(e\) and column corresponding to vertex \(u\) is defined as follows: \(b_{eu} = 1\) if vertex \(u\) is the tail of edge \(e\), \(b_{eu}=-1\) if vertex \(u\) is the head of  edge \(e\), and \(b_{eu}=0\) otherwise. Let \(\vece_u\) be the \(u\)-th canonical basis of the space \(\mathbb{R}^{|V|}\), then for an edge \(e\) connecting two vertices \(i\) and \(j\), \(\vecb_e\) can also be recast as \(\vecb_e=\vece_{i}-\vece_{j}\).  Let  \(\matw \in \mathbb{R}^{|E| \times |E|}\) be a diagonal matrix with the diagonal entry \((e,e)\) being \(w_e\). Then the Laplacian matrix \(\lap\) of graph \(\gr\) can be written as \(\lap=\matb^T\matw\matb=\sum_{e\in E}w_e\vecb_e\vecb_e^{\top}\).
 
-Since we prove the approximation guarantee of our algorithms in \secref{sec:faster-greedy}, it is necessary to provide the definition of approximate factor.
+The Laplacian matrix \(\lap\) is symmetric and positive semidefinite. All  its eigenvalues  are non-negative, with a unique zero eigenvalue. Let \(0=\lambda_1< \lambda_2 \leq \lambda_3\leq \dots\leq \lambda_{n}\) be the \(n\) eigenvalues of  \(\lap\), and let \(u_i\), \( i={1,2,\dots,n}\), be their corresponding mutually orthogonal  unit eigenvectors. Then, \(\lap\) has the following spectral decomposition:  \(\lap=\sum_{i=2}^{n}\lambda_i u_iu_i^\top\).  It is easy to verify that \( \lambda_{n}\leq n w_{\max}\)~\cite{LiSc18}.
+Since \(\lap\) is not invertible, we use \(\lap^{\dagger}\) to denote its pseudoinverse, which can be written as \(\lap^{\dagger}=\sum_{i=2}^{n}\frac{1}{\lambda_i}u_iu_i^{\top}\). Let \(\matj\) denote the matrix with all entries being ones. Then the pseudoinverse \(\lap^{\dagger}\) can also be recast as \(\mypar{\lap +\frac{1}{n}\matj}^{-1} - \frac{1}{n}\matj\)~\cite{GhBoSa08}. Note that for a general symmetric matrix, it shares the same null space as its Moore-Penrose generalized inverse~\cite{BeGrTh74}.
+Since the  null space of  null of \({\lap}\) is \( \vecone\),  it turns out that \({\lap} \vecone ={\lap}^{\dagger} \vecone =\mathbf{0}\).
 
-\begin{definition}[\(\epsilon\)-approximation]
-    Assuming \(x\) and \(\tilde{x}\) are positive scalars, and \(\epsilon\) is an error parameter that satisfies \(\epsilon\in(0,1)\), we define \(\tilde{x}\) as an \(\epsilon\)-approximation of \(x\) if \((1-\epsilon)\tilde{x}\le x\le(1+\epsilon)\tilde{x}\) holds. We denote this relationship as \(x\approx_{\epsilon}\tilde{x}\) for the sake of brevity.
-\end{definition}
+\subsection{Electrical Network and Resistance Distance}
 
-\subsection{Supermodular Functions}
 
-Subsequently, we give the definitions of monotone and supermodular set functions. For simplicity, we use the notation \(S+u\) to represent \(S\cup\setof{u}\).
+For an arbitrary graph \(\gr=(V,E,w)\), we can define its corresponding electrical network \(\bar{\gr}=(V,E,r)\), which is obtained from \(\gr\)  by considering edges as resistors and considering vertices as junctions between resistors~\cite{DoSn84}. The resistor of an associated  edge \(e\) is \(r_e=w_e^{-1}\).  For graph  \(\gr\), the resistance distance \(R_{ij}\) between two vertices \(i\) and \(j\)  is defined as the effective resistance between \(i\) and \(j\) in the corresponding  electrical network \(\bar{\gr}\)~\cite{KlRa93}, which is equal to the potential difference between \(i\) and \(j\) when a unit current enters one vertex and leaves the other one.
 
-\begin{definition}[Monotonicity]
-    A set function \(f:2^{V}\to\rea^+\) is considered monotone if and only if, for any non-empty sets \(X\) and \(Y\) that satisfy \(X\subseteq Y\subseteq V\), the inequality \(f(X)\ge f(Y)\) holds.
-\end{definition}
+%Let \(\bar{\gr}\) represent the corresponding resistor network of graph \(\gr\), which is obtained from \(\gr\) by arranging a conductance equal to the weight of the edge along every edge of \(\gr\). Let \(R_{ab}\) be the effective resistance, i.e., resistance distance~\cite{KlRa93}, between any pair of vertices a and b in the resistor network, which is defined as the voltage when a unit current enters one vertex and leaves the other.
 
-\begin{definition}[Supermodularity]
-    A set function \(f:2^{V}\to\rea^+\) is considered supermodular if and only if, for any non-empty sets \(X\) and \(Y\) that satisfy \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\), the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds.
-\end{definition}
+For  graph \(\gr\), the resistance distance  \(R_{ij}\) between two vertices \(i\) and \(j\) can be expressed in terms of the elements of \(\lap^{\dagger}\) as~\cite{KlRa93}:
+\begin{equation}\label{EE04}
+    R_{ij}={\lap}_{ii}^{\dagger}+{\lap}_{jj}^{\dagger}-2{\lap}_{ij}^{\dagger}.
+\end{equation}
+Define \(\matr\) as  the \(n \times n\) resistance matrix of graph \(\gr\), whose entry at row \(i\) and column \(j\) represents the resistance distance  \(R_{ij}\) between  vertices \(i\) and \(j\).
 
-\subsection{Graphs and Laplacian Matrices}\label{sub:lap}
-
-We use \(\gr=(V,E,w)\) to denote connected weighted undirected graph with \(n=\abs{V}\) nodes and \(m=\abs{E}\) edges, where \(V,E\) denote the node set and edge set of \(\gr\) respectively, and \(w:E\to\rea^+\) denotes the edge weight function.
-We use \(e=\edge{u}{v}\) to represent an edge \(e\) connecting node \(u\) and node \(v\), and also use \(w_{\min}\) and \(w_{\max}\) to represent the minimum and maximum edge weight of \(\gr\) respectively, thus, \(w_{\min}=\min_{e\in E}\setof{w_e}\),\(w_{\max}=\max_{e\in E}\setof{w_e}\).
-
-After giving the denotation of \(\gr\), then the adjacency matrix of \(\gr\) can be denoted as \(\mata\in \rea^{n\times n}\): for node \(i,j\in V\), \(\mata_{[i,j]}=\mata_{[j,i]}=w_{\edge{i}{j}}\) if \(i\) and \(j\) are adjacent, and \(\mata_{[i,j]}=\mata_{[j,i]}=0\) otherwise.
-
-Moreover, degree vector can be defined as \(\vecd=\mata\allone=\begin{pmatrix}\mydeg_1&\mydeg_2&\cdots&\mydeg_n\end{pmatrix}^\top\), where \(\mydeg_i\) represents degree of node \(i\).
-Then the maximum degree can be denoted as \(\mydeg_{\max}=\max\setof{d_u|u\in V}\).
-If we denote the relevant degree diagonal matrix as \(\matd={\rm{diag}}\mypar{\mydeg_1,\mydeg_2,\cdots,\mydeg_n}\), then the Laplacian matrix \(\lap\) of \(\gr\) is defined as \(\lap=\matd-\mata\).
-
-The Laplacian matrix of a graph has other definitions.
-For an undirected graph \(\gr\), we first assign an arbitary direction to each edge in \(\gr\), then for edge \(e=\edge{i}{j}\in E\), the row corresponding to edge \(e\) in the incidence matrix \(\matb\in\rea^{m\times n}\) of \(\gr\) can be denoted as \(\matb_{[e,:]}=\vece_i-\vece_j\).
-Furthermore, let \(\matw\in\rea^{m\times m}\) be a diagonal matrix whose diagonal entry \((e,e)\) is denoted as \(w_e\), then the Laplacian matrix \(\lap\) of \(\gr\) can be defined as \(\lap=\matb^\top\matw\matb=\sum_{e\in E}w_e\bsym{b}_e\bsym{b}_e^\top\).
-
-From the definition above, it is easy to prove that \(\lap\) is positive semi-definite.
-In addition, all its eigenvalues are positive except for one unique zero eigenvalue.
-If we denote eigenvalues and corresponding eigenvectors of \(\lap\in\rea^{n\times n}\) as \(0=\lambda_1<\lambda_2\le\lambda_3\le\dots\le\lambda_n\) and \(\vecv_1,\vecv_2,\dots,\vecv_n\) respectively, then \(\lap\) can be rewritten as \(\lap=\sum_{i=1}^n\lambda_i\vecv_i\vecv_i^\top\).
-Since \(\lap\) is not invertible due to its null space \(\allone\), we turn to use its pseudoinverse form, which is defined as \(\lap^\dagger=\sum_{i=2}^n\lambda_i^{-1}\vecv_i\vecv_i^\top\).
-\(\lap^\dagger\) appears in many quantities related to random walk, such as Kemeny constant~\cite{Hu14} and Kirchhoff index.
-
-Moreover, Laplacian matrix has some useful properties.
-It is easy to verify that Laplacian matrix is Symmetric Diagonally Dominant(SDD).
-Also, for a connected undirected graph \(\gr=(V,E)\) and any nonempty node set \(S\), its corresponding Laplacian submatrix \(\lap_{-S}\) is Symmetric Diagonally Dominant M-matrix(SDDM).
-For \(\lap_{-S}\), we also have the following lemma.
-\begin{lemma}\label{lem:trace-lap}
-    For a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) nodes, let \(\lap\) denote the Laplacian matrix of \(\gr\).
-    Then for any nonempty set \(S\subseteq V\),
-    \[\trace{\lap_{-S}^{-1}}\le n^2w_{\min}^{-1}.\]
+\begin{lemma}\label{Foster} \cite{Te91}
+    Let \(\gr=(V,E,w)\) be a simple connected graph with \(n\) vertices. Then the sum of  weight times resistance distance over all pairs of adjacent vertices in  \(\gr\)  satisfies
+    \begin{equation*}
+        \sum_{ i\sim j\in E }w_{ij}R_{ij}=n-1.
+    \end{equation*}
+    %where the summation is taken over all  edges in \(\gr\).
 \end{lemma}
 
-\subsection{Random Walk on Graphs}\label{subsec:random-walk}
+\subsection{Random Walk on a Graph}
 
-For a connected weighted graph \(\gr\) with \(n\) nodes, the classical random walk model of \(\gr\) can be described by the transition matrix \(\matp\in\rea^{n\times n}\): at any time step, the walker located at node \(i\) moves to node \(j\) with probability \({\matp_{[i,j]}=\mydeg_i^{-1}\mata_{[i,j]}}\).
-It is easy to verify that
+For a graph  \(\gr\), one can define a  discrete-time random walk  on it. At any time step, the walker starting from its current location \(i\) moves to  vertex \(j\) with  probability  \(a_{ij}/s_i\). If  \(\gr\) is  finite and non-bipartite, the random walk  has a unique stationary distribution~\cite{LiZh13PRE}
+\begin{equation}\label{EE01}
+    \vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}=\left(\frac{s_1}{s}, \frac{s_2}{s}, \cdots, \frac{s_n}{s}\right)^{\top},
+\end{equation}
+where \(s\) is the sum of strengths over all vertices, namely \(s=\sum_{i=1}^n s_i=\sum_{i=1}^{n}\sum_{j=1}^{n} a_{ij}\).
 
-\begin{equation}\label{eq:trs}
-    \matp=\matd^{-1}\mata.
+A fundamental quantity for random walks is hitting time~\cite{Lo93,CoBeTeVoKl07}. The hitting time \(H_{ij}\) from vertex \(i\) to vertex \(j\),  is the expected number of jumps for a walker starting  from \(i\) to visit \(j\) for the first time. There is an intimate relationship between hitting time and resistance distance~\cite{Te91}.
+\begin{lemma}
+    Let \(\gr\) be a connected weighted graph with  resistance matrix  \(\matr\). Let \(H_{ij}\) be the hitting time  from vertex \(i\) to vertex \(j\). Then,
+    \begin{equation}\label{EE03}
+        H_{ij}=\frac{1}{2}\sum_{z=1}^{n} s_z(R_{ij}+R_{jz}-R_{iz}).
+    \end{equation}
+\end{lemma}
+
+A lot of  interesting quantities can be derived from hitting times. Here we only consider two quantities, the absorbing random-walk centrality~\cite{MaMagi15}  and the Kemeny constant~\cite{Hu14}.
+
+For a vertex \(j\) in graph \(\gr=(V,E,w)\), its absorbing random-walk centrality \(H_j\) is defined as \(H_j=\sum_{i} \rho(i) H_{ij}\), where \(\rho(\cdot)\) is the starting probability distribution over all vertices in \(V\). By definition, \(H_j\) is a weighted average of hitting times to vertex \(j\). The smaller the value of \(H_j\), the more important the vertex \(j\). The random-walk based centrality has an obvious advantage over those shortest-path based centrality measures~\cite{Ne05}. In this paper, we concentrate on a natural choice of  \(\rho(\cdot)\) by selecting the starting vertex from the stationary distribution \(\vecpi\). In this case, \(H_j=\sum_{i} \pi_i H_{ij}\), which has been much studied~\cite{TeBeVo09,Be09,Be16}. In the following text, we  call \(H_j=\sum_{i} \pi_i H_{ij}\) \textit{walk centrality} for short.
+
+Another quantity we are concerned with is the Kemeny constant \(K\). For a graph \(\gr\), its Kemeny constant \(K\) is defined as the expected steps for a walker starting from  vertex \(i\) to vertex \(j\) selected randomly from the vertex set \(V\), according to the stationary distribution \(\vecpi\). That is, \(K = \sum_{j = 1}^{n} \pi_j H_{ij}\). The Kemeny constant has been used to measure the user navigation efficiency through the WWW~\cite{LeLo02} and  robotic surveillance efficiency in network environments~\cite{PaAgBu15}. It can also measure the mixing rate of random walks~\cite{LePeWi09}.
+
+Most quantities for random walks on graph \(\gr\) are determined by the eigenvalues and eigenvectors of the normalized Laplacian matrix~\cite{Ch97}, \({\mats}^{-\frac{1}{2}}\lap {\mats}^{-\frac{1}{2}}\), of \(\gr\), including the walk centrality and Kemeny constant. By definition, \({\mats}^{-\frac{1}{2}}\lap {\mats}^{-\frac{1}{2}}\) is a real, symmetric, semi-definitive matrix. Let \(0=\sigma_1 < \sigma_2 \leq \sigma_3 \leq \cdots \leq \sigma_n \) be the \(n\) eigenvalues of the normalized Laplacian matrix \({\mats}^{-\frac{1}{2}}\lap {\mats}^{-\frac{1}{2}}\). And let \(\vecpsi_1\), \(\vecpsi_2\), \(\vecpsi_3\), \(\ldots\), \(\vecpsi_n\) be their corresponding mutually orthogonal eigenvectors of unit length, where \(\vecpsi_i=(\psi_{i1},\psi_{i2},\ldots,\psi_{in})^{\top}\). Then~\cite{Lo93,Be16},
+\begin{equation}\label{ATT01}
+    H_j=\sum_{i=1}^{n} \pi_i H_{ij}=\frac{s}{s_j}\sum_{k=2}^{n}\frac{1}{\sigma_{k}}\psi_{kj}^{2}
+\end{equation}
+and
+\begin{equation}\label{Kemeny01}
+    K =\sum_{j=1}^{n}\pi_j\,H_{ij} =\sum_{k=2}^{n}\frac{1}{\sigma_{k}}\,.
 \end{equation}
 
-If \(\gr\) is non-bipartite and finite, there exists a unique stationary distribution of the random walk~\cite{Cv80}
-\[
-    \vecpi=\begin{pmatrix}
-        \pi_1 & \pi_2 & \dots & \pi_n
-    \end{pmatrix}^\top=\begin{pmatrix}
-        \frac{d_1}{\dsum} & \frac{d_2}{\dsum} & \dots & \frac{d_n}{\dsum}
-    \end{pmatrix}^\top,
-\]
-where \(\dsum=\sum_{i=1}^nd_i\).
+Equations \eqref{ATT01} and \eqref{Kemeny01} provide exact computation for the walk centrality and Kemeny constant, respectively. However, both formulas are expressed in terms of  the eigenvalues and eigenvectors of the normalized Laplacian, the computation complexity for which scale as \(O(n^3)\). Thus, direct  computation for \(H_j\) and \(K\)  using spectral method appears to be prohibitive for large networks, and is  infeasible  to those realistic networks with millions of vertices.
 
-Hitting time is a fundamental quantity in random walks, which is also known as absorbing length.
-The hitting time \(H_{u,v}\) from node \(u\) to node \(v\) is the expected number of time steps for a walker starting from \(u\) to visit node \(v\) for the first time.
 
-In other words, if we denote the time steps for a walker starting from \(u\) to first reach \(v\) as the random variable \(T_{u,v}\), then we have \(H_{u,v}=\mean{T_{u,v}}\).
-Many interesting quantities can be further obtained from hitting time, including Kemeny constant \(\kem\), absorbing random-walk centrality \(H_u\) and random detour time \(D_{i,j}(u)\).
 
-For a connected undirected graph \(\gr=(V,E)\), its Kemeny constant \(\kem\) is defined as the expected hitting time for a random walker who starts from an arbitary node \(u\) to node \(v\) which is selected according to the stationary distribution \(\vecpi\).
-That is, \(\kem=\sum_{v\in V}\vecpi_vH_{u,v}\).
+\section{New Formulas for Markov  Centrality and Kemeny Constant }
 
-For node \(u\) in a connected undirected graph \(\gr=(V,E)\), its absorbing random-walk centrality \(H_u\) is defined as the expected hitting time of a walker who starts from node \(i\) to node \(u\), where node \(i\) is selected according to the stationary distribution \(\vecpi\).
-In this case, \(H_u=\sum_{i\in V}\vecpi_iH_{i,u}\).
-% To distinguish from the newly defined centrality in \secref{subsec:def-manc}, we denote \(H_u\) as \textit{Single Absorbing Node Centrality}(SANC).
+In this section, we first establish an explicit relation between the walk centrality \(H_j\) and the Kemeny constant \(K\).  Then we express both quantities in terms of quadratic forms of the pseudoinverse \(\lap^{\dagger}\)  of graph Laplacian \(\lap\), based on which we put forward a random  algorithm  approximately computing \(H_j\) and  \(K\).
 
-Subsequently, for graph \(\gr\), its random detour time \(D_{i,j}(u)\) is defined as the expected time of a walker who starts from node \(i\), must visit node \(u\), then first reaches node \(j\), where \(i,u,j\in V\) differs from each other.
-That is, \(D_{i,j}(u)= H_{i,u}+H_{u,j}\).
+%\subsection{Relation between Markov  Centrality and Kemeny Constant }
 
-\section{Related Work}
+Although both the walk centrality \(H_j\) and the Kemeny constant \(K\) have attracted much attention from the scientific community, the relation between  them for a generic  graph  \(\gr\) is still lacking. Below we show that the Kemeny constant \(K\) can be expressed in a linear combination of walk centrality  \(H_j\) for all vertices in \(\gr\), as stated in the following lemma.
 
-Many researchers have noticed the connection between random detour time and their proposed centralities.
-Ranjan et al.~\cite{RaZh13} presented \textit{topological centrality} \(\cscr^*(u)\) as the reciprocal of \(\lap^\dagger_{[u,u]}\), and found that \(\cscr^*(u)\) can be represented by random detour time and hitting time, that is, \({\cscr^*(u)}^{-1}\propto \sum_{i=1}^n\sum_{j=1}^n\mypar{D_{i,j}(u)-H_{i,j}}\).
-Gangemi et al.~\cite{GaLePaGoLiZh15} simply took variants of random detour time as components of \textit{pivotality}, which is the measure of node reachability.
-We prove that random detour time is also related to Kemeny constant and absorbing random-walk centrality.
-This connection also holds for the case of multiple nodes.
-
-There exist various random walk-based centralities, such as the \textit{Random Walk Decay Centrality}~\cite{WaRaSk19} and the \textit{Group-to-group random walk betweenness centrality}~\cite{GiBaRa21}, both of them are variants of existing centralities.
-Besides, Mavroforakis et al.~\cite{MaMaGi15} presented \textit{\(k\) absorbing random-walk centrality}, which is the most directly related to our work.
-We give new proofs on the monotonicity and supermodularity of MANC from the perspective of numerical analysis, which is more concise and intuitive.
-Moreover, we design and implement a nearly linear algorithm for MANC minimization problem, which is proved to have an approximation guarantee.
-
-Admittedly, many existing studies have focused on the notion of selecting \(k\) nodes in the network to optimize some quantities related to absorbing random walk, such as absorbing distance~\cite{LiYuHuCh14,MoBaZhPe20,ZhLuWaGu17} and absorbing probability~\cite{ZhLuWaGu17,RoGl16}.
-However, computing these quantities on infinite random walk models requires time-consuming matrix inversions.
-Most of researchers use finite random walk models to approximate the infinite case, except for Rosenfeld et al.~\cite{RoGl16}, who use LU decomposition to reduce the complexity of computing absorbing probability.
-Instead of constructing finite random walk models, our work focus on the infinite random walk model, use a nearly linear algorithm to minimize MANC, which has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any \(\epsilon\in(0,1)\).
-
-\section{Problem Formulation}\label{sec:prob-form}
-
-\subsection{Connections among quantities related to random walk}
-
-After proposing definitions in \secref{subsec:random-walk}, it is intuitive that the larger \(D_{i,j}(u)\) is, the harder it is for a walker to reach node \(u\), then less important \(u\) is in the whole network.
-Actually, it is easy to prove the following theorem, establishing connection among Kemeny constant \(\kem\), absorbing random-walk centrality \(H_u\) and random detour time \(D_{i,j}(u)\).
-\begin{theorem}\label{thm:connection-single}
-    For an arbitary node \(u\) in a connected graph \(\gr=(V,E)\) with \(n\) nodes,
-    \begin{equation}\label{eq:detour-single}
-        H_u+\kem=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(u).
+\begin{lemma}
+    Let \(\gr=(V,E,w)\) be a connected weighted graph. Then, its  Kemeny constant \(K\)  and walk centrality \(H_j\) obey the following relation:
+    \begin{equation}\label{HjK01}
+        K=\sum_{j=1}^{n} \pi_j H_j=\sum_{j=1}^{n} \frac{s_j}{s} H_j.
     \end{equation}
-\end{theorem}
+\end{lemma}
 \begin{IEEEproof}
-    According to definitions in \secref{subsec:random-walk}, the right side of~\eqref{eq:detour-single} can be rewritten as
-    \begin{align*}
-        \sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(u) & =\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_j\mypar{H_{i,u}+H_{u,j}} \\
-                                                           & =\sum_{i=1}^n\vecpi_iH_{i,u}+\sum_{j=1}^n\vecpi_jH_{u,j}         \\
-                                                           & =H_u+\kem.
-    \end{align*}
+    From~\eqref{Kemeny01}, the Kemeny constant \(K\) is independent of the starting vertex \(i\). Define \(K_i =\sum_{j=1}^{n}\pi_j\,H_{ij}\). Then   \(K_i=K_j\) holds for any pair of vertices \(i\) and \(j\). Thus, we have
+    \begin{align}\label{Kemeny02}
+        K & =K_i =\sum_{i=1}^{n} \pi_i \left( \sum_{j=1}^{n}\pi_j\,H_{ij}\right) \notag \\
+          & =\sum_{j=1}^{n} \pi_j \left( \sum_{i=1}^{n}\pi_i\,H_{ij}\right) \notag      \\
+          & =\sum_{j=1}^{n} \frac{s_j}{s} H_j,\notag
+    \end{align}
+    which establishes the lemma.
 \end{IEEEproof}
 
-Inspired by this single-node version of theorem, we try to extend it to the case of multiple nodes.
-To begin with, we need to extend the definition of absorbing random-walk centrality and random detour time to multi-node case.
+After obtaining the relation governing  the Kemeny constant \(K\)  and walk centrality \(H_j\), we continue to express them in terms of quadratic forms of matrix  \(\lap^{\dagger}\).
 
-Similarly, for node set \(S\) in a connected graph \(\gr=(V,E)\), the group hitting time \(H_{u,S}\) from node \(u\) to node set \(S\) is the expected number of time steps for a walker starting from \(u\) to visit an arbitary node of \(S\) for the first time.
-Also, if we denote the time steps for a walker starting from \(u\) to first reach an arbitary node of \(S\) as random variable \(T_{u,S}\), then we have \(H_{u,S}=\mean{T_{u,S}}\).
-
-For node set \(S\) in graph \(\gr\), the group random detour time \(D_{i,j}(S)\) is defined as the expected time of a walker who starts from node \(i\), must visit an arbitary node in set \(S\), then first reaches node \(j\).
-
-\begin{definition}[Group random detour time]\label{def:detour-multiple}
-    If we denote the probability that a walker starting from node \(i\) first reaches node \(u\) in absorbing set \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpdistr\in\rea^{n\times\abs{S}}\), then we have
-    \[D_{i,j}(S)= H_{i,S}+\sum_{k=1}^{\abs{S}}\matpdistr_{[i,k]}H_{k,j}.\]
-\end{definition}
-
-It is clear that when \(S\) contains only one node \(v\), group hitting time \(H_{u,S}\) and group random detour time \(D_{i,j}(S)\) automatically reduces to hitting time \(H_{u,v}\) and random detour time \(D_{i,j}(v)\).
-It prompts us to similarly extend \thmref{thm:connection-single} to multi-node case.
-
-\begin{theorem}\label{thm:connection-multiple}
-    For an arbitary node subset \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) nodes,
-    \begin{equation}\label{eq:connection-multiple}
-        \sum_{i=1}^n\vecpi_iH_{i,S}+\kem=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S).
+\begin{lemma}
+    \label{HjK} Let \(\gr=(V,E,w)\) be a connected weighted graph  with  Laplacian matrix \(\lap\). Then, the walk centrality \(H_j\) and Kemeny constant \(K\) can be represented  in terms of quadratic forms of the pseudoinverse \(\lap^{\dagger}\)  of   matrix  \(\lap\) as:
+    \begin{equation}\label{ATT02}
+        H_j=s(\vece_j - \vecpi)^{\top} \lap^{\dagger} (\vece_j - \vecpi)
     \end{equation}
-\end{theorem}
+    and
+    \begin{equation}\label{Kemeny03}
+        K= \sum_{j=1}^{n} s_j (\vece_j - \vecpi)^{\top} \lap^{\dagger} (\vece_j - \vecpi).
+    \end{equation}
+\end{lemma}
 \begin{IEEEproof}
-    To prove~\eqref{eq:connection-multiple}, we utilize the fundamental matrix \(\matfstar\) in the non-absorbing random walk model.
-    According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\allone\vecpi^\top)^{-1}\matpi^{-1}\), where \(\matpi\) is defined as \(\rm{diag}\mypar{\vecpi}\).
-    Subsequently, the hitting time \(H_{i,j}\) can be represented by \(\matfstar\) as \(H_{i,j}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\)~\cite{BoRaZh11}.
-    Then the right side of \eqref{eq:connection-multiple} can be rewritten as
-    \begin{equation}\label{eq:detour}
+    We first prove~\eqref{ATT02}. Inserting~(\ref{EE03}) and~(\ref{EE04}) into~(\ref{ATT01}) leads to
+    \begin{equation}\label{EE05}
         \begin{split}
-            &\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)\\
-            =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\vecpi_i\vecpi_j\matpdistr_{[i,k]}H_{k,j}  \\
-            =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\vecpi^\top\matpdistr\mypar{\matfstar_{[j,j]}\allone-\matfstar_{[S,j]}}                        \\
-            =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\allone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
-            =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1,
+            H_j&=\frac{1}{2} \sum_{i=1}^{n} \pi_i \sum_{z=1}^{n} s_z(R_{ij}+R_{jz}-R_{iz}) \\
+            &=\frac{1}{s} \sum_{i=1}^{n} s_i \sum_{z=1}^{n} s_z \left({\lap}_{jj}^{\dagger}-{\lap}_{ij}^{\dagger}-{\lap}_{jz}^{\dagger}+{\lap}_{iz}^{\dagger}\right) \\
         \end{split}
     \end{equation}
-    where the last equality is due to the fact that \(\matpdistr\allone=\allone\) and \(\matfstar\vecpi=\allone\).
 
-    Afterwards, we are able to rewrite Kemeny constant \(\kem\) as
-    \begin{equation}\label{eq:kemeny}
+    The  four terms in the brackets of~\eqref{EE05}  can be sequentially calculated as follows:
+    \begin{equation}\label{EE06}
+        \sum_{i=1}^{n} s_i \sum_{z=1}^{n} s_z {\lap}_{jj}^{\dagger}=s^2 \vece_j^{\top} \lap^{\dagger} \vece_j\,,
+    \end{equation}
+    \begin{equation}\label{EE07}
+        \sum_{i=1}^{n} s_i \sum_{z=1}^{n} s_z {\lap}_{ij}^{\dagger}=\sum_{i=1}^{n} s_i \sum_{z=1}^{n} s_z {\lap}_{jz}^{\dagger}=s^2 \vece_j^{\top} \lap^{\dagger} \vecpi\,,
+    \end{equation}
+    and
+    \begin{equation}\label{EE08}
+        \sum_{i=1}^{n} s_i  \sum_{z=1}^{n} s_z {\lap}_{iz}^{\dagger}=s^2 \vecpi^{\top} \lap^{\dagger} \vecpi \,.
+    \end{equation}
+    Plugging~\eqref{EE06},~\eqref{EE07}, and~\eqref{EE08}  into~\eqref{EE05}, we obtain
+    \begin{equation}\label{EE09}
         \begin{split}
-            \kem&=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jH_{i,j}\\
-            &=\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_j\mypar{\matfstar_{[j,j]}-\matfstar_{[i,j]}}\\
-            &=\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1,
+            H_j&=s(\vece_j^{\top} \lap^{\dagger} \vece_j - 2 \vece_j^{\top} \lap^{\dagger} \vecpi + \vecpi^{\top} \lap^{\dagger} \vecpi) \\
+            &=s(\vece_j - \vecpi)^{\top} \lap^{\dagger} (\vece_j - \vecpi).
         \end{split}
     \end{equation}
-    where the last equality is due to the fact that \(\matfstar\vecpi=\allone\) and \(\vecpi^\top\allone=1\).
-    Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes our proof.
+    Substituting~\eqref{EE09}  into~\eqref{HjK01} gives~\eqref{Kemeny03}.
 \end{IEEEproof}
 
-Since \(D_{i,j}(S)\) is a multi-node extension from \(D_{i,j}(u)\), it is natural to view the term \(\sum_{i=1}^n\vecpi_iH_{i,S}\) in~\eqref{eq:connection-multiple} as the multi-node extension of absorbing random-walk centrality \(H_u=\sum_{i=1}^n\vecpi_iH_{i,u}\), which means that it can be defined as a new form of group node centrality.
+\section{Nearly Linear Time Approximation Algorithm}
 
-\subsection{Definition of MANC and Its Minimization Problem}\label{subsec:def-manc}
+In the preceding section, we reduce the problem of computing  \(H_j\) and \(K\) to evaluating the quadratic forms \((\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), \(u=1,2,\ldots, n\), of matrix  \(\lap^{\dagger}\).  However,  this involves computing the pseudoinverse of \(\lap\), the  straightforward computation for which still has a complexity of \(O(n^3)\), making it infeasible to huge networks. Here, we present an algorithm to compute an approximation of \(H_u\) for all  \(u \in V\) and \(K\)  in nearly linear time with respect to the number of edges,  which has a strict theoretical guarantee with  high probability.
 
-% In this section, we define Multiple Absorbing Node Centrality (MANC) \(\manc{S}\) as the weighted average of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
+%\subsection{Random projections for related quantities}
 
-\begin{definition}[Multiple Absorbing Node Centrality,MANC]\label{def:manc}
-    For node set \(S\) in a connected undirected graph \(\gr=(V,E)\), its MANC \(\manc{S}\) is defined as the expected hitting times of a random walker who starts from node \(u\) to an arbitary node in \(S\), where node \(i\) is selected according to the stationary distribution \(\vecpi\).
-    In this case,
-    \[\manc{S}=\sum_{u\in V}\vecpi_u H_{u,S}.\]
-\end{definition}
-
-It is obvious that when \(S\) contains only one node \(v\), MANC \(\manc{S}\) automatically reduces to absorbing random-walk centrality \(H_v\).
-The definition of MANC naturally raises the problem of minimizing MANC subject to a cardinality constraint.
-
-\begin{problem}[Multiple Absorbing Node Centrality Minimization, MANCM]
-Given a connected undirected graph \(\gr=(V,E,w)\) with \(n\) nodes, \(m\) edges and an integer \(k\ll n\), the goal is to find a node set \(S^*\subseteq V\) such that MANC \(\manc{S^*}\) is minimized:
-\[S^*=\argmax_{S\subseteq V,\abs{S}=k}\manc{S}.\]
-\end{problem}
-
-According to ~\cite{KeSn76}, we are able to transfrom the definition of MANC into the inverse of SDDM matrix.
-
-\begin{fact}
-    Given the absorbing node set \(S\) and transition matrix \(\matp\), then the fundamental matrix \(\matf\) can be denoted as
-    \begin{equation}\label{eq:funda}
-        \matf=\sum_{l=0}^\infty\matp_{-S}^l=(\mati-\matp_{-S})^{-1}=(\mati-\matp)_{-S}^{-1}.
+Let \(C(u)=(\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), which can be written in an Euclidian norm as
+\begin{small}
+    \begin{equation}\label{EE12}
+        \begin{split}
+            &\quad C(u)=(\vece_u - \vecpi)^{\top} \lap^{\dagger} \lap \lap^{\dagger} (\vece_u - \vecpi) \\
+            &=(\vece_u - \vecpi)^{\top} \lap^{\dagger} \matb^{\top} \matw \matb \lap^{\dagger} (\vece_u - \vecpi) \\
+            &=(\vece_u - \vecpi)^{\top} \lap^{\dagger} \matb^{\top} \matw^{\frac{1}{2}} \matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u - \vecpi) \\
+            &=\|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u - \vecpi)\|^2.
+        \end{split}
     \end{equation}
-\end{fact}
+\end{small}
+This  in fact  equals the square of the distance between  vectors  \(\matw^{\frac{1}{2}} \matb \lap^{\dagger} \vece_u\) and \(\matw^{\frac{1}{2}} \matb \lap^{\dagger} \vecpi\), which can be evaluated by the Johnson-Lindenstraus
+Lemma~\cite{Ac01}.
+\begin{lemma}%[Johnson-Lindenstrauss Lemma, \cite{Ac01}]
+    \label{lemma:JL}
+    Given fixed vectors \(\vecv_1,\vecv_2,\ldots,\vecv_n\in \mathbb{R}^d\) and
+    \(\epsilon>0\), let
+    \(\matq_{k\times d}\),  \(k\ge 24\log n/\epsilon^2\), be a matrix with each  entry equal  to \(1/\sqrt{k}\) or \(- 1/\sqrt{k}\)  with the same probability \(1/2\). Then with probability at least \(1-1/n\),
+    \[(1-\epsilon)\|\vecv_i-\vecv_j\|^2\le \|\matq \vecv_i-\matq \vecv_j\|^2\le
+        (1+\epsilon)\|\vecv_i-\vecv_j\|^2\] for all pairs \(i,j\le n\).
+\end{lemma}
+Lemma~\ref{lemma:JL} indicates that,  the pairwise distances \(\|\vecv_i-\vecv_j\|^2\) (\(i,j=1,2,\ldots, n\)) are almost preserved if we
+project the \(n\) vectors \(\vecv_i\) (\(i=1,2,\ldots, n\))  into a lower-dimensional space, spanned
+by \(O(\log n)\) random vectors.
 
-According to~\eqref{eq:funda}, the entry \((i,j)\) of \(\matf\) can be represented as the expected number of passages through node \(j\) by the random walker starting from node \(i\) before being absorbed.
-From the linearity of mean, it follows that the hitting time of a random walker is equivalent to the sum of the expected number of passages through all nodes in the graph, i.e. \(\vecl=\matf\allone\), where \(\vecl_i\) denotes the hitting time of a random walker starting from node \(i\).
-In particular, if the random walker starts from absorbing node, the hitting time can be regarded as \(0\).
-Considering the above case, MANC \(\manc{S}\) can be written as
-\[\manc{S}=\vecpi_{-S}^\top\vecl=\vecpi_{-S}^\top\matf\allone=\vecpi_{-S}^\top(\mati-\matp)_{-S}^{-1}\allone.\]
+In order to compute  \(C(u)\), we use Lemma~\ref{lemma:JL} to reduce the dimension. Let \(\matq\) be a \(k\times m\) random projection matrix. Then  \(\|\matq \matw^{\frac{1}{2}} \matb \lap^{\dagger}(\vece_u-\vecpi)\|\) is a good approximation for \(\|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u - \vecpi)\|\). Here we can use sparse matrix multiplication to compute \(\matq \matw^{\frac{1}{2}} \matb\). However, computing \(\matz=\matq \matw^{\frac{1}{2}} \matb \lap^{\dagger}\) directly involves inverting \(\lap+\frac{1}{n}\matj\). We avoid this by solving the system of equations \(\lap \vecz_i=\vecq_i\), \(i=1,\ldots,k\), where  \(\vecz^\top_i\) and \(\vecq^\top_i\) are, respectively, the \(i\)-th row of \(\matz\) and \(\matq \matw^{\frac{1}{2}} \matb\). For the convenience  of description, in the sequel we use the notation \(\Otil(\cdot)\) to hide \(\mathrm{poly} \log \) factors. By using Laplacian solvers~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16}, \(\vecz^\top _i\) can be efficiently approximated.  We here use the  solver from~\cite{CoKyMiPaPeRaSu14}, the performance of which is characterized in the following lemma.
 
-Furthermore, after simplification using~\eqref{eq:trs}, we get the formula of \(\manc{S}\):
-\begin{equation}\label{eq:MANC}
-    \begin{split}
-        \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\matp}_{-S}^{-1}\allone=\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\allone                          \\
-        & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\matd_{-S}^{-1}\matd_{-S}\allone \\
-        & =\vecpi_{-S}^\top\mypar{\matd-\mata}_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}.
-    \end{split}
-\end{equation}
+%For Major Comments (2): What we need to evaluate ios \(\lap^{\dagger} \vecq_i\) and \(\vecz_i\) is the solution of the equation \(\lap\vecz_i=\vecq_i\) given by the Laplacian Solver in Lemma~\ref{lemma:ST}. Then, we have
+%	\begin{equation}
+%		\lap^{\dagger} \lap (\vecz_i - \lap^{\dagger} \vecq_i)
+%		= \lap^{\dagger} (\lap \vecz_i) - (\lap^{\dagger} \lap %\lap^{\dagger}) \vecq_i
+%		= \lap^{\dagger} \vecq_i - \lap^{\dagger} \vecq_i
+%		= 0.
+%	\end{equation}
+%Since the null space of \(\lap^{\dagger}\lap\) is \(\vecone\), we can obtain \(\vecz_i - \lap^{\dagger} \vecq_i = c \vecone\), \(c \in \mathbb{R}\). By multiplying \(\vecone^\top\) on both sides, it is easy to derive \(c=0\). Thus, we conclude \(\vecz_i = \lap^{\dagger} \vecq_i\).
 
-\subsection{Properties of MANC}
+\begin{lemma}%[\cite{SpTe04}]
+    \label{lemma:ST}
+    There is an algorithm \(\vecx = \mathtt{LaplSolve}(\lap,\vecy,\delta)\) which
+    takes a Laplacian matrix \(\lap\),
+    a column vector \(\vecy\), and an error
+    parameter \(\delta > 0\), and returns a column vector \(\vecx\) satisfying  \(\boldsymbol{1}^\top\vecx = 0\) and
+    \[
+        \|\vecx - \lap^{\dagger} \vecy\|_{\lap} \leq \delta \|\lap^{\dagger} \vecy\|_{\lap},
+    \]
+    where \(\Abs{\vecy}_{\lap} = \sqrt{\vecy^{\top} \lap \vecy}\).
+    The algorithm runs in expected time \(\Otil \left(m \log(1/\delta) \right)\).
+\end{lemma}
 
-After proposing physic explanations of MANC, we attempt to study the properties of them. First, we prove that MANCM is NP-hard.
-Subsequently, we prove that the set function \(\manc{\cdot}\) is monotone and supermodular, which provides us with a theorecical basis for designing greedy algorithms with approximation guarantees.
-
-\subsubsection{NP-hard}
-
-\
-
-To prove the NP-hardness of MANCM, we try to construct a reduction from Vertex Cover to a decision version of MANCM.
-
-\begin{problem}[Vertex Cover on \(c\)-regular graphs]
-Given a connected \(c\)-regular graph \(G=(V,E)\) and an integer \(k\), the goal is to find out whether there exists a node set \(S\subseteq V\) such that \(\abs{S}\le k\) and every edge in \(E\) is incident with at least one node in \(S\).
-\end{problem}
-
-% \begin{problem}[Multiple Absorbing Node Centrality Minimization, Decision Version, MANCMD]
-% Given a connected weighted graph \(\gr=(V,E,w)\), a real number \(b\) and an interger \(k\).
-% The goal is to find out whether there exists a node set \(S\subseteq V\) such that \(\abs{S}\le k\) and \(\manc{S}\le b\).
-% \end{problem}
-
-\begin{theorem}\label{thm:np-hard}
-    MANCM is NP-hard.
-\end{theorem}
-\begin{IEEEproof}
-    For an arbitary connected \(c\)-regular graph \(\gr=(V,E,w)\), where the weights of all edges are equal to \(1\).
-    Let \(S\subseteq V\) be a nonempty node set with capacity \(k\), then we attempt to prove that \(\manc{S}\ge (n-k)/n\), the equality holds if and only if \(S\) is a vertex cover of \(\gr\).
-
-    We first prove that if \(S\) is a vertex cover of \(\gr\), then \(\manc{S}=(n-k)/n\).
-    When \(S\) is a vertex cover of \(\gr\), because there are no edges between nodes in \(V\setminus S\), we can simplify~\eqref{eq:MANC} as
-    \[\manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\matd_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\allone.\]
-    Since \(\gr\) is a \(c\)-regular graph, \(\vecpi=\begin{pmatrix}1/n&\cdots&1/n\end{pmatrix}^\top\).
-    Thus, \(\manc{S}=\vecpi_{-S}^\top\allone=(n-k)/n\).
-
-    We then prove that if \(S\) is not a vertex cover of \(\gr\), then \(\manc{S}>(n-k)/n\).
-    For node \(u\in S\) and node \(v\in V\setminus S\), it is obvious that \(H_{u,S}=0\), \(H_{v,S}\ge1\).
-    Meanwhile, because \(S\) is not a vertex cover of \(\gr\), edge set \(E\) has at least one edge \((u',v')\) that is not covered by \(S\).
-    When a walker starting from node \(u'\) moves to node \(v'\) with probability of at least \(\frac{1}{d_{\max}}>\frac{1}{n}\), its walking length is greater than \(1\).
-    That is,
-    \[H_{u',S}=H_{v',S}>\mypar{1-\frac{1}{n}}+\frac{2}{n}=1+\frac{1}{n}.\]
-
-    Therefore, if we denote \(S+u'+v'\) as \(S'\), then we are able to get the lower bound of MANC:
+By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST},  one can  approximate  \(C(u)\) arbitrarily well.
+%Lemma~\ref{lemma:ST} shows that \(\vecz^\top _i\) can be efficiently approximated by using \(\mathtt{LaplSolve}\).
+%Before introducing our algorithm, we recall two lemmas that are critical to proving the approximation factor of our algorithm. In what follows we use the notation \(\Otil(\cdot)\) to hide \(\mathrm{poly}(\log n )\) factors.
+%To approximate  \(C(u)\), we need to use the following fact.
+%\begin{fact}
+%	Given two positive numbers \(a\), \(b\) and their approximation \(\tilde{a}\), \(\tilde{b}\), which satisfy \((1 - \epsilon) a \le \tilde{a} \le (1 + \epsilon) a\) and  \((1 - \epsilon) b \le \tilde{b} \le (1 + \epsilon) b\). Then, we have
+%	\[
+%	(1 - \epsilon) (a+b) \le \tilde{a}+\tilde{b} \le (1 + \epsilon) (a+b).
+%	\]
+%\end{fact}
+\begin{lemma}\label{lem:error1}
+    Given an approximate factor \(\epsilon \le 1/2\) and a \(k\times n\) matrix \(\matz\) that satisfies
+    \[
+        (1-\epsilon) C(u)
+        \leq
+        \|\matz (\vece_{u} - \vecpi)\|^{2}
+        \leq
+        (1+\epsilon)  C(u),
+    \]
+    for any vertex \(u\in V\) and
     \begin{align*}
-        \manc{S} & =\sum_{v\in V}\vecpi_vH_{v,S}                                                          \\
-                 & =\sum_{v\in V\setminus S'}\vecpi_vH_{v,S}+\vecpi_{u'}H_{u',S}+\vecpi_{v'}H_{v',S}      \\
-                 & >\vecpi_{-S'}\allone+\vecpi_{u'}\mypar{1+\frac{1}{n}}+\vecpi_{v'}\mypar{1+\frac{1}{n}} \\
-                 & =\vecpi_{-S}^\top\allone+\frac{\vecpi_{u'}+\vecpi_{v'}}n
-        >\vecpi_{-S}^\top\allone=(n-k)/n.
+             & (1-\epsilon) \|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u-\vece_v)\|^2 \\
+        \leq &
+        \|\matz (\vece_u - \vece_v)\|^2                                                      \\
+        \leq &
+        (1+\epsilon) \|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u-\vece_v)\|^2
     \end{align*}
-
-    Based on the above proposition, we can easily construct a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of MANCM, which completes our proof of the NP-hardness of MANCM.
-
-\end{IEEEproof}
-
-\subsubsection{Monotonicity and Supermodularity}
-
-\
-
-In this part, we prove that the objective function \(\manc{\cdot}\) is monotone and supermodular.
-\begin{theorem}[Monotonicity]\label{thm:mono}
-    Let \(S\) be an arbitary nonempty node set of connected weighted graph \(\gr=(V,E,w)\), then for node \(u\in V\setminus S\),
-    \[\manc{S}\ge \manc{S+u}.\]
-\end{theorem}
-
-\begin{IEEEproof}
-    According to \defref{def:manc}, \(\manc{S}=\sum_{v\in V}\vecpi_vH_{v,S}\).
-    Since \(S\) is a subset of \(S+u\), when a random walker reaches nodes in \(S\), it must have reached nodes in \(S+u\). Therefore \(H_{v,S}\ge H_{v,S+u}\) holds for any node \(v\in V\), which completes our proof.
-\end{IEEEproof}
-
-\begin{theorem}[Supermodularity]\label{thm:supermod}
-    Let \(S,T\) be arbitary nonempty node sets of connected weighted graph \(\gr=(V,E,w)\) such that \(S\subseteq T\subsetneq V\), then for node \(u\in V\setminus T\),
-    \[\manc{S}-\manc{S+u}\ge \manc{T}-\manc{T+u}.\]
-\end{theorem}
-
-\begin{IEEEproof}
-    For a subset \(A\) of the probability space, we denote \(\indfunc{A}\) as the indicator function of the event \(A\). Then we rewrite \(\manc{S}-\manc{S+u}\) by discussing the hitting node of random walker.
-    \begin{align*}
-          & \manc{S}-\manc{S+u}                                                                                                                      \\
-        = & \sum_{v\in V}\vecpi_v\mypar{\mean{T_{v,S}}-\mean{\min\setof{T_{v,S},T_{v,u}}}}                                                           \\
-        = & \sum_{v\in V}\vecpi_v(\mean{T_{v,S}}-\mean{T_{v,S}\indfunc{\setof{T_{v,S}\le T_{v,u}}}}-\mean{T_{v,u}\indfunc{\setof{T_{v,u}<T_{v,S}}}}) \\
-        = & \sum_{v\in V}\vecpi_v\mean{(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}}.
-    \end{align*}
-    Similarly, we also have
-    \[\manc{T}-\manc{T+u}=\sum_{v\in V}\vecpi_v\mean{(T_{v,T}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,T}}}}.\]
-    As is mentioned in proof of \thmref{thm:mono}, \(T_{v,S}\ge T_{v,T}\) holds for any node \(v\in V\).
-    It is also obvious that \(\indfunc{\setof{T_{v,u}<T_{v,S}}}\ge\indfunc{\setof{T_{v,u}<T_{v,T}}}\).
-    Combining the above two inequalities, we can prove that
-    \[(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}\ge(T_{v,T}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,T}}}\]
-    holds for any node \(v\in V\), which completes our proof.
-\end{IEEEproof}
-
-\section{Simple Greedy Algorithm}\label{sec:simple-greedy}
-
-Due to the monotonicity and supermodularity of the set function \(\manc{\cdot}\), there exists a simple greedy algorithm with a \(1-\frac1e\) approximate factor to MANCM~\cite{NeWoFi78}:
-At each iteration, a new absorbing node \(u^*\) is selected from the set of non-absorbing nodes \(V\setminus S\), satisfying
-\[\Delta(u,S)=\manc{S}-\manc{S+u},\]
-\[u^*=\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}.\]
-
-It is easy to find that the simple algorithm above needs to compute \(\Delta(u,S)\) for each node \(u\) in the graph at each iteration, leading to \(O(n)\) matrix inverse operations.
-When using naive matrix inverse algorithm with complexity \(O(n^3)\), the overall complexity of the simple greedy algorithm is \(O(kn^4)\).
-By simplifying \(\Delta(u,S)\), we attempt to reduce the time complexity of greedy algorithm.
-
-For node \(u\in V\setminus S\), after adjusting the order of submatrix \(\lap_{-S}\), we rewrite \(\lap_{-S}\) as
-\[\lap_{-S}=\begin{pmatrix}l_u & -\veca^\top \\-\veca&\mata\end{pmatrix},\]
-where \(\mata\) denotes \(\lap_{-(S+u)}\).
-According to the properties of block matrices, we can get
-\[\lap_{-S}^{-1}=\begin{pmatrix}
-        t & t\veca^\top\mata^{-1} \\t\mata^{-1}\veca&\mata^{-1}+t\mata^{-1}\veca\veca^\top\mata^{-1}
-    \end{pmatrix},\]
-where \(t=(l_u-\veca^\top\mata^{-1}\veca)^{-1}\).
-Therefore, when \(S\neq\varnothing\), \(\Delta(u,S)\) can be rewritten as
-
-\begin{equation}\label{eq:margin-deriv}
-    \begin{split}
-        &\manc{S}-\manc{S+u}\\
-        =&\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecd_{-(S+u)}\\
-        =&\begin{pmatrix}\vecpi_u&\vecpi_{-(S+u)}^\top\end{pmatrix}\begin{pmatrix}t & t\veca^\top\mata^{-1} \\t\mata^{-1}\veca&\mata^{-1}+t\mata^{-1}\veca\veca^\top\mata^{-1}\end{pmatrix}\begin{pmatrix}d_u\\\vecd_{-(S+u)}\end{pmatrix}\\
-        &-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecd_{-(S+u)}\\
-        =&t\vecpi_ud_u+td_u\vecpi_{-(S+u)}^\top\mata^{-1}\veca+t\vecpi_u\veca^\top\mata^{-1}\vecd_{-(S+u)}\\
-        &+t\vecpi_{-(S+u)}^\top\mata^{-1}\veca\veca^\top\mata^{-1}\vecd_{-(S+u)}\\
-        =&\frac1t(t\vecpi_u+t\vecpi_{-(S+u)}^\top\mata^{-1}\veca)(td_u+t\veca^\top\mata^{-1}\vecd_{-(S+u)})\\
-        =&\frac{(\vecpi_{-S}^\top\lap_{-S}^{-1}\vece_u)(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S})}{\vece_u^\top\lap_{-S}^{-1}\vece_u}=\frac{(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S})^2}{d(\vece_u^\top\lap_{-S}^{-1}\vece_u)}.
-    \end{split}
-\end{equation}
-
-However, at the first iteration of greedy algorithm, \(S=\varnothing\), then \eqref{eq:margin-deriv} is illegal due to the singularity of \(\lap\).
-Given that \(\manc{\varnothing}=\infty\), we can define \(\Delta(u,\varnothing)\) as \(-\manc{S+u}=-H_u\), which is the negative of absorbing random-walk centrality for node \(u\).
-It is easy to verify that~\cite{ZhXuZh20}
-
-\begin{equation}\label{eq:margin-empty}
-    H_u=d(\vece_u-\vecpi)^\top\lap^\dagger(\vece_u-\vecpi).
-\end{equation}
-
-\eqref{eq:margin-deriv} and~\eqref{eq:margin-empty} illustrate that for any node \(u\in V\setminus S\), computing \(\Delta(u,S)\) only requires the inverse of the same matrix \(\lap_{-S}\) or the pseudoinverse of the same matrix \(\lap\) . Consequently, we are able to optimize the simple greedy algorithm as~\algoref{algo:exact}, reducing time complexity from \(O(kn^4)\) to \(O(kn^3)\).
-
-\begin{algorithm}
-    \caption{\textsc{Exact}\((\gr,k)\)}
-    \label{algo:exact}
-    \Input{
-        A connected weighted undirected graph \(\gr=(V,E,w)\);
-        an integer \(k\in[1,\abs{V}]\)
-    }
-    \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
-    Compute \(\lap\) and \(\vecd\)\;
-    \(d\gets\vecd\allone\),\(\vecpi\gets d^{-1}\vecd\)\;
-    \(S_1\gets\setof{\argmin_{u\in V}\setof{d(\vece_u-\vecpi)^\top\lap^\dagger(\vece_u-\vecpi)}}\)\;
-    \For{\(i=2,3,\dots,k\)}{
-        \ForEach{\(u\in V\setminus S\)}{
-            \(\Delta(u,S)\gets\frac{(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S})^2}{d(\vece_u^\top\lap_{-S}^{-1}\vece_u)}\)\;
-        }
-        \(u^*\gets\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}\)\;
-        \(S_i\gets S_{i-1}\cup\setof{u^*}\)
-    }
-    \Return{\(S_k\)}
-\end{algorithm}
-
-Afterwards, we prove that \algoref{algo:exact} has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximate factor.
-\begin{theorem}
-    The algorithm \(S_k=\textsc{Exact}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a node subset \(S_k\) with capacity \(k\).
-    When \(k>1\), the node set \(S\) satisfies
-    \[\manc{\setof{u^*}}-\manc{S_k}\ge\mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}}\mypar{\manc{\setof{u^*}}-\manc{S^*}},\]
+    for any pair of vertices \(u,v \in V\).
+    Let \(\vecz_i\) be the \(i\)-th row of \(\matz\) and let \(\tilde{\vecz}_i\) be an approximation of \(\vecz_i\) for all \(i \in \{1,2,...,k\}\), satisfying
+    \begin{equation}\label{EE13} \|\vecz_i-\tilde{\vecz}_i\|_{\lap}\le\delta
+        \|\vecz_{i}\|_{\lap},
+    \end{equation}
     where
-    \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}},S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
-\end{theorem}
-\begin{IEEEproof}
-    According to the supermodularity of \(\manc{\cdot}\),
-    \[\manc{S_i}-\manc{S_{i+1}}\ge\frac{1}{k}\mypar{\manc{S_i}-\manc{S^*}}\]
-    holds for any positive integer \(i\), which indicates that
-    \[\manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1}{k}}\mypar{\manc{S_i}-\manc{S^*}}.\]
-    Subsequently, we can further obtain that
-    \begin{align*}
-        \manc{S_k}-\manc{S^*}\le & \mypar{1-\frac{1}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}    \\
-        \le                      & \frac{k}{k-1}\cdot\frac{1}{e}\mypar{\manc{S_1}-\manc{S^*}},
-    \end{align*}
-    which completes our proof based on the fact that \(S_1=\setof{u^*}\).
-\end{IEEEproof}
-
-\section{Faster Greedy Algorithm}\label{sec:faster-greedy}
-
-Despite the time complexity optimization made by proposing \algoref{algo:exact}, this simple greedy algorithm still requires matrix inversion so that it cannot be applicated in large networks. In order to accelerate the computation of~\eqref{eq:margin-deriv} and~\eqref{eq:margin-empty}, we establish efficient approximations of them by using~\lemref{lem:JL} and~\lemref{lem:solver}.
-
-\begin{lemma}[Johnson-Lindenstrauss Lemma, JL Lemma~\cite{JoLi84}]\label{lem:JL}
-    Given fixed vectors \(\vecv_1,\vecv_2,\dots,\vecv_n\in\rea^d\) and \(\epsilon>0\), let \(\matq\in\rea^{k\times d}\) denote a matrix where \(k\ge\ceil{24\epsilon^{-2}\log n}\), each entry in \(\matq\) is equal to \(1/\sqrt k\) or \(-1/\sqrt k\) with the same probability \(1/2\). Then \(\forall i,j\le n\),
-    \begin{equation}\label{eq:JL}
-        \Abs{\vecv_i-\vecv_j}^2\approx_\epsilon\Abs{\matq\vecv_i-\matq\vecv_j}^2.
+    \begin{equation}\label{EE14}
+        \delta \leq  \frac{\epsilon }{3} \frac{s-s_u}{s}
+        \sqrt{\frac{(1-\epsilon) w_{\min}}{(1+\epsilon) n^4 w_{\max}}}.
     \end{equation}
-\end{lemma}
-\lemref{lem:JL} indicates that if we project \(n\) vectors \(\vecv_1,\vecv_2,\dots,\vecv_n\) into a lower dimensional space spanned by \(O(\log n)\) random vectors, the distances between projected vectors will be preserved with high probability.
-
-\begin{lemma}[SDD Solver~\cite{CoKyMiPaJaPeRaXu14,SpTe14,GaKySp23}]\label{lem:solver}
-    There exists an algorithm \(\vecx=\textsc{Solve}(\mats,\vecb,\delta)\) which takes a SDDM matrix or a Laplacian \(\mats\in\rea^{n\times n}\) with \(m\) nonzero elements, a vector \(\vecb\in\rea^n\), and an error parameter \(\delta>0\) as input, and returns a vector \(\vecx\in\rea^n\) which satisies
-    \[\Abs{\vecx-\mats^{-1}\vecb}_{\mats}\le\delta\Abs{\mats^{-1}\vecb}_{\mats}\]
-    with high probability.
-\end{lemma}
-
-In \lemref{lem:solver}, \(\Abs{\vecx}_{\mats}\) is denoted as \(\sqrt{\vecx^\top\mats\vecx}\), and \(\mats^{-1}\) is denoted as the pseudoinverse of \(\mats\) when \(\mats\) is a Laplacian.
-The expected time complexity of algorithm \textsc{Solve} is \(\tilde{O}(m)\), where \(\tilde{O}(\cdot)\) hides the poly(\(\log n\)) factors.
-
-Based on~\lemref{lem:JL} and~\lemref{lem:solver}, we are able to efficiently approximate the quantities in~\eqref{eq:margin-deriv} and~\eqref{eq:margin-empty} that are related to \(\lap^\dagger\) and \(\lap_{-S}^{-1}\).
-
-\subsection{Approximations of~\eqref{eq:margin-empty}}\label{subsec:approx-margin-empty}
-
-Given that~\eqref{eq:margin-empty} can be regarded as the absorbing random-walk centrality, we use an efficient algorithm \textsc{ApproxH} proposed by~\cite{ZhXuZh20}.
-\begin{lemma}\label{lem:approxhk}
-    There exists an algorithm called \textsc{ApproxH} with time complexity \(\tilde{O}(m)\), which takes a connected weighted undirected graph \(\gr=(V,E,w)\) and an error parameter \(\epsilon>0\) as input, and returns the approximation \(\tilde{H}_u\) of absorbing random-walk centrality \(H_u\) for any node \(u\) in graph \(\gr\) such that
-    \[H_u\approx_\epsilon\tilde{H}_u.\]
-\end{lemma}
-
-\begin{algorithm}
-    \caption{\textsc{ApproxH}\((\gr,\epsilon)\)}
-    \label{algo:approxh}
-    \Input{
-        A connected weighted undirected graph \(\gr=(V,E,w)\);
-        an error parameter \(\epsilon>0\)
-    }
-    \Output{The approximation \(\tilde{H}_u\) of absorbing random-walk centrality \(H_u\) for any node \(u\) in graph \(\gr\)}
-    Compute \(\lap\) and \(\vecd\)\;
-    \(d\gets\vecd\allone\),\(\vecpi\gets d^{-1}\vecd,n\gets\abs{V}\)\;
-    \(w_{\min}\gets\min\setof{w_e|e\in E},w_{\max}\gets\max\setof{w_e|e\in E}\)\;
-    \(k\gets\ceil{24\epsilon^{-2}\log n}\),\(\delta\gets\frac{\epsilon}{6n^2}\sqrt{\frac{(1-\epsilon)w_{\min}}{(1+\epsilon)w_{\max}}}\)\;
-    Construct a matrix \(\matq\in\rea^{k\times m}\), each entry of which is \(\pm1/\sqrt k\) with identical probability\;
-    Decompose \(\lap\) into \(\matb\in\rea^{m\times n}\) and \(\matw\in\rea^{m\times m}\), where \(\lap=\matb^\top\matw\matb\)\;
-    \(\overline{\matx}\gets\matq\matw^{1/2}\matb\)\;
-    \For{\(i=1,2,\dots,k\)}{
-    \(\matx'_{[i,:]}\gets\textsc{Solve}(\lap,\overline{\matx}_{[i,:]},\delta)\)\;
-    }
-    \ForEach{\(u\in V\)}{
-        \(\tilde{H}_u\gets d\Abs{\matx'(\vece_u-\vecpi)}^2\)\;
-    }
-    \Return{\(\setof{\tilde{H}_u|u\in V}\)}
-
-\end{algorithm}
-
-\subsection{Approximations of~\eqref{eq:margin-deriv}}
-
-Before proposing the approximations of~\eqref{eq:margin-deriv}, the proof of the following lemma is necessary.
-\begin{lemma}\label{lem:norm-ineq}
-    Given a connected weighted undirected graph \(\gr=(V,E,w)\), let \(\lap\) denote the Laplacian matrix of the graph.
-    Then for an arbitary node set \(S\subseteq V\) and an arbitary vector \(\vecv\in\rea^{n-\abs{S}}\), \(\vecv_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\) holds.
-\end{lemma}
-
-\begin{IEEEproof}
-    As is mentioned in~\secref{sub:lap}, we can decompose Laplacian matrix as \(\lap=\matb^\top\matw\matb\).
-    Similarly, we can decompose SDDM matrix \(\lap_{-S}\) as \(\lap_{-S}=\lap'+\matz=\matb'^\top\matw'\matb'+\matz\), where \(\lap'\) denotes the Laplacian matrix of another graph, \(\matz\) denotes a diagonal matrix.
-
-    If \(\matz_{[i,i]}\neq0\), then we have \(\matz_{[i,i]}\ge w_{\min}\), it is apparent that \(\vecv_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\).
-    If \(\matz_{[i,i]}=0\), there must exist a node \(j\) that satisfies \(\matz_{[j,j]}\ge w_{\min}\) in the component of graph that contains node \(i\) after removing nodes in \(S\).
-    Let \(\pscr_{ij}\) denotes the simple path connecting node \(i\) and node \(j\), then we have
-    \begin{align*}
-        \Abs{\vecv}^2_{\lap_{-S}}
-         & \ge w_{\min}\sum_{\edge{a}{b}\in\pscr_{ij}}(\vecv_a-\vecv_b)^2+w_{\min}\vecv_j^2     \\
-         & \ge w_{\min}n^{-1}\mypar{\sum_{\edge{a}{b}\in\pscr_{ij}}(\vecv_a-\vecv_b)+\vecv_j}^2
-        \ge w_{\min}n^{-1}\vecv_i^2,
-    \end{align*}
-    which completes our proof.
-\end{IEEEproof}
-
-We first approximate the numerator of~\eqref{eq:margin-deriv}, which requires the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}\).
-Since \(\lap_{-S}\) is a SDDM matrix, we can use~\lemref{lem:solver} to avoid computing matrix inverse \(\lap_{-S}^{-1}\).
-\begin{lemma}\label{lem:approx-numer}
-    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty node set \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\), let \(\vecx'=\textsc{Solve}(\lap_{-S},\vecd_{-S},\delta_1)\) where \(\delta_1=\frac{w_{\min}\epsilon}{7n^3w_{\max}}\). Then for any node \(i\in V\setminus S\), we have
-    \begin{equation}\label{eq:approx-numer}
-        \vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\approx_{\epsilon/7}\vecx'_i.
-    \end{equation}
+    Then for any vertex \(u\) belonging to \(V\),
+    %\begin{small}
+    \begin{align}
+        \label{EE15}
+        (1 - \epsilon)^2  C(u)
+        \leq
+        \|\tilmatz  (\vece_{u} - \vecpi)\|^2
+        \leq
+        (1 + \epsilon)^2  C(u),
+    \end{align}
+    where \(\tilmatz = [\tilde{\vecz}_1, \tilde{\vecz}_2, ..., \tilde{\vecz}_k]^\top\).
+    %\end{small}
 \end{lemma}
 \begin{IEEEproof}
-
-    Combining \lemref{lem:solver} and \lemref{lem:norm-ineq}, we can bound \((\vecx'_i-\vecx_i)^2\) as
+    To prove (\ref{EE15}), it is sufficient  to show that for an arbitrary vertex \(u\),
+    \begin{small}
+        \begin{align}\label{EE16a}
+             & \quad \abs{\Abs{\matz(\vece_u-\vecpi)}^2-\|{\tilmatz(\vece_u-\vecpi)}\|^2}\nonumber \\
+             & =
+            \abs{\Abs{\matz(\vece_u-\vecpi)}-\|\tilmatz(\vece_u-\vecpi)\|}\times \nonumber         \\
+             & \quad\abs{\Abs{\matz(\vece_u-\vecpi)}+\|\tilmatz(\vece_u-\vecpi)\|} \nonumber       \\
+             & \le
+            \left(\frac{2\epsilon}{3}+\frac{\epsilon^2}{9}\right)\Abs{\matz(\vece_u-\vecpi)}^2,
+        \end{align}
+    \end{small}
+    which is obeyed if
+    \begin{small}
+        \begin{equation}\label{EE16}
+            \abs{\Abs{\matz(\vece_u-\vecpi)}-\|\tilmatz(\vece_u-\vecpi)\|} \le
+            \frac{\epsilon}{3}\Abs{\matz(\vece_u-\vecpi)}.
+        \end{equation}
+    \end{small}
+    This can be understood from the following arguments. On the one hand, if
+    {\footnotesize \(\abs{\Abs{\matz(\vece_u-\vecpi)}^2-\|{\tilmatz(\vece_u-\vecpi)}\|^2} \le \left(\frac{2\epsilon}{3}+\frac{\epsilon^2}{9}\right)\Abs{\matz(\vece_u-\vecpi)}^2\)}, then
     \begin{align*}
-        (\vecx'_i-\vecx_i)^2
-         & \le nw_{\min}^{-1}\Abs{\vecx'-\vecx}^2_{\lap_{-S}}
-        \le nw_{\min}^{-1}\delta_1^2\Abs{\vecx}^2_{\lap_{-S}}        \\
-         & \le n^4w_{\min}^{-1}w_{\max}^2\delta_1^2\trace{\lap_{-S}}
-        \le n^6w_{\min}^{-2}w_{\max}^2\delta_1^2,
+            & \left(1-\frac{2\epsilon}{3}-\frac{\epsilon^2}{9}\right)\Abs{\matz(\vece_u-\vecpi)}^2  \\
+        \le & \|{\tilmatz(\vece_u-\vecpi)}\|^2                                                      \\
+        \le & \left(1+\frac{2\epsilon}{3}+\frac{\epsilon^2}{9}\right)\Abs{\matz(\vece_u-\vecpi)}^2,
     \end{align*}
-    where the last inequality is due to \lemref{lem:trace-lap}.
-    On the other hand, since \(\vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\) denotes the expected hitting time of a random walker starting from node \(i\), we have \(\vecx_i\ge1\).
-    Finally, we are able to give the approximation of \(\vecx_i\) as
-    \[\frac{\abs{\vecx'_i-\vecx_i}}{\vecx_i}\le n^3w_{\max}w_{\min}^{-1}\delta_1=\epsilon/7.\]
-\end{IEEEproof}
+    which, combining with \(\epsilon \le 1/2\) and the assumption that \((1-\epsilon) C(u)\leq\|\matz (\vece_{u} - \vecpi)\|^{2}\leq(1+\epsilon)  C(u)\), leads to Eq.~\eqref{EE15}.
+    On the other hand, if Eq.~\eqref{EE16} is true, we have \(\|\tilmatz(\vece_u-\vecpi)\| \le (1+\frac{\epsilon}{3})\Abs{\matz(\vece_u-\vecpi)}\). Thus,
+    \begin{equation*}
+        \abs{\Abs{\matz(\vece_u-\vecpi)}+\|\tilmatz(\vece_u-\vecpi)\|} \le (2+\frac{\epsilon}{3})\Abs{\matz(\vece_u-\vecpi)},
+    \end{equation*}
+    which results in Eq.~\eqref{EE16a}.
 
-Subsequently, we attempt to approximate the denominator of~\eqref{eq:margin-deriv}, which can be recast in an euclidian norm by using \lemref{lem:JL}:
-\begin{equation}\label{eq:denom-solver}
-    \begin{split}
-        \vece_i^\top\lap_{-S}^{-1}\vece_i
-        =&\vece_i^\top\lap_{-S}^{-1}(\matb'^\top\matw'\matb'+\matz)\lap_{-S}^{-1}\vece_i\\
-        =&\vece_i^\top\lap_{-S}^{-1}\matb'^\top\matw'\matb'\lap_{-S}^{-1}\vece_i+\vece_i^\top\lap_{-S}^{-1}\matz\lap_{-S}^{-1}\vece_i\\
-        =&\Abs{\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2.
-    \end{split}
-\end{equation}
+    We now prove that~\eqref{EE16} holds true.  By applying triangle inequality and Cauchy-Schwarz inequality, we obtain
+    \begin{small}
+        \begin{align*}
+             & \quad \abs{\Abs{\matz(\vece_u-\vecpi)}-\|\tilmatz(\vece_u-\vecpi)\|}                                 \\
+             & \le \Abs{(\matz-\tilmatz)(\vece_u-\vecpi)}                                                           \\
+             & = \frac{1}{s} \Abs{\sum_{v=1}^{n} s_v (\matz-\tilmatz)(\vece_u-\vece_v)}                             \\
+             & \le \frac{1}{s} \sum_{v=1}^{n} s_v \Abs{(\matz-\tilmatz)(\vece_u-\vece_v)}                           \\
+             & \le \frac{1}{s} \sqrt{\sum_{v=1}^{n} s_v^2 \sum_{v=1}^{n} \Abs{(\matz-\tilmatz)(\vece_u-\vece_v)}^2} \\
+             & \le \sqrt{\sum_{v=1}^{n} \Abs{(\matz-\tilmatz)(\vece_u-\vece_v)}^2},
+        \end{align*}
+    \end{small}
+    where the last inequality is due to the fact that \(s=\sum_{v=1}^{n} s_v\ge \sqrt{\sum_{v=1}^{n} s_v^2}\).
 
-Although~\eqref{eq:denom-solver} indicates that we can avoid matrix inversion by using~\lemref{lem:solver}, due to the dimension of the matrices \(\matw'\) and \(\matz\) being \(\abs{E}=m\) and \(\abs{V}=n\) respectively, the number of calls to \textsc{Solve} is still unacceptable.
-Therefore, we need to use~\lemref{lem:JL} to reduce the dimension of the corresponding matrices.
-
-From~\lemref{lem:JL}, let \(\matq\in\rea^{q\times m},\matr\in\rea^{r\times n}\) denote the projection matrix constructed according to the definition of~\lemref{lem:JL}, where \(q=r=\ceil{24\epsilon^{-2}\log n}\), then we have
-\begin{equation}\label{eq:denom-jl}
-    \begin{split}
-        &\Abs{\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2\\
-        \approx_\epsilon&\Abs{\matq\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matr\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2.
-    \end{split}
-\end{equation}
-
-For the convenience of writing, we denote \(\matw'^{1/2}\matb'\lap_{-S}^{-1}\) and \(\matq\matw'^{1/2}\matb'\lap_{-S}^{-1}\) as \(\matx\) and \(\tilde{\matx}\) respectively, denote \(\matz^{1/2}\lap_{-S}^{-1}\) and \(\matr\matz^{1/2}\lap_{-S}^{-1}\) as \(\maty\) and \(\tilde{\maty}\) respectively.
-Then~\eqref{eq:denom-solver} and~\eqref{eq:denom-jl} can be rewritten as
-\begin{equation}\label{eq:denom-solver-simp}
-    \vece_i^\top\lap_{-S}^{-1}\vece_i=\Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2,
-\end{equation}
-\begin{equation}\label{eq:denom-jl-simp}
-    \Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2\approx_\epsilon\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2.
-\end{equation}
-
-Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can efficiently approximate the denominator of~\eqref{eq:margin-deriv}.
-\begin{lemma}\label{lem:approx-denom}
-    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty node set \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\).
-    Let \(\overline{\matx}\) and \(\overline{\maty}\) denote \(\matq\matw^{1/2}\matb\) and \(\matr\matz^{1/2}\) respectively.
-    Let \(\matx'\in\rea^{q\times n}\) and \(\maty'\in\rea^{r\times n}\) be matrices such that \(\matx'_{[i,:]}=\textsc{Solve}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\), \(\maty'_{[i,:]}=\textsc{Solve}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\), where \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\), \(\delta_2=\frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\). Then for any node \(i\in V\setminus S\), we have
-    \begin{equation}\label{eq:approx-denom}
-        \Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2=\vece_i^\top\lap_{-S}^{-1}\vece_i\approx_{\epsilon/3}\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2.
-    \end{equation}
-\end{lemma}
-\begin{IEEEproof}
-    According to triangle inequality, we have
+    Since we only consider connected graphs,   there exists a simple path \(\mathcal{P}_v\) between \(u\) and any other vertex \(v\).  Applying the triangle inequality along path \(\mathcal{P}_v\), the square of the last sum term in the above equation can be evaluated as:
+    \begin{small}
+        \begin{align*}
+             & \quad \sum_{v=1}^{n} \Abs{(\matz-\tilmatz)(\vece_u-\vece_v)}^2                                             \\
+             & \le \sum_{v=1}^{n} \left(\sum_{a\sim b \in \mathcal{P}_v} \Abs{(\matz-\tilmatz)(\vece_a-\vece_b)}\right)^2 \\
+             & \le n \sum_{v=1}^{n} \sum_{a\sim b \in \mathcal{P}_v} \Abs{(\matz-\tilmatz)(\vece_a-\vece_b)}^2            \\
+             & \le n^2 \sum_{a\sim b \in E} \Abs{(\matz-\tilmatz)(\vece_a-\vece_b)}^2                                     \\
+             & = n^2 \Abs{(\matz - \tilmatz ) \matb^{\top}}_{F}^{2}                                                       \\
+             & = n^2 \Abs{\matb(\matz - \tilmatz )^{\top}}_{F}^{2}                                                        \\
+             & \leq
+            \frac{n^2}{w_{\min}} \Abs{\matw^{1/2} \matb(\matz - \tilmatz )^{\top}}_{F}^{2}\,,
+        \end{align*}
+    \end{small}
+    where \(\| \matm \|_{F}\) denotes the Frobenius norm of  matrix \(\matm\),  defined as the square root of the trace for matrix \(\matm^{\top} \matm\). The last term can be bounded as
+    \begin{small}
+        \begin{align*}
+                & \frac{n^2}{w_{\min}} \Abs{\matw^{1/2} \matb(\matz - \tilmatz )^{\top}}_{F}^{2}                      \\
+            =   & \frac{n^2}{w_{\min}} \trace{(\matz - \tilmatz )\matb^{\top} \matw \matb(\matz - \tilmatz )^{\top}}  \\
+            =   & \frac{n^2}{w_{\min}} \trace{(\matz - \tilmatz )\lap(\matz - \tilmatz )^{\top}}                      \\
+            =   & \frac{n^2}{w_{\min}} \sum_{i=1}^k (\vecz_i - \tilde{\vecz}_i)^\top \lap (\vecz_i - \tilde{\vecz}_i) \\
+            \le & \frac{n^2\delta^2}{w_{\min}} \sum_{i=1}^k \vecz_i^\top\lap\vecz_i                                   \\
+            =   & \frac{n^2\delta^2}{w_{\min}}  \trace{\matz\lap\matz^{\top}}                                         \\
+            =   & \frac{n^2\delta^{2}}{w_{\min}} \Abs{\matw^{1/2} \matb \matz^{\top}}_{F}^{2}\,,
+        \end{align*}
+    \end{small}
+    where the  inequality follows from (\ref{EE13}) and the last term can be further evaluated by Lemma~\ref {Foster} as
+    %\begin{small}
     \begin{align*}
-            & \abs{\Abs{\tilde{\matx}\vece_i}-\Abs{\matx'\vece_i}}\le\Abs{(\tilde{\matx}-\matx)\vece_i}\le\Abs{\tilde{\matx}-\matx'}_{F}                                  \\
-        =   & \sqrt{\sum_{j=1}^q\Abs{\tilde{\matx}_{[j,:]}-\matx'_{[j,:]}}^2}\le\sqrt{\sum_{j=1}^qnw_{\min}^{-1}\Abs{\tilde{\matx}_{[j,:]}-\matx'_{[j,:]}}_{\lap_{-S}}^2} \\
-        \le & \sqrt{\sum_{j=1}^qnw_{\min}^{-1}\delta_2^2\Abs{\tilde{\matx}_{[j,:]}}_{\lap_{-S}}^2}\le n\delta_2\sqrt{w_{\min}^{-1}}\Abs{\tilde{\matx}}_F,
+         & \quad \frac{n^2\delta^2}{w_{\min}} \Abs{\matw^{1/2} \matb \matz^{\top}}_{F}^{2}                                            \\
+         & =\frac{n^2\delta^{2}}{w_{\min}}
+        \sum_{a\sim b \in E} w_{a\sim b} \Abs{\matz (\vece_{a} - \vece_{b})}^{2}                                                      \\
+         & \leq
+        \frac{\delta^{2}n^2 (1+\epsilon)}{w_{\min}}
+        \sum_{a\sim b \in E} w_{a\sim b}\|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_a-\vece_b)\|^2                              \\
+         & =
+        \frac{\delta^{2}n^2 (1+\epsilon)}{w_{\min}}
+        \sum_{a\sim b \in E} w_{a\sim b}(\vece_a-\vece_b)^\top \lap^{\dagger} \matb^\top \matw \matb \lap^{\dagger} (\vece_a-\vece_b) \\
+         & =
+        \frac{\delta^{2}n^2 (1+\epsilon)}{w_{\min}}
+        \sum_{a\sim b \in E} w_{a\sim b}(\vece_a-\vece_b)^\top \lap^{\dagger} \lap \lap^{\dagger} (\vece_a-\vece_b)                   \\
+         & =
+        \frac{\delta^{2}n^2 (1+\epsilon)}{w_{\min}}
+        \sum_{a\sim b \in E} w_{a\sim b}(\vece_a-\vece_b)^\top \lap^{\dagger} (\vece_a-\vece_b)                                       \\
+         & =
+        \frac{\delta^{2} n^2 (1+\epsilon)}{w_{\min}}
+        \sum_{a\sim b \in E} w_{a\sim b} R_{ab}                                                                                       \\
+         & =\frac{\delta^{2} n^2(n-1) (1+\epsilon)}{w_{\min}}.
     \end{align*}
-    where the third inequality and the fourth inequality are due to \lemref{lem:norm-ineq} and \lemref{lem:solver} respectively.
+    %\end{small}
+    %The last inequality follows by the fact that  \(\sum_{a\sim b \in E} w_{a\sim b} R_{ab} = n-1\).
 
-    As \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\), by using \lemref{lem:JL}, we are able to further obtain
-    \begin{align*}
-            & n\delta_2\sqrt{w_{\min}^{-1}}\Abs{\tilde{\matx}}_F\le n\delta_2\sqrt{w_{\min}^{-1}(1+\epsilon/7)\sum_{i\in V\setminus S}\Abs{\matx\vece_i}^2} \\
-        \le & n\delta_2\sqrt{w_{\min}^{-1}(1+\epsilon/7)\trace{\lap_{-S}^{-1}}}\le n^2\delta_2w_{\min}^{-1}\sqrt{1+\epsilon/7},
-    \end{align*}
-    where the last inequality is due to \lemref{lem:trace-lap}.
-    Similarly, for \(\abs{\Abs{\tilde{\maty}\vece_i}-\Abs{\maty'\vece_i}}\), we have
-    \begin{equation}\label{eq:approx-maty-raw}
-        \abs{\Abs{\tilde{\maty}\vece_i}-\Abs{\maty'\vece_i}}\le n^2\delta_2w_{\min}^{-1}\sqrt{1+\epsilon/7}.
-    \end{equation}
-    On the other hand, according to \lemref{lem:JL},
-    \[\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2\ge(1-\epsilon/7)\vece_i^\top\lap_{-S}^{-1}\vece_i\ge(1-\epsilon/7)n^{-2}w_{\max}^{-1}\]
-    where the last inequality is due to the scaling of \(\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\ge1\).
 
-    According to the Pigeonhole Principle, at least one element of \(\setof{\Abs{\tilde{\matx}\vece_i},\Abs{\tilde{\maty}\vece_i}}\) is no less than \(\frac{1}{n}\sqrt{\frac{1-\epsilon/7}{2w_{\max}}}\).
-    Without loss of generality, we let \(\Abs{\tilde{\matx}\vece_i}\ge\frac{1}{n}\sqrt{\frac{1-\epsilon/7}{2w_{\max}}}\), then we have
-    \[\frac{\abs{\Abs{\tilde{\matx}\vece_i}-\Abs{\matx'\vece_i}}}{\Abs{\tilde{\matx}\vece_i}}\le n\delta_2w_{\min}^{-1}\sqrt{\frac{2w_{\max}(1+\epsilon/7)}{1-\epsilon/7}}=\frac{\epsilon}{31}.\]
-    According to the inequality above, we can further obtain
-    \begin{align*}
-        \frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2} & =\frac{\abs{\Abs{\tilde{\matx}\vece_i}-\Abs{\matx'\vece_i}}\mypar{\Abs{\tilde{\matx}\vece_i}+\Abs{\matx'\vece_i}}}{\Abs{\tilde{\matx}\vece_i}^2} \\
-                                                                                                      & \le\frac{\epsilon}{31}\mypar{2+\frac{\epsilon}{31}}\le\frac{\epsilon}{15},
-    \end{align*}
-    which means
-    \begin{equation}\label{eq:approx-matx}
-        \frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2}\le\frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2}\le\frac{\epsilon}{15}.
-    \end{equation}
-    For the case of \(\Abs{\maty'\vece_i}^2\), as~\eqref{eq:approx-maty-raw} still holds, we can obtain
-    \[\frac{\abs{\Abs{\tilde{\maty}\vece_i}-\Abs{\maty'\vece_i}}}{\Abs{\tilde{\matx}\vece_i}}\le n\delta_2w_{\min}^{-1}\sqrt{\frac{2w_{\max}(1+\epsilon/7)}{1-\epsilon/7}}=\frac{\epsilon}{31},\]
-    thus indicating that
-    \begin{equation}\label{eq:approx-maty}
-        \begin{split}
-            \frac{\abs{\Abs{\tilde{\maty}\vece_i}^2-\Abs{\maty'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2}&\le\frac{\abs{\Abs{\tilde{\maty}\vece_i}-\Abs{\maty'\vece_i}}\mypar{\Abs{\tilde{\maty}\vece_i}+\Abs{\maty'\vece_i}}}{\Abs{\tilde{\matx}\vece_i}^2}\\
-            &\le\frac{\epsilon}{31}\mypar{2+\frac{\epsilon}{31}}\le\frac{\epsilon}{15}.
+    In addition, \(\Abs{\matz (\vece_u - \vecpi)}^2\) can also be bounded by
+    \begin{equation}\label{EE17}
+        \begin{split}  \notag
+            &\quad\Abs{\matz (\vece_u - \vecpi)}^2
+            \geq
+            (1 - \epsilon) C(u) \\
+            &=(1-\epsilon)(\vece_u-\vecpi)^{\top} \lap^{\dagger} (\vece_u-\vecpi) \\
+            &\geq (1-\epsilon)\lambda_{n}^{-1} \Abs{\vece_u-\vecpi}^2 \\
+            &	\geq (1-\epsilon)(n w_{\max})^{-1} \frac{(s-s_u)^2}{s^2}.
         \end{split}
     \end{equation}
-    Combining~\eqref{eq:approx-matx} and~\eqref{eq:approx-maty}, we are finally able to get
+    In the above equation, the first inequation follows due to the following reason.   Note that \(\vece_u-\vecpi\) is orthogonal to  vector \(\vecone\), which is an eigenvector of \(\lap^{\dagger}\) corresponding to the \(0\) eigenvalue. Hence, \((\vece_u-\vecpi)^{\top} \lap^{\dagger} (\vece_u-\vecpi) \ge \lambda_{n}^{-1} \Abs{\vece_u-\vecpi}^2\) always holds true.
+
+    %where \(\lambda_n\) refers to the maximum eigenvalue of \(L\). The last inequality in (\ref{EE17}) is due to the fact that \(w_{\max}\lap_{\mathcal{K}_n}-\lap_{G}\) is positive semidefinite, while \(\lap_{\mathcal{K}_n}\) is the Laplacian of an \(n\)-vertex clique whose edge weights are all equal to \(1\).
+    Thus, we have
+    %\begin{small}
     \begin{align*}
-            & \frac{\abs{\mypar{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}-\mypar{\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2}}}{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}             \\
-        \le & \frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}+\abs{\Abs{\tilde{\maty}\vece_i}^2-\Abs{\maty'\vece_i}^2}}{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}\le\frac{\epsilon}{7},
+         & \quad \frac{
+            \abs{ \Abs{\matz (\vece_{u} - \vecpi)} -  \Abs{\tilmatz  (\vece_{u} - \vecpi)}}
+        }{
+            \Abs{\matz (\vece_{u} - \vecpi)}
+        }                                                 \\
+         & \le
+        \delta \left(\frac{n^2(n-1) (1+\epsilon)}{w_{\min}}\right)^{1/2}\left(\frac{n
+        w_{\max}}{1-\epsilon}\right)^{1/2}\frac{s}{s-s_u} \\
+         & \le \frac{\epsilon}{3},
     \end{align*}
-    which completes our proof in conjunction with \lemref{lem:JL}.
+    %\end{small}
+    where \(\delta\) is given by (\ref{EE14}).
 \end{IEEEproof}
 
-\subsection{Nearly Linear Time Approximation Algorithms}
+Lemma~\ref{lem:error1} leads to the following theorem.
+\begin{theorem}
+    \label{TheoAlg1}
+    There is a \(\Otil(m\log{c}/\epsilon^2)\) time algorithm, which  inputs  a scalar \(0<\epsilon<1\) and a graph \(\gr=(V,E,w)\) where \(c=\frac{w_{\max}}{w_{\min}}\), and returns a \((24\log n/\epsilon^2)\times n\) matrix \(\tilmatz\) such that with probability at least \(1-1/n\),
+    \begin{align}
+        (1-\epsilon)^2  C(u) \leq \|\tilmatz(\vece_u-\vecpi)\|^2 \leq (1+\epsilon)^2  C(u)\nonumber
+    \end{align}
+    for any vertex \(u \in V\).
+\end{theorem}
 
-Combining Lemmas \ref{lem:approx-numer} and \ref{lem:approx-denom}, we finally propose the approximate algorithm \textsc{ApproxDelta} of computing \(\Delta(u,S)\) when \(S\neq\varnothing\).
-Because \textsc{ApproxDelta} calls algorithm \textsc{Solve} in \ref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, the complexity of \textsc{ApproxDelta} is \(\tilde{O}\mypar{m\epsilon^{-2}}\), where \(\tilde{O}(\cdot)\) hides the poly(\(\log n\)) factors.
-Furthermore, we are able to provide its approximation guarantee.
+Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \(\text{Approx}\mathcal{HK}\) to approximately compute the walk centrality \(H_u\) for all  vertices  \(u \in V\) and the Kemeny constant \(K\), the pseudocode of which is provided in Algorithm~\ref{ALG01}.
 
 \begin{algorithm}
-    \caption{\textsc{ApproxDelta}\((\gr,S,\epsilon)\)}
-    \label{algo:approxdelta}
+    \caption{\(\text{Approx\(\mathcal{HK}\)}(\gr, \epsilon)\)}
+    \label{ALG01}
     \Input{
-        A connected weighted undirected graph \(\gr=(V,E,w)\);
-        The absorbing node set \(S\subseteq V\);
-        an error parameter \(\epsilon\in(0,1)\)
+        \(\gr\): a connected undirected graph. \\
+        \(\epsilon\): an approximation parameter %of vertex centrality
     }
     \Output{
-        The margin \(\Delta(u,S)\) of MANC created by adding node \(u\) to \(S\) for any node \(u\in V\setminus S\)
+        \(\tilde{H}=\{u,\tilde{H}_u| u \in V\}\): \(\tilde{H}_u\) is an approximation of the walk centrality \(H_u\) of vertex \(u\);
+        \(\tilde{K}\): approximation of the Kemeny constant \(K\)
     }
-    Compute \(\lap\) and \(\vecd\)\;
-    \(n\gets\abs{V},m\gets\abs{E}\)\;
-    \(w_{\min}\gets\min\setof{w_e|e\in E},w_{\max}\gets\max\setof{w_e|e\in E}\)\;
-    \(d\gets\vecd\allone\),\(q,r\gets\ceil{24(\epsilon/7)^{-2}\log n}\)\;
-    \(\delta_1\gets \frac{w_{\min}\epsilon}{7n^2w_{\max}}\),\(\delta_2\gets \frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\)\;
-    \(\vecx'\gets\textsc{Solve}(\lap_{-S},\vecd_{-S},\delta_1)\)\;
-    \(\matq\gets\textsc{GenerateRandomMatrix}(q,m)\)\;
-    \(\matr\gets\textsc{GenerateRandomMatrix}(r,n)\)\;
-    Decompose \(\lap_{-S}\) into \(\matb'\in\rea^{m\times n}\), \(\matw'\in\rea^{m\times m}\) and \(\matz\in\rea^{n\times n}\), where \(\lap_{-S}=\matb'^\top\matw'\matb'+\matz\)\;
-    \(\overline{\matx}\gets\matq\matw^{1/2}\matb\),\(\overline{\maty}\gets\matr\matz^{1/2}\)\;
-    \For{\(i=1,2,\dots,q\)}{
-    \(\matx'_{[i,:]}\gets\textsc{Solve}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\)\;
-    \(\maty'_{[i,:]}\gets\textsc{Solve}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\)\;
+    \(\lap=\) Laplacian of \(\gr\),\, \(s_u=\) the strength of \(u\) for all \(u\in V\), \(s=\sum_{u \in V} s_u\)\;  Construct a matrix \(\matq_{k \times m}\),  where \(k=\lceil 24\log n/\epsilon^2 \rceil\) and each entry is \(\pm 1/\sqrt{k}\) with identical probability\;
+    \For{\(i=1\) to \(k\)}{
+        \(\vecq_i^\top \)=the \(i\)-th row of  \(\matq_{k \times m} \matw^{1/2} \matb\)  \\
+        \(\tilde{\vecz}_i=\mathtt{LaplSolve}(\lap, \vecq_i, \delta)\) where parameter   \(\delta\) is  given by~(\ref{EE14}) \\
     }
-    \ForEach{\(u\in V\setminus S\)}{
-        \(\Delta'(u,S)\gets\frac{\vecx'^2}{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}\)\;
+    Calculate the constant vector \({\bf p}=\tilmatz \vecpi\)\;
+    \For{each \(u\in V\)}{
+    \(\tilde{H}_u=s \|\tilmatz_{:,u}-{\bf p}\|^2\)
     }
-    \Return{\(\setof{\Delta'(u,S)|u\in V\setminus S}\)}
-
+    \(\tilde{K}=\sum_{u \in V} \frac{s_u}{s} \tilde{H}_u\)\;
+    \Return \(\tilde{H}=\{u,\tilde{H}_u| u \in V\}\) and \(\tilde{K}\)
 \end{algorithm}
 
-\begin{lemma}\label{lem:approx-marginest}
-    For any real number \(\epsilon\in(0,1)\), \(\Delta'(u,S)\) satisfies
-    \[\Delta(u,S)\approx_\epsilon \Delta'(u,S)\]
-    with high probability.
-\end{lemma}
-% \begin{IEEEproof}
+\section{Numerical Experiments}
 
-% \end{IEEEproof}
+In this section, we present experimental results for various real and model networks to demonstrate the  efficiency and accuracy of our approximation algorithm \(\text{Approx}\mathcal{HK}\) for computing the walk centrality \(H_u\) of  every vertex and the Kemeny constant \(K\).
 
-Combining \algoref{algo:approxh} and \algoref{algo:approxdelta}, we can give the faster greedy algorithm \textsc{Approx} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor.
-Since \textsc{Approx} calls \textsc{ApproxH} once and calls \textsc{ApproxDelta} \(k-1\) times, the complexity of \textsc{Approx} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear.
+All   experiments are conducted on  a machine  with 4-core 4.2GHz  Intel i7-7700K CPU and with  32GB of RAM. We implement the approximation algorithm \(\text{Approx}\mathcal{HK}\) in \textit{Julia v0.6.0}, where  the \(\mathtt{LaplSolve}\) is from~\cite{KySa16}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
 
-\begin{algorithm}
-    \caption{\textsc{Approx}\((\gr,k,\epsilon)\)}
-    \label{algo:approx}
-    \Input{
-        A connected weighted undirected graph \(\gr=(V,E,w)\);
-        an integer \(k\in[1,\abs{V}]\);
-        an error parameter \(\epsilon\in(0,1)\)
-    }
-    \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
-    \(d\gets\vecd\allone\),\(\vecpi\gets d^{-1}\vecd\)\;
-    \(\setof{\tilde{H}_u|u\in V }\gets\textsc{ApproxH}(\gr,\epsilon)\)\;
-    \(S_1\gets\setof{\argmin_{u\in V}\setof{\tilde{H}_u}}\)\;
-    \For{\(i=2,3,\dots,k\)}{
-        \(\setof{\Delta'(u,S)|u\in V\setminus S}\gets\textsc{ApproxDelta}(\gr,S,\epsilon)\)\;
-        \(u^*\gets\argmax_{u\in V\setminus S}\setof{\Delta'(u,S)}\)\;
-        \(S_i\gets S_{i-1}\cup\setof{u^*}\)\;
-    }
-    \Return{\(S_k\)}
-\end{algorithm}
+\subsection{Results for Vertex Centrality of Real Networks }
 
-\begin{theorem}
-    The algorithm \(S_k=\textsc{Approx}(\gr,k,\epsilon)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) ,a positive integer \(k\) and an error parameter \(\epsilon\in(0,1)\), then returns a node subset \(S_k\) with capacity \(k\). When \(k>1\), the node set \(S\) satisfies
-    \begin{align*}
-        \mypar{1+\epsilon} & \manc{\setof{u^*}}-\manc{S_k}\ge                                                                         \\
-                           & \mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon}\mypar{\mypar{1+\epsilon}\manc{\setof{u^*}}-\manc{S^*}},
-    \end{align*}
-    where
-    \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}},S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
-\end{theorem}
-\begin{IEEEproof}
-    Since \algoref{algo:approx} use \(\Delta'(u,S)\) computed by \algoref{algo:approxdelta} instead of \(\Delta(u,S)\), combining \lemref{lem:approx-marginest} and supermodularity, we are able to obtain that
-    \[\manc{S_i}-\manc{S_{i+1}}\ge\frac{1-\epsilon}{k}\mypar{\manc{S_i}-\manc{S^*}}\]
-    holds for any positive integer \(i\), which indicates that
-    \[\manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1-\epsilon}{k}}\mypar{\manc{S_i}-\manc{S^*}}.\]
-    Subsequently, we can further obtain that
-    \begin{align*}
-        \manc{S_k}-\manc{S^*} \le & \mypar{1-\frac{1-\epsilon}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}            \\
-        \le                       & \mypar{\frac{k}{k-1}\cdot\frac{1}{e}+\epsilon}\mypar{\manc{S_1}-\manc{S^*}},
-    \end{align*}
-    which completes our proof based on the fact that \(\manc{S_1}\le\mypar{1+\epsilon}\manc{\setof{u^*}}\).
-\end{IEEEproof}
+We first test the algorithm for approximating  centrality \(H_u\) on a large set of  realistic  networks from different domains.  The  data of these networks are taken from the Koblenz Network Collection~\cite{Ku13}. For those networks that are disconnected originally, we perform our experiments on their largest connected components (LCC). Related information about the number of vertices and edges for the studied real networks and their LCC  is  shown  in Table~\ref{tab:network_size},  where networks are listed in an increasing order of the number of vertices in the original networks. The smallest network has 198 vertices, while the largest one consists of more than \(1.3 \times 10^{6}\) vertices.
 
-\section{Experiments}\label{sec:experiments}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+\begin{table}[!b]
 
-After theorecical analyses of the two approximate algorithm \textsc{Exact} and \textsc{Approx}, we attempt to verify their performance on real-world network datasets.
-We choose some datasets from KONECT~\cite{Ku13} and SNAP~\cite{LeKr14}.
-The information of these datasets is shown in \tabref{tab:info}.
-Note that our algorithm works only for connected graphs, therefore for the originally disconnected networks, we perform numerical experiments on their largest connected components.
-\begin{table}
-    \caption{Information of datasets as well as running time of two algorithms on datasets, where \(n,m\) denote the number of nodes and edges of a network's largest connected component respectively.}
-    \label{tab:info}
-    \begin{tabular}{ccccc}
-        \toprule
-        \multirow{2}*{Network} & \multirow{2}*{\(n\)} & \multirow{2}*{\(m\)} & \multicolumn{2}{c}{Time (seconds)}                   \\
-        \cmidrule(lr){4-5}     &                      &                      & \textsc{Exact}                     & \textsc{Approx} \\
-        \midrule
-        % Zebra                  & 23                   & 105                  & 0.0012                             & 0.021           \\
-        % Zachary karate club    & 34                   & 78                   & 0.0020                             & 0.024           \\
-        % Contiguous USA         & 49                   & 107                  & 0.0053                             & 0.061           \\
-        % Les Misérables         & 77                   & 254                  & 0.0067                             & 0.061           \\
-        Euroroads              & 1039                 & 1305                 & 0.95                               & 0.89            \\
-        Hamsterster friends    & 1788                 & 12476                & 2.91                               & 0.97            \\
-        ego-Facebook           & 4039                 & 88234                & 38.37                              & 4.63            \\
-        CA-GrQc                & 4158                 & 13428                & 39.87                              & 1.28            \\
-        US power grid          & 4941                 & 6594                 & 73.03                              & 1.13            \\
-        Reactome               & 5973                 & 146992               & 125.02                             & 8.30            \\
-        CA-HepTh               & 8638                 & 24827                & 356.98                             & 2.72            \\
-        Sister cities          & 10320                & 17988                & 605.11                             & 5.19            \\
-        CA-HepPh               & 11204                & 117649               & -                                  & 9.79            \\
-        CAIDA                  & 26475                & 53381                & -                                  & 13.80           \\
-        loc-Gowalla            & 196591               & 950327               & -                                  & 341.21          \\
-        com-Amazon             & 334863               & 925872               & -                                  & 1026.41         \\
-        Dogster friends        & 426485               & 8543321              & -                                  & 2400.34         \\
-        roadNet-PA             & 1087562              & 1541514              & -                                  & 4647.36         \\
-        YouTube                & 1134890              & 2987624              & -                                  & 2919.23         \\
-        roadNet-TX             & 1351137              & 1879201              & -                                  & 6004.25         \\
-        Skitter                & 1694616              & 11094209             & -                                  & 7191.77         \\
-        roadNet-CA             & 1957027              & 2760388              & -                                  & 10391.41        \\
-        Flixster               & 2523386              & 7918801              & -                                  & 5674.25         \\
-        \bottomrule
-    \end{tabular}
+    \centering
+    \normalsize
+    \tabcolsep=8pt
+    \fontsize{8.5}{9}\selectfont
+    \begin{threeparttable}
+        \caption{Statistics of the collection of datasets used in our experiments. For a network with \(n\) vertices and \(m\) edges, we denote the number of vertices and edges in its largest connected component by \(n'\) and \(m'\), respectively.}
+        \label{tab:network_size}
+        \begin{tabularx}{8.7cm}{p{2.125cm}<{\centering} p{0.85cm}<{\centering} p{0.9cm}<{\centering} p{0.85cm}<{\centering} p{0.9cm}<{\centering}}
+            \Xhline{2\arrayrulewidth}
+            \specialrule{0em}{1.5pt}{1pt}
+            Network                          & \(n\)     & \(m\)     & \(n'\)    & \(m'\) \cr
+            \midrule
+            Jazz musicians                   & 198       & 2,742     & 198       & 2,742\cr
+            Chicago                          & 1,467     & 1,298     & 823       & 822 \cr
+            Hamster full                     & 2,426     & 16,631    & 2,000     & 16,098 \cr
+            Facebook (NIPS)                  & 4,039     & 88,234    & 4,039     & 88,234\cr
+            CA-GrQc                          & 5,242     & 14,496    & 4,158     & 13,422 \cr
+            Reactome                         & 6,327     & 147,547   & 5,973     & 145,778 \cr
+            Route views                      & 6,474     & 13,895    & 6,474     & 12,572 \cr
+            \scriptsize{Pretty Good Privacy} & 10,680    & 24,316    & 10,680    & 24,316 \cr
+            CA-HepPh                         & 12,008    & 118,521   & 11,204    & 117,619 \cr
+            Astro-ph                         & 18,772    & 198,110   & 17,903    & 196,972 \cr
+            CAIDA                            & 26,475    & 53,381    & 26,475    & 53,381\cr
+            Brightkite                       & 58,228    & 214,078   & 56,739    & 212,945 \cr
+            Livemocha*                       & 104,103   & 2,193,083 & 104,103   & 2,193,083\cr
+            WordNet*                         & 146,005   & 656,999   & 145,145   & 656,230 \cr
+            Gowalla*                         & 196,591   & 950,327   & 196,591   & 950,327 \cr
+            com-DBLP*                        & 317,080   & 1,049,866 & 317,080   & 1,049,866 \cr
+            Amazon*                          & 334,863   & 925,872   & 334,863   & 925,872 \cr
+            Pennsylvania*                    & 1,088,092 & 1,541,898 & 1,087,562 & 1,541,514 \cr
+            roadNet-TX*                      & 1,379,917 & 1,921,660 & 1,351,137 & 1,879,201 \cr
+            \Xhline{2\arrayrulewidth}
+        \end{tabularx}
+    \end{threeparttable}
 \end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-To facilitate calling SDD solver in Laplacians.jl\footnote{https://github.com/danspielman/Laplacians.jl}, our numerical experiment programs are implemented by Julia.
-We run our programs on a Linux box equipped with 256GiB RAM and 3.5GHz AMD EPYC Milan CPU, using 32 threads.
 
-% \subsection{Accuracy of \textsc{ApproxDelta}}
+We now investigate the efficiency of our approximation algorithm \(\text{Approx}\mathcal{HK}\). To this end, in Table~\ref{tab:runtime_comparison}, we report the running time of \(\text{Approx}\mathcal{HK}\) and that of the direct accurate algorithm called \(\text{Exact}\mathcal{HK}\) that calculates the centrality \(H_u\) for each \(u \in V\) by calculating the pseudoinverse of \(\lap\) as given  in Lemma~\ref{HjK}. To objectively evaluate the running time, for both \(\text{Exact}\mathcal{HK}\) and \(\text{Approx}\mathcal{HK}\) on all considered networks except the last seven ones marked with \(\ast\), we enforce the program to run on a single thread.  From Table~\ref{tab:runtime_comparison} we can see that for  moderate approximation parameter \(\epsilon\), the computational time for \(\text{Approx}\mathcal{HK}\) is significantly  smaller than  that  for \(\text{Exact}\mathcal{HK}\), especially for large-scale networks tested.  Thus,   \(\text{Approx}\mathcal{HK}\) can significantly improve the performance compared with  \(\text{Exact}\mathcal{HK}\). For the  seven networks marked with \(\ast\), the number of vertices for which ranges from \(10^5\) to \(10^6\), we cannot run the \(\text{Exact}\mathcal{HK}\) algorithm on the machine due to the limits of memory and time. However, for these networks, we can approximately compute their walk centrality for all vertices by using algorithm \(\text{Approx}\mathcal{HK}\), which further show that   \(\text{Approx}\mathcal{HK}\) is  efficient and scalable to large networks.
 
-% Since we give the approximate guarantee for algorithm \textsc{ApproxDelta} and \textsc{ApproxH} above, it is necessary to calculate the approximation errors of both algorithms in real networks by numerical experiments.
-
-% The introduced relative error of approximate algorithm can be represented as
-% \[\rho_{u,S}=\frac{\abs{\Delta'(u,S)-\Delta(u,S)}}{\Delta(u,S)}\]
-% which is caused by using \lemref{lem:JL} and \lemref{lem:solver}.
-% To intuituively demonstrate the relationship between the error and the dimension of the projection matrix in \lemref{lem:JL}, we use quantity \(c_{JL}\) to denote \(q/\log n\) in \textsc{ApproxDelta}.
-% We run \textsc{ApproxDelta} with various \(c_{JL}\) on different real networks (Euroroads, Hamsterster friends, ego-Facebook and CA-GrQc), setting absorbing set \(S=\setof{u^*}\) where
-% \[u^*=\argmin_{u\in V}\manc{\setof{u}}\]
-% For each \(c_{JL}\), we compute \(\rho_{u,S}\) for each node \(u\neq u^*\), then draw the distribution of them in \figref{pic:margin-error}.
-% We observe that almost all of the relative errors are in the interval \((0,0.2]\) when \(c_{JL}\ge50\), so we set parameter \(c_{JL}=50\) in the following experiments, whose results will show that this parameter is sufficient to get approximate solution.
-
-% \begin{figure}
-%     \centering
-%     \includegraphics[width=0.475\textwidth]{margin_errors.eps}
-%     \caption{Relative error \(\rho_{u,S}\) distribution of algorithm \textsc{ApproxDelta} with different \(c_{JL}\) on four networks: ego-Facebook (a), CA-GrQc (b), Euroroads (c) and Hamsterster friends (d).\label{pic:margin-error}}
-% \end{figure}
-
-\subsection{Performance of \textsc{Exact} and \textsc{Approx}}
-
-We first compare the performance of \textsc{Exact} and \textsc{Approx} with optimum solution on four small networks~\cite{Ku13}: \textit{Zebra} with 23 nodes, \textit{Zachary karate club} with 34 nodes, \textit{Contiguous USA} with 49 nodes and \textit{Les Misérables} with 77 nodes.
-For each network \(\gr=(V,E)\), we find the \(k\)-element set with minimum MANC value by enumerating all the \(k\)-element subsets of \(V\), then compare the minimum MANC value with solution given by \textsc{Exact} and \textsc{Approx}, whose results is shown in \figref{pic:compare-effect-optimum}.
-\figref{pic:compare-effect-optimum} demonstrates that the solutions given by our greedy algorithms are almost the same with each other, both of them are also quite close to the optimum solution, which indicates that the approximation ratio of our proposed algorithms are far better than the theorecical guarantees.
-
-\begin{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table*}[htbp]
     \centering
-    \begin{tikzpicture}[scale=\scaleoptimum,baseline]
-        \begin{axis}[
-                xlabel=\Large{\(k\)},
-                ylabel=\Large{\(M(S)\)},
-                legend style={font=\Large},
-                legend entries={Approx,Exact,Optimum},
-            ]
-            \addplot+[
-                mark=pentagon*,
-                mark size = 3pt
-            ] table {compare_effects/optimum/Zebra/Approx.dat};
-            \addplot table {compare_effects/optimum/Zebra/Exact.dat};
-            \addplot table {compare_effects/optimum/Zebra/Optimum.dat};
-            \node [font=\huge] at (3.5,10) {(a)};
-        \end{axis}
-    \end{tikzpicture}
-    \begin{tikzpicture}[scale=\scaleoptimum,baseline]
-        \begin{axis}[
-                xlabel=\Large{\(k\)},
-                ylabel=\Large{\(M(S)\)},
-                legend style={font=\Large},
-                legend entries={Approx,Exact,Optimum},
-            ]
-            \addplot+[
-                mark=pentagon*,
-                mark size = 3pt
-            ] table {compare_effects/optimum/Zachary karate club/Approx.dat};
-            \addplot table {compare_effects/optimum/Zachary karate club/Exact.dat};
-            \addplot table {compare_effects/optimum/Zachary karate club/Optimum.dat};
-            \node [font=\huge] at (3.5,7) {(b)};
-        \end{axis}
-    \end{tikzpicture}
+    \normalsize
+    %\tabcolsep=4.8pt
+    %\small
+    %\fontsize{6.4}{8.0}\selectfont
+    \begin{threeparttable}
+        \caption{The running time (seconds, \(s\)) of \(\text{Exact}\mathcal{HK}\) and \(\text{Approx}\mathcal{HK}\) with various \(\epsilon\) on several realistic  networks.}
+        \label{tab:runtime_comparison}
+        \begin{tabular}{cccccccc}
+            \toprule
+            %\Xhline{2\arrayrulewidth}
+            \multirow{2}{*}{Network}                      &
+            \multirow{2}{*}{\(\text{Exact}\mathcal{HK}\)} &
+            \multicolumn{6}{c}{\(\text{Approx}\mathcal{HK}\) (\(s\)) with various \(\epsilon\)}\cr
+            \cmidrule{3-8}
+                                                          & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\) & \(0.15\) & \(0.1\) & \(0.05\) \cr
+            \midrule
+            Jazz musicians                                & 0.001   & 0.020   & 0.026    & 0.043   & 0.071    & 0.144   & 0.613\cr
+            Chicago                                       & 0.033   & 0.007   & 0.009    & 0.013   & 0.023    & 0.050   & 0.204\cr
+            Hamster full                                  & 0.385   & 0.226   & 0.265    & 0.405   & 0.703    & 1.591   & 6.317\cr
+            Facebook (NIPS)                               & 2.889   & 0.965   & 1.338    & 1.972   & 3.408    & 7.501   & 30.92\cr
+            CA-GrQc                                       & 3.127   & 0.306   & 0.383    & 0.590   & 1.039    & 2.336   & 9.345\cr
+            Reactome                                      & 8.824   & 1.753   & 2.470    & 3.709   & 6.008    & 13.88   & 56.09\cr
+            Route views                                   & 11.35   & 0.286   & 0.351    & 0.535   & 0.980    & 1.993   & 7.907\cr
+            Pretty Good Privacy                           & 47.79   & 0.746   & 0.907    & 1.450   & 2.494    & 5.928   & 21.17\cr
+            CA-HepPh                                      & 54.39   & 1.937   & 2.496    & 3.792   & 7.018    & 15.35   & 57.16\cr
+            Astro-ph                                      & 219.2   & 4.959   & 4.789    & 7.223   & 13.32    & 29.61   & 112.9\cr
+            CAIDA                                         & 706.3   & 1.724   & 1.777    & 2.781   & 4.731    & 10.51   & 42.90\cr
+            Brightkite                                    & 4589    & 8.595   & 9.090    & 13.81   & 24.50    & 49.39   & 220.7\cr
+            Livemocha*                                    & --      & 57.33   & 79.59    & 125.7   & 210.0    & 464.3   & 1957 \cr
+            WordNet*                                      & --      & 23.03   & 31.51    & 48.15   & 96.36    & 188.4   & 1112 \cr
+            Gowalla*                                      & --      & 36.76   & 52.33    & 73.40   & 130.5    & 312.0   & 1189 \cr
+            com-DBLP*                                     & --      & 57.13   & 90.41    & 143.4   & 248.8    & 511.2   & 2250 \cr
+            Amazon*                                       & --      & 86.32   & 116.6    & 170.9   & 303.0    & 709.0   & 2523 \cr
+            Pennsylvania*                                 & --      & 290.4   & 433.1    & 647.1   & 1103     & 2701    & 13233\cr
+            roadNet-TX*                                   & --      & 372.4   & 601.7    & 926.1   & 1555     & 3301    & 17522\cr
+            %\Xhline{2\arrayrulewidth}
+            \bottomrule
+        \end{tabular}
+    \end{threeparttable}
+\end{table*}
 
-    \begin{tikzpicture}[scale=\scaleoptimum,baseline]
-        \begin{axis}[
-                xlabel=\Large{\(k\)},
-                ylabel=\Large{\(M(S)\)},
-                legend style={font=\Large},
-                legend entries={Approx,Exact,Optimum},
-            ]
-            \addplot+[
-                mark=pentagon*,
-                mark size = 3pt
-            ] table {compare_effects/optimum/Contiguous USA/Approx.dat};
-            \addplot table {compare_effects/optimum/Contiguous USA/Exact.dat};
-            \addplot table {compare_effects/optimum/Contiguous USA/Optimum.dat};
-            \node [font=\huge] at (3.5,25) {(c)};
-        \end{axis}
-    \end{tikzpicture}
-    \begin{tikzpicture}[scale=\scaleoptimum,baseline]
-        \begin{axis}[
-                xlabel=\Large{\(k\)},
-                ylabel=\Large{\(M(S)\)},
-                legend style={font=\Large},
-                legend entries={Approx,Exact,Optimum},
-            ]
-            \addplot+[
-                mark=pentagon*,
-                mark size = 3pt
-            ] table {compare_effects/optimum/Les Misérables/Approx.dat};
-            \addplot table {compare_effects/optimum/Les Misérables/Exact.dat};
-            \addplot table {compare_effects/optimum/Les Misérables/Optimum.dat};
-            \node [font=\huge] at (3.5,9) {(d)};
-        \end{axis}
-    \end{tikzpicture}
-    \caption{MANC \(\manc{S}\) of node set \(S\) computed by three different algorithms(\textsc{Exact},\textsc{Approx} and \textsc{Optimum}) on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c) and Les Misérables (d).\label{pic:compare-effect-optimum}}
-\end{figure}
+In addition to the high efficiency,  our algorithm  \(\text{Approx}\mathcal{HK}\) also provides a desirable approximation \(\hat{H}_u\) for the walk centrality \(H_u\).   To show the accuracy of   \(\text{Approx}\mathcal{HK}\), we compare the  approximate  results for \(\text{Approx}\mathcal{HK}\) with the exact results computed by  Lemma~\ref{HjK}. In Table~\ref{tab:accuracy}, we report the mean relative error \(\sigma\) of algorithm  \(\text{Approx}\mathcal{HK}\), with \(\sigma\) being defined by \(\sigma=\frac{1}{n}\sum_{u\in V}|{H_u}-\tilde{H}_u|/{H_u}\). From  Table~\ref{tab:accuracy} we can see that  the actual mean relative errors for all \(\epsilon\) and all networks are  very small, and are almost negligible for smaller \(\epsilon\). More interestingly, for all networks tested,   \(\sigma\) are magnitudes smaller than the theoretical guarantee. Therefore, the  approximation algorithm  \(\text{Approx}\mathcal{HK}\) provides very accurate results in practice.
 
-We subsequently compare the performance of \textsc{Exact} and \textsc{Approx} with three other algorithms: \textsc{Top-Absorb}, \textsc{Top-Degree} and \textsc{Top-PageRank}.
-\textsc{Top-Absorb} simply chooses \(k\) absorbing nodes with minimum absorbing random-walk centrality, while \textsc{Top-Degree} and \textsc{Top-PageRank} chooses them with biggest degrees and biggest PageRank value respectively.
-We run these four algorithms on four medium-sized networks, the results is shown in \figref{pic:compare-effect}.
-\figref{pic:compare-effect} demonstrates that both of our algorithms also get similar approximate solutions in larger networks, which outperform the solutions of other algorithms.
 
-\begin{figure}
+\begin{table}[htbp]
+    \tabcolsep=8pt
     \centering
-    \begin{tikzpicture}[scale=\scaleexact,baseline]
-        \begin{semilogyaxis}[
-                xlabel=\Large{\(k\)},
-                ylabel=\Large{\(M(S)\)},
-                minor x tick num=1,
-                minor y tick num=4,
-                legend style={
-                        font=\footnotesize,
-                        legend columns=2,
-                    },
-                legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
-                ymax=800,
-            ]
-            \addplot+[
-                mark=pentagon*,
-                mark size = 3pt
-            ] table {compare_effects/exact/CA-GrQc/Approx.dat};
-            \addplot table {compare_effects/exact/CA-GrQc/Exact.dat};
-            \addplot table {compare_effects/exact/CA-GrQc/Top-Absorb.dat};
-            \addplot table {compare_effects/exact/CA-GrQc/Top-Degree.dat};
-            \addplot table {compare_effects/exact/CA-GrQc/Top-PageRank.dat};
-            \node [font=\huge] at (10,30) {(a)};
-        \end{semilogyaxis}
-    \end{tikzpicture}
-    \begin{tikzpicture}[scale=\scaleexact,baseline]
-        \begin{semilogyaxis}[
-                xlabel=\Large{\(k\)},
-                ylabel=\Large{\(M(S)\)},
-                minor x tick num=1,
-                minor y tick num=4,
-                legend style={
-                        font=\footnotesize,
-                        legend columns=2,
-                    },
-                legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
-                ymax=4500,
-            ]
-            \addplot+[
-                mark=pentagon*,
-                mark size = 3pt
-            ] table {compare_effects/exact/ego-Facebook/Approx.dat};
-            \addplot table {compare_effects/exact/ego-Facebook/Exact.dat};
-            \addplot table {compare_effects/exact/ego-Facebook/Top-Absorb.dat};
-            \addplot table {compare_effects/exact/ego-Facebook/Top-Degree.dat};
-            \addplot table {compare_effects/exact/ego-Facebook/Top-PageRank.dat};
-            \node [font=\huge] at (10,20) {(b)};
-        \end{semilogyaxis}
-    \end{tikzpicture}
+    \fontsize{8.0}{8.8}\selectfont
+    \begin{threeparttable}
+        \caption{Mean relative error \(\sigma\) of \(\text{Approx}\mathcal{HK}\) (\(\times \num{e-2}\)).} %100\%
+        \label{tab:accuracy}
+        \begin{tabularx}{7.5cm}{c p{0.5cm} p{0.5cm} p{0.5cm} p{0.5cm}}
+            \toprule[1pt]
+            \multirow{2}{*}{Network} &
+            \multicolumn{4}{l}{Mean relative error for various \(\epsilon\)}\cr
+            \cmidrule{2-5}
+                                     & \(0.3\)  & \(0.2\)  & \(0.1\)  & \(0.05\)\cr
+            \midrule
+            Jazz musicians           & \(10.2\) & \(7.23\) & \(3.89\) & \(1.79\)\cr
+            Chicago                  & \(9.01\) & \(5.98\) & \(3.33\) & \(1.48\)\cr
+            Hamster full             & \(8.88\) & \(6.07\) & \(2.94\) & \(1.48\)\cr
+            Facebook (NIPS)          & \(9.25\) & \(5.78\) & \(2.86\) & \(1.51\)\cr
+            CA-GrQc                  & \(7.94\) & \(5.25\) & \(2.64\) & \(1.33\)\cr
+            Reactome                 & \(8.39\) & \(5.61\) & \(2.81\) & \(1.43\)\cr
+            %Route views         &\(5.74\)  & \(3.90\) & \(1.92\) & \(0.974\)\cr
+            Route views              & \(5.74\) & \(3.90\) & \(1.92\) & \(0.97\)\cr
+            Pretty Good Privacy      & \(7.03\) & \(4.75\) & \(2.34\) & \(1.19\)\cr
+            CA-HepPh                 & \(7.67\) & \(5.20\) & \(2.57\) & \(1.28\)\cr
+            Astro-ph                 & \(7.85\) & \(5.24\) & \(2.63\) & \(1.32\)\cr
+            %	CAIDA               &\(5.32\) & \(3.54\) & \(1.75\) & \(0.876\)\cr	
+            CAIDA                    & \(5.32\) & \(3.54\) & \(1.75\) & \(0.88\)\cr
+            %Brightkite          &\(5.90\) & \(3.95\) & \(1.99\) & \(0.984\)\cr
+            Brightkite               & \(5.90\) & \(3.95\) & \(1.99\) & \(0.98\)\cr
+            \bottomrule
+        \end{tabularx}
+    \end{threeparttable}
+\end{table}
+\subsection{Results for Kemeny Constant of Model Networks }
 
-    \begin{tikzpicture}[scale=\scaleexact,baseline]
-        \begin{semilogyaxis}[
-                xlabel=\Large{\(k\)},
-                ylabel=\Large{\(M(S)\)},
-                ytick distance=10^1,
-                minor x tick num=1,
-                minor y tick num=4,
-                legend style={
-                        font=\footnotesize,
-                        legend columns=2,
-                    },
-                legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
-                ymax=1600,
-            ]
-            \addplot+[
-                mark=pentagon*,
-                mark size = 3pt
-            ] table {compare_effects/exact/Euroroads/Approx.dat};
-            \addplot table {compare_effects/exact/Euroroads/Exact.dat};
-            \addplot table {compare_effects/exact/Euroroads/Top-Absorb.dat};
-            \addplot table {compare_effects/exact/Euroroads/Top-Degree.dat};
-            \addplot table {compare_effects/exact/Euroroads/Top-PageRank.dat};
-            \node [font=\huge] at (10,25) {(c)};
-        \end{semilogyaxis}
-    \end{tikzpicture}
-    \begin{tikzpicture}[scale=\scaleexact,baseline]
-        \begin{semilogyaxis}[
-                xlabel=\Large{\(k\)},
-                ylabel=\Large{\(M(S)\)},
-                minor x tick num=1,
-                minor y tick num=4,
-                legend style={
-                        font=\footnotesize,
-                        legend columns=2,
-                    },
-                legend entries={Approx,Exact,Top-Absorb,Top-Degree,Top-PageRank},
-                ymax=12000,
-            ]
-            \addplot+[
-                mark=pentagon*,
-                mark size = 3pt
-            ] table {compare_effects/exact/US power grid/Approx.dat};
-            \addplot table {compare_effects/exact/US power grid/Exact.dat};
-            \addplot table {compare_effects/exact/US power grid/Top-Absorb.dat};
-            \addplot table {compare_effects/exact/US power grid/Top-Degree.dat};
-            \addplot table {compare_effects/exact/US power grid/Top-PageRank.dat};
-            \node [font=\huge] at (10,90) {(d)};
-        \end{semilogyaxis}
-    \end{tikzpicture}
-    \caption{MANC \(\manc{S}\) of node set \(S\) computed by four different algorithms(\textsc{Exact},\textsc{Approx},\textsc{Top-Absorb} and \textsc{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d).\label{pic:compare-effect}}
+To further demonstrate the performance of our proposed algorithm \(\text{Approx}\mathcal{HK}\), we use it to compute the Kemeny constant for some model networks.  Although for a general graph, the exact result for its  Kemeny constant is difficult to obtain, for some model networks generated by an iterative way, their   Kemeny constant can be determined explicitly. For example, for the pseudofractal scale-free web~\cite{XiZhCo16} and the Koch network~\cite{XiLiZh15}, one can obtain  exact expressions for  their Kemeny constant.
+
+In the following we use algorithm \(\text{Approx}\mathcal{HK}\) to approximately compute the Kemeny constant for the pseudofractal scale-free web and the Koch network. One main justification for selecting these two networks is that they display the remarkable scale-free small-world properties as observed in most real networks~\cite{Ne03}.  Both the pseudofractal scale-free web and the Koch network are constructed in an iterative way. Their particular constructions allow to explicitly determine their Kemeny constant.
+
+Let \(\mathcal{F}_g\) (\(g \geq 0\)) denote the pseudofractal scale-free web after \(g\) iterations. For \(g=0\), \( \mathcal{F}_0\) consists of a triangle of three vertices and three edges. For \(g>0\), \(\mathcal{F}_g\) is obtained from \(\mathcal{F}_{g-1}\) as follows. For each existing edge in \(\mathcal{F}_{g-1}\), a new vertex is created and linked to both end vertices of the edge.  Figure~\ref{psfw1} schematically illustrates the construction process of the pseudofractal scale-free web. In network \(\mathcal{F}_g\), there are \((3^{g+1}+3)/2\) vertices and \(3^{g+1}\) edges.  It has been shown~\cite{XiZhCo16} that the Kemeny constant \(K(\mathcal{F}_g) \) for \(\mathcal{F}_g\) is
+\begin{equation}\label{Kg01}
+    K(\mathcal{F}_g)=\frac{5}{2}\times3^g-\frac{5}{3}\times2^g+\frac{1}{2}\,. %\notag
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure  1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[!t]
+    \centering
+    % \includegraphics[width=0.75\linewidth]{Pseudofractal.eps}
+    \caption{ Illustration of the first several iterations of the pseudofractal scale-free web. }
+    \label{psfw1}
 \end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \captionof{figure}{MANC \(\manc{S}\) of node set \(S\) computed by four different algorithms(\textsc{Exact},\textsc{Approx},\textsc{Top-Absorb} and \textsc{Top-Degree}).\label{pic:compare-effect}}
 
-\subsection{Running time of \textsc{Exact} and \textsc{Approx}}
+The Koch network is also built in an iterative way. Let \(\mathcal{M}_{g}\) (\(g \geq 0\)) denote the Koch network after \(g\) iterations. Initially (\(g=0\)), \(\mathcal{M}_{0}\) is a triangle with three
+vertices and three edges. For \(g\geq 1\), \(\mathcal{M}_{g}\) is obtained from \(\mathcal{M}_{g-1}\) by
+performing the following operations. For each of the three vertices in
+every existing triangle in \(\mathcal{M}_{g-1}\), two new vertices are created, both of which and their
+``mother'' vertices are connected to one another forming a new triangle. Figure~\ref{network} illustrates the growth process of the Koch network.  In network \(\mathcal{M}_{g}\), the number of vertices is \(2\times 4^{g}+1\), and the number of
+edges is \(3\times 4^{g}\).  In~\cite{XiLiZh15}, the Kemeny constant \(K(\mathcal{M}_g)\) for \(\mathcal{M}_g\) was obtained to be
+\begin{equation}\label{Kg02}
+    K(\mathcal{M}_g)=(1+2g)\times 4^g+\frac{1}{3}\,. %\notag
+\end{equation}
 
-Finally, we prove that algorithm \textsc{Approx} is much more efficient than algorithm \textsc{Exact}, especially when applicated on large networks.
-We test both algorithms on a larger set of real networks.
-For each network, we use \textsc{Exact} and \textsc{Approx} separately to solve MANC minimization problem, setting \(k=10\).
-The running time of both algorithms is listed in \tabref{tab:info}.
-From \tabref{tab:info}, we can observe that the running time of \textsc{Approx} is proportional to the number of edges in the network, thus leading to an increase in the speedup ratio of \textsc{Approx} compared to \textsc{Exact}as the network size grows.
-In addition, \tabref{tab:info} indicates that \textsc{Approx} is still usable when dealing with networks with millions of nodes, while \textsc{Exact} fails because of its high time complexity.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure 2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[!t]
+    \centering
+    % \includegraphics[width=0.85\linewidth,trim=0 0 0 0]{Koch.eps}
+    % \includegraphics[width=0.85\linewidth]{Koch.eps}
+    \caption{Construction process for the Koch network.}
+    \label{network}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \begin{table}
-%     \caption{The average running times and corresponding speedup ratio of \textsc{Exact} and \textsc{Approx} on a larger set of real networks.}
-%     \label{tab:running-time}
-%     \begin{tabular}{*4{c}}
-%         \toprule
-%         \multirow{2}*{Network} & \multicolumn{2}{c}{Time (seconds)} & \multirow{2}*{Speedup ratio}          \\
-%         \cmidrule(lr){2-3}     & \textsc{Exact}                     & \textsc{Approx}                       \\
-%         \midrule
-%         Euroroads              & 0.864                              & 0.509                        & 1.697  \\
-%         Hamsterster friends    & 2.679                              & 1.133                        & 2.365  \\
-%         ego-Facebook           & 39.499                             & 6.150                        & 6.423  \\
-%         CA-GrQc                & 42.611                             & 1.515                        & 28.126 \\
-%         US power grid          & 74.966                             & 1.530                        & 48.997 \\
-%         Reactome               & 139.377                            & 10.426                       & 13.368 \\
-%         CA-HepTh               & 392.903                            & 4.050                        & 97.013 \\
-%         Sister cities          & 667.902                            & 8.362                        & 79.873 \\
-%         CA-HepPh               & -                                  & 23.377                       & -      \\
-%         CAIDA                  & -                                  & 23.705                       & -      \\
-%         loc-Gowalla            & -                                  & 543.582                      & -      \\
-%         com-Amazon             & -                                  & 1643.860                     & -      \\
-%         Dogster friends        & -                                  & 3702.121                     & -      \\
-%         roadNet-PA             & -                                  & 8556.227                     & -      \\
-%         roadNet-CA             & -                                  & 17876.751                    & -      \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
+We use our  algorithm \(\text{Approx}\mathcal{HK}\) to compute the Kemeny constant on  pseudofractal scale-free web \(\mathcal{F}_{12}\) and the Koch network \(\mathcal{M}_{10}\). The numerical results are reported in  Table~\ref{tab:Kemeny}, which shows that the approximation algorithm \(\text{Approx}\mathcal{HK}\) works effectively for both networks. This again demonstrates the advantage of our proposed algorithm for large networks.
 
-\section{Conclusions}\label{sec:conc}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table*}[htbp]
+    %\tabcolsep=5pt
+    \centering
+    \normalsize
+    %\fontsize{6.51}{8.0}\selectfont
+    \begin{threeparttable}
+        \caption{Exact Kemeny constant \(K\),   their approximation \(\tilde{K}\),  relative error \(\rho=(K-\tilde{K})/K\), and running time (seconds, \(s\)) for \(\tilde{K}\) on networks \(\mathcal{F}_{12}\) and \(\mathcal{M}_{10}\).  \(K\) is obtained via~\eqref{Kg01} and~\eqref{Kg02}, while \(\tilde{K}\) is obtained through algorithm \(\text{Approx}\mathcal{HK}\) with \(\epsilon=0.1\).}
+        \label{tab:Kemeny}
+        \begin{tabular}{ccccccc}
+            \toprule
+            Network              & Vertices  & Edges     & \(K\)      & \(\tilde{K}\) & Error \(\rho\) & Time\cr
+            \midrule
+            \specialrule{0em}{3pt}{3pt}
+            \(\mathcal{F}_{12}\) & 797,163   & 1,594,323 & 1,321,776  & 1,321,956     & 0.00014        & 207\cr
+            \specialrule{0em}{3pt}{3pt}
+            \(\mathcal{M}_{10}\) & 2,097,153 & 3,145,728 & 22,020,096 & 22,018,022    & 0.000094       & 1917\cr
+            \specialrule{0em}{3pt}{3pt}
+            %ZGL	           & 1,594,324  & 1,594,323  & 14,348,907 & 14,341,659\cr
+            %\specialrule{0em}{3pt}{3pt}
+            %ABZ			& 1,572,862  & 1,572,861 & 52,953,206 & 53,010,203\cr
+            %\specialrule{0em}{3pt}{3pt}
+            %DA			& 2,125,764  & 3,188,646 & 975,712,194 & 959,864,749\cr
+            \bottomrule
+        \end{tabular}
+    \end{threeparttable}
+\end{table*}
+\section{Conclusions}
 
-In this paper, we took the definition of hitting time of absorbing random walk as a basis, and extended it to the case to multiple nodes, i.e, Multiple Absorbing Node Centrality (MANC).
-For a connected weighted undirected graph with \(n\) nodes and \(m\) edges, MANC \(\manc{S}\) of the node set \(S\) is defined as the weighted sum of the hitting times of absorbing random walks from all nodes in the graph to \(S\).
-Furthermore, we constructed the problem of finding the node set \(S^*\) with capacity \(k\) that minimizes \(\manc{S^*}\).
-We proved that this problem is NP-hard, and the objective function is monotone and supermodular.
-Due to these properties of MANC, we designed two approximate greedy algorithm, the former algorithm has a \(1-\frac1e\) approximate factor and \(O(kn^3)\) time complexity, while the latter algorithm obtains a \(1-\frac1e-\epsilon\) approximate factor and runs in time \(\tilde{O}(km)\).
-Numerical experiments on real-world networks illustrate that both of the algorithms can provide solutions that are quite close to the optimal.
-Specifically, numerical experiments on large networks incidate that the latter algorithm \textsc{Approx} is still well scalable while maintaining the approximation error and can be applicated in large networks with millions of nodes.
+The hitting time of random walks arises  in many practical scenarios. However, the time cost of exactly computing hitting time is prohibitively expensive. In this paper, we studied a walk centrality and Kemeny constant of a graph, both of which are actually weighted average of hitting times and have found wide  applications. We established a link between the two quantities, and reformulated them in terms of quadratic forms of the pseudoinverse of graph Laplacian. Moreover, we provided a randomized approximation algorithm with probabilistic guarantee, which computes the walk centrality for all vertices and Kemeny constant in nearly linear time with respect to  the number of edges. Finally, we conducted extensive experiments on various real-world and model networks, which show that the proposed  algorithm is both efficient and accurate, especially for large-scale networks. %It is expected that our approximate method can be extended or modified to compute other quantities derived from hitting times~\cite{Lo93}.
 
 \bibliographystyle{IEEEtran}
 \balance

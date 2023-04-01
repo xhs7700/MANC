@@ -85,7 +85,7 @@ Consequently, we further construct the MANC minimization problem: finding the no
 In this paper, we prove that the MANC minimization problem is NP-hard.
 Subsequently, we use the monotonicity and supermodularity of MANC to design greedy algorithms with approximation guarantees to solve this problem.
 However, the inevitable matrix inversion in the greedy algorithm leads to a complexity of \(O(kn^3)\) for networks containing \(n\) nodes, which cannot be employed in large networks.
-Then, we attempt to reformulate MANC as the quadratic form of either the pseudoinverse of Laplacian matrix or the inverse of a SDDM matrix so that we can approximate it by using SDD solver~\cite{CoKyMiPaJaPeRaXu14,SpTe14,GaKySp23} and Johnson-Lindenstrauss Lemma~\cite{JoLi84}.
+Then, we attempt to reformulate MANC as the quadratic form of either the pseudoinverse of Laplacian matrix or the inverse of a SDDM matrix so that we can approximate it by using SDD solver~\cite{CoKyMiPaPeRaSu14,SpTe14,GaKySp23} and Johnson-Lindenstrauss Lemma~\cite{JoLi84}.
 For a network with \(n\) nodes and \(m\) edges, our proposed fast greedy algorithm \textsc{Approx} has a \(\tilde{O}(km)\) time complexity.
 In order to verify the accuracy and efficiency of \textsc{Approx}, we perform extensive numerical experiments on networks of different sizes.
 The result demonstrates that \textsc{Approx} is still well scalable while maintaining the approximation error and can be applicated in large networks with millions of nodes.
@@ -136,7 +136,7 @@ We use \(e=\edge{u}{v}\) to represent an edge \(e\) connecting node \(u\) and no
 
 After giving the denotation of \(\gr\), then the adjacency matrix of \(\gr\) can be denoted as \(\mata\in \rea^{n\times n}\): for node \(i,j\in V\), \(\mata_{[i,j]}=\mata_{[j,i]}=w_{\edge{i}{j}}\) if \(i\) and \(j\) are adjacent, and \(\mata_{[i,j]}=\mata_{[j,i]}=0\) otherwise.
 
-Moreover, degree vector can be defined as \(\vecd=\mata\allone=\begin{pmatrix}\mydeg_1&\mydeg_2&\cdots&\mydeg_n\end{pmatrix}^\top\), where \(\mydeg_i\) represents degree of node \(i\).
+Moreover, degree vector can be defined as \(\vecd=\mata\vecone=\begin{pmatrix}\mydeg_1&\mydeg_2&\cdots&\mydeg_n\end{pmatrix}^\top\), where \(\mydeg_i\) represents degree of node \(i\).
 Then the maximum degree can be denoted as \(\mydeg_{\max}=\max\setof{d_u|u\in V}\).
 If we denote the relevant degree diagonal matrix as \(\matd={\rm{diag}}\mypar{\mydeg_1,\mydeg_2,\cdots,\mydeg_n}\), then the Laplacian matrix \(\lap\) of \(\gr\) is defined as \(\lap=\matd-\mata\).
 
@@ -147,7 +147,7 @@ Furthermore, let \(\matw\in\rea^{m\times m}\) be a diagonal matrix whose diagona
 From the definition above, it is easy to prove that \(\lap\) is positive semi-definite.
 In addition, all its eigenvalues are positive except for one unique zero eigenvalue.
 If we denote eigenvalues and corresponding eigenvectors of \(\lap\in\rea^{n\times n}\) as \(0=\lambda_1<\lambda_2\le\lambda_3\le\dots\le\lambda_n\) and \(\vecv_1,\vecv_2,\dots,\vecv_n\) respectively, then \(\lap\) can be rewritten as \(\lap=\sum_{i=1}^n\lambda_i\vecv_i\vecv_i^\top\).
-Since \(\lap\) is not invertible due to its null space \(\allone\), we turn to use its pseudoinverse form, which is defined as \(\lap^\dagger=\sum_{i=2}^n\lambda_i^{-1}\vecv_i\vecv_i^\top\).
+Since \(\lap\) is not invertible due to its null space \(\vecone\), we turn to use its pseudoinverse form, which is defined as \(\lap^\dagger=\sum_{i=2}^n\lambda_i^{-1}\vecv_i\vecv_i^\top\).
 \(\lap^\dagger\) appears in many quantities related to random walk, such as Kemeny constant~\cite{Hu14} and Kirchhoff index.
 
 Moreover, Laplacian matrix has some useful properties.
@@ -258,19 +258,19 @@ It prompts us to similarly extend \thmref{thm:connection-single} to multi-node c
 \end{theorem}
 \begin{proof}
     To prove~\eqref{eq:connection-multiple}, we utilize the fundamental matrix \(\matfstar\) in the non-absorbing random walk model.
-    According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\allone\vecpi^\top)^{-1}\matpi^{-1}\), where \(\matpi\) is defined as \(\rm{diag}\mypar{\vecpi}\).
+    According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\vecone\vecpi^\top)^{-1}\matpi^{-1}\), where \(\matpi\) is defined as \(\rm{diag}\mypar{\vecpi}\).
     Subsequently, the hitting time \(H_{i,j}\) can be represented by \(\matfstar\) as \(H_{i,j}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\)~\cite{BoRaZh11}.
     Then the right side of \eqref{eq:connection-multiple} can be rewritten as
     \begin{equation}\label{eq:detour}
         \begin{split}
             &\sum_{i=1}^n\sum_{j=1}^n\vecpi_i\vecpi_jD_{i,j}(S)\\
             =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\vecpi_i\vecpi_j\matpdistr_{[i,k]}H_{k,j}  \\
-            =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\vecpi^\top\matpdistr\mypar{\matfstar_{[j,j]}\allone-\matfstar_{[S,j]}}                        \\
-            =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\allone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
+            =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\vecpi^\top\matpdistr\mypar{\matfstar_{[j,j]}\vecone-\matfstar_{[S,j]}}                        \\
+            =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\vecone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
             =&\sum_{i=1}^n\vecpi_i H_{i,S}+\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1,
         \end{split}
     \end{equation}
-    where the last equality is due to the fact that \(\matpdistr\allone=\allone\) and \(\matfstar\vecpi=\allone\).
+    where the last equality is due to the fact that \(\matpdistr\vecone=\vecone\) and \(\matfstar\vecpi=\vecone\).
 
     Afterwards, we are able to rewrite Kemeny constant \(\kem\) as
     \begin{equation}\label{eq:kemeny}
@@ -280,7 +280,7 @@ It prompts us to similarly extend \thmref{thm:connection-single} to multi-node c
             &=\sum_{j=1}^n\vecpi_j\matfstar_{[j,j]}-1,
         \end{split}
     \end{equation}
-    where the last equality is due to the fact that \(\matfstar\vecpi=\allone\) and \(\vecpi^\top\allone=1\).
+    where the last equality is due to the fact that \(\matfstar\vecpi=\vecone\) and \(\vecpi^\top\vecone=1\).
     Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes our proof.
 \end{proof}
 
@@ -314,16 +314,16 @@ According to ~\cite{KeSn76}, we are able to transfrom the definition of MANC int
 \end{fact}
 
 According to~\eqref{eq:funda}, the entry \((i,j)\) of \(\matf\) can be represented as the expected number of passages through node \(j\) by the random walker starting from node \(i\) before being absorbed.
-From the linearity of mean, it follows that the hitting time of a random walker is equivalent to the sum of the expected number of passages through all nodes in the graph, i.e. \(\vecl=\matf\allone\), where \(\vecl_i\) denotes the hitting time of a random walker starting from node \(i\).
+From the linearity of mean, it follows that the hitting time of a random walker is equivalent to the sum of the expected number of passages through all nodes in the graph, i.e. \(\vecl=\matf\vecone\), where \(\vecl_i\) denotes the hitting time of a random walker starting from node \(i\).
 In particular, if the random walker starts from absorbing node, the hitting time can be regarded as \(0\).
 Considering the above case, MANC \(\manc{S}\) can be written as
-\[\manc{S}=\vecpi_{-S}^\top\vecl=\vecpi_{-S}^\top\matf\allone=\vecpi_{-S}^\top(\mati-\matp)_{-S}^{-1}\allone.\]
+\[\manc{S}=\vecpi_{-S}^\top\vecl=\vecpi_{-S}^\top\matf\vecone=\vecpi_{-S}^\top(\mati-\matp)_{-S}^{-1}\vecone.\]
 
 Furthermore, after simplification using~\eqref{eq:trs}, we get the formula of \(\manc{S}\):
 \begin{equation}\label{eq:MANC}
     \begin{split}
-        \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\matp}_{-S}^{-1}\allone=\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\allone                          \\
-        & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\matd_{-S}^{-1}\matd_{-S}\allone \\
+        \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\matp}_{-S}^{-1}\vecone=\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\vecone                          \\
+        & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\matd_{-S}^{-1}\matd_{-S}\vecone \\
         & =\vecpi_{-S}^\top\mypar{\matd-\mata}_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}.
     \end{split}
 \end{equation}
@@ -357,9 +357,9 @@ Given a connected \(c\)-regular graph \(G=(V,E)\) and an integer \(k\), the goal
 
     We first prove that if \(S\) is a vertex cover of \(\gr\), then \(\manc{S}=(n-k)/n\).
     When \(S\) is a vertex cover of \(\gr\), because there are no edges between nodes in \(V\setminus S\), we can simplify~\eqref{eq:MANC} as
-    \[\manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\matd_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\allone.\]
+    \[\manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\matd_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\vecone.\]
     Since \(\gr\) is a \(c\)-regular graph, \(\vecpi=\begin{pmatrix}1/n&\cdots&1/n\end{pmatrix}^\top\).
-    Thus, \(\manc{S}=\vecpi_{-S}^\top\allone=(n-k)/n\).
+    Thus, \(\manc{S}=\vecpi_{-S}^\top\vecone=(n-k)/n\).
 
     We then prove that if \(S\) is not a vertex cover of \(\gr\), then \(\manc{S}>(n-k)/n\).
     For node \(u\in S\) and node \(v\in V\setminus S\), it is obvious that \(H_{u,S}=0\), \(H_{v,S}\ge1\).
@@ -371,9 +371,9 @@ Given a connected \(c\)-regular graph \(G=(V,E)\) and an integer \(k\), the goal
     Therefore, if we denote \(S+u'+v'\) as \(S'\), then we are able to get the lower bound of MANC:
     \begin{align*}
         \manc{S} & =\sum_{v\in V}\vecpi_vH_{v,S}=\sum_{v\in V\setminus S'}\vecpi_vH_{v,S}+\vecpi_{u'}H_{u',S}+\vecpi_{v'}H_{v',S} \\
-                 & >\vecpi_{-S'}\allone+\vecpi_{u'}\mypar{1+\frac{1}{n}}+\vecpi_{v'}\mypar{1+\frac{1}{n}}                         \\
-                 & =\vecpi_{-S}^\top\allone+\frac{\vecpi_{u'}+\vecpi_{v'}}n
-        >\vecpi_{-S}^\top\allone=(n-k)/n.
+                 & >\vecpi_{-S'}\vecone+\vecpi_{u'}\mypar{1+\frac{1}{n}}+\vecpi_{v'}\mypar{1+\frac{1}{n}}                         \\
+                 & =\vecpi_{-S}^\top\vecone+\frac{\vecpi_{u'}+\vecpi_{v'}}n
+        >\vecpi_{-S}^\top\vecone=(n-k)/n.
     \end{align*}
 
     Based on the above proposition, we can easily construct a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of MANCM, which completes our proof of the NP-hardness of MANCM.
@@ -470,7 +470,7 @@ It is easy to verify that~\cite{ZhXuZh20}
     }
     \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
     Compute \(\lap\) and \(\vecd\)\;
-    \(d\gets\vecd\allone\),\(\vecpi\gets d^{-1}\vecd\)\;
+    \(d\gets\vecd\vecone\),\(\vecpi\gets d^{-1}\vecd\)\;
     \(S_1\gets\setof{\argmin_{u\in V}\setof{d(\vece_u-\vecpi)^\top\lap^\dagger(\vece_u-\vecpi)}}\)\;
     \For{\(i=2,3,\dots,k\)}{
         \ForEach{\(u\in V\setminus S\)}{
@@ -515,7 +515,7 @@ Despite the time complexity optimization made by proposing \algoref{algo:exact},
 \end{lemma}
 \lemref{lem:JL} indicates that if we project \(n\) vectors \(\vecv_1,\vecv_2,\dots,\vecv_n\) into a lower dimensional space spanned by \(O(\log n)\) random vectors, the distances between projected vectors will be preserved with high probability.
 
-\begin{lemma}[SDD Solver~\cite{CoKyMiPaJaPeRaXu14,SpTe14,GaKySp23}]\label{lem:solver}
+\begin{lemma}[SDD Solver~\cite{CoKyMiPaPeRaSu14,SpTe14,GaKySp23}]\label{lem:solver}
     There exists an algorithm \(\vecx=\textsc{Solve}(\mats,\vecb,\delta)\) which takes a SDDM matrix or a Laplacian \(\mats\in\rea^{n\times n}\) with \(m\) nonzero elements, a vector \(\vecb\in\rea^n\), and an error parameter \(\delta>0\) as input, and returns a vector \(\vecx\in\rea^n\) which satisies
     \[\Abs{\vecx-\mats^{-1}\vecb}_{\mats}\le\delta\Abs{\mats^{-1}\vecb}_{\mats}\]
     with high probability.
@@ -543,7 +543,7 @@ Given that~\eqref{eq:margin-empty} can be regarded as the absorbing random-walk 
     }
     \Output{The approximation \(\tilde{H}_u\) of absorbing random-walk centrality \(H_u\) for any node \(u\) in graph \(\gr\)}
     Compute \(\lap\) and \(\vecd\)\;
-    \(d\gets\vecd\allone\),\(\vecpi\gets d^{-1}\vecd,n\gets\abs{V}\)\;
+    \(d\gets\vecd\vecone\),\(\vecpi\gets d^{-1}\vecd,n\gets\abs{V}\)\;
     \(w_{\min}\gets\min\setof{w_e|e\in E},w_{\max}\gets\max\setof{w_e|e\in E}\)\;
     \(k\gets\ceil{24\epsilon^{-2}\log n}\),\(\delta\gets\frac{\epsilon}{6n^2}\sqrt{\frac{(1-\epsilon)w_{\min}}{(1+\epsilon)w_{\max}}}\)\;
     Construct a matrix \(\matq\in\rea^{k\times m}\), each entry of which is \(\pm1/\sqrt k\) with identical probability\;
@@ -718,7 +718,7 @@ Furthermore, we are able to provide its approximation guarantee.
     Compute \(\lap\) and \(\vecd\)\;
     \(n\gets\abs{V},m\gets\abs{E}\)\;
     \(w_{\min}\gets\min\setof{w_e|e\in E},w_{\max}\gets\max\setof{w_e|e\in E}\)\;
-    \(d\gets\vecd\allone\),\(q,r\gets\ceil{24(\epsilon/7)^{-2}\log n}\)\;
+    \(d\gets\vecd\vecone\),\(q,r\gets\ceil{24(\epsilon/7)^{-2}\log n}\)\;
     \(\delta_1\gets \frac{w_{\min}\epsilon}{7n^2w_{\max}}\),\(\delta_2\gets \frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\)\;
     \(\vecx'\gets\textsc{Solve}(\lap_{-S},\vecd_{-S},\delta_1)\)\;
     \(\matq\gets\textsc{GenerateRandomMatrix}(q,m)\)\;
@@ -757,7 +757,7 @@ Since \textsc{Approx} calls \textsc{ApproxH} once and calls \textsc{ApproxDelta}
         an error parameter \(\epsilon\in(0,1)\)
     }
     \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
-    \(d\gets\vecd\allone\),\(\vecpi\gets d^{-1}\vecd\)\;
+    \(d\gets\vecd\vecone\),\(\vecpi\gets d^{-1}\vecd\)\;
     \(\setof{\tilde{H}_u|u\in V }\gets\textsc{ApproxH}(\gr,\epsilon)\)\;
     \(S_1\gets\setof{\argmin_{u\in V}\setof{\tilde{H}_u}}\)\;
     \For{\(i=2,3,\dots,k\)}{
