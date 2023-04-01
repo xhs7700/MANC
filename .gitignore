@@ -1,8 +1,8 @@
-main.aux
-main.bbl
-main.blg
-main.log
-main.out
-main.pdf
-main.synctex.gz
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.pdf
+*.synctex.gz
 MANC.pdf
