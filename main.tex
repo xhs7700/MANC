@@ -7,7 +7,7 @@
 
 \begin{document}
 
-\title{Absorbing Time of Random Walks as a Node Group Centrality}
+\title{Absorbing Time of Random Walks\\ as a Node Group Centrality}
 \author{Haisong~Xia,
     Zuobai~Zhang,
     Xiaotian~Zhou,
@@ -19,31 +19,111 @@
 \maketitle
 
 \begin{abstract}
-    For random walks on a graph, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex  \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution. Both quantities have found a large variety of applications in different areas. However, their high computational complexity limits their applications, especially for large networks with millions of vertices. In this paper, we first establish a connection between the two quantities, representing \(K\) in terms of \(H_j\) for all vertices. We then express both quantities in terms of quadratic forms of the pseudoinverse for graph Laplacian, based on which we develop an efficient algorithm that provides an approximation of \(H_j\) for all vertices and \(K\) in nearly linear time with respect to  the edge number, with  high probability. Extensive experiment results on real-life and model networks validate both the efficiency and accuracy of the proposed algorithm.
+    For random walks on a graph, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution.
+    Both quantities have found a large variety of applications in different areas.
+    However, their high computational complexity limits their applications, especially for large networks with millions of vertices.
+    In this paper, we first establish a connection between the two quantities, representing \(K\) in terms of \(H_j\) for all vertices.
+    Subsequently, we extend the notion of mean hitting time to the case of multiple vertices, proposing a vertex group centrality and its minimization problem.
+    We then express these quantities in terms of either the pseudoinverse for graph Laplacian or the inverse for a SDDM matrix, based on which we develop an efficient algorithm that provides an approximation of \(H_j\) for all vertices and \(K\) in nearly linear time with respect to the edge number, with high probability.
+    Based on the aforementioned algorithm, we provide another nearly linear greedy algorithm to solve the minimization problem of our proposed vertex group centrality with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any \(\epsilon\in(0,1)\).
+    Extensive experiment results on real-life and model networks validate both the efficiency and accuracy of our proposed algorithms.
 \end{abstract}
 
 \begin{IEEEkeywords}
-    Random walk, hitting time, Kemeny constant, spectral algorithm, complex network, node centrality.
+    Random walk, hitting time, Kemeny constant, spectral algorithm, complex network, vertex centrality.
 \end{IEEEkeywords}
 
-\section{Introduction}
+\section{Introduction}\label{sec:intro}
 
-As a powerful tool and method, random walks have found broad applications in various aspects. Frequently cited examples include image segmentation~\cite{Le06}, random algorithm design~\cite{SaDi12}, collaborative recommendation~\cite{FoPiReSa07}, community detection~\cite{LaDeBa14}, among others. A fundamental quantity related to random walks is hitting time~\cite{Lo93}, also called first-passage time~\cite{CoBeTeVoKl07}. For a random walk on a graph, the hitting time \(H_{ij}\) from a vertex \(i\) to another vertex \(j\) is the expected time for the walker starting from \(i\) to visit \(j\) for the first time. Hitting time is related to many problems and has been successfully applied to diverse areas, such as Hanoi problem with random move~\cite{WuZhCh11}, query suggestion~\cite{MeZhCh08}, and clustering algorithm~\cite{ChLiTa08}.
+\IEEEPARstart{A}{s} a powerful tool and method, random walks have found broad applications in various aspects.
+Frequently cited examples include image segmentation~\cite{Le06}, random algorithm design~\cite{SaDi12}, collaborative recommendation~\cite{FoPiReSa07}, community detection~\cite{LaDeBa14}, among others.
+A fundamental quantity related to random walks is hitting time~\cite{Lo93}, also called first-passage time~\cite{CoBeTeVoKl07}.
+For a random walk on a graph, the hitting time \(H_{ij}\) from a vertex \(i\) to another vertex \(j\) is the expected time for the walker starting from \(i\) to visit \(j\) for the first time.
+Hitting time is related to many problems and has been successfully applied to diverse areas, such as Hanoi problem with random move~\cite{WuZhCh11}, query suggestion~\cite{MeZhCh08}, and clustering algorithm~\cite{ChLiTa08}.
 
-Except for the intrinsic interest of hitting time itself and its direct applications, many other relevant quantities related to random walks are encoded in or expressed in terms of this crucial quantity, for example, absorbing random-walk centrality~\cite{MaMagi15} (or Markov centrality~\cite{WhSm03}) and Kemeny constant~\cite{Hu14}, both of which are a partial average of hitting times. As the name implies, the absorbing random-walk centrality is a measure for the importance of vertices on a graph. For a vertex \(j\), its absorbing random-walk centrality \(H_j\) is defined by \(H_j=\sum_{i} \rho(i) H_{ij}\), where \(\rho(\cdot)\) is the starting probability distribution over all vertices. Different from the shortest-path based centrality measures, random-walk based centrality metrics include the contributions from essentially all paths~\cite{Ne05}, and thus have a better discriminating power.
+Except for the intrinsic interest of hitting time itself and its direct applications, many other relevant quantities related to random walks are encoded in or expressed in terms of this crucial quantity, for example, absorbing random-walk centrality~\cite{MaMagi15} (or Markov centrality~\cite{WhSm03}), Kemeny constant~\cite{Hu14} and random detour time~\cite{RaZh13}.
+As the name implies, the absorbing random-walk centrality is a measure for the importance of vertices on a graph.
+For a vertex \(j\), its absorbing random-walk centrality \(H_j\) is defined by \(H_j=\sum_{i} \rho(i) H_{ij}\), where \(\rho(\cdot)\) is the starting probability distribution over all vertices.
+Different from the shortest-path based centrality measures, random-walk based centrality metrics include the contributions from essentially all paths~\cite{Ne05}, and thus have a better discriminating power.
 
-For random walks on a graph with \(n\) vertices, the Kemeny constant \(K\) is defined as the expected time for the walker starting from one vertex to second vertex selected randomly from the graph according to the stationary distribution \(\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}\) of the random walk, that is, \(K=\sum_{j} \pi_j H_{ij}\). The Kemeny constant has also found a wealth of applications in different fields~\cite{Hu14}. It can be utilized to gauge the efficiency of user navigation through the World Wide Web (WWW)~\cite{LeLo02}. Moreover, the Kemeny constant is related to the mixing rate of an irreducible Markov chain~\cite{LePeWi09}, by regarding it as the expected time to mixing of the Markov chain~\cite{Hu06}. Recently, the Kemeny constant has been applied to measure the efficiency of robotic surveillance in network environments~\cite{PaAgBu15} and to characterize the noise robustness of a class of protocols for formation control~\cite{JaOl15}.
+For random walks on a graph with \(n\) vertices, the Kemeny constant \(K\) is defined as the expected time for the walker starting from one vertex to second vertex selected randomly from the graph according to the stationary distribution \(\vecpi=\left(\pi_1, \pi_2, \cdots, \pi_n\right)^{\top}\) of the random walk, that is, \(K=\sum_{j} \pi_j H_{ij}\).
+The Kemeny constant has also found a wealth of applications in different fields~\cite{Hu14}.
+It can be utilized to gauge the efficiency of user navigation through the World Wide Web (WWW)~\cite{LeLo02}.
+Moreover, the Kemeny constant is related to the mixing rate of an irreducible Markov chain~\cite{LePeWi09}, by regarding it as the expected time to mixing of the Markov chain~\cite{Hu06}.
+Recently, the Kemeny constant has been applied to measure the efficiency of robotic surveillance in network environments~\cite{PaAgBu15} and to characterize the noise robustness of a class of protocols for formation control~\cite{JaOl15}
 
+Despite the wide range of applications of the absorbing random-walk centrality and the Kemeny constant, it is a computational challenge to obtain their exact values.
+By definition, both the absorbing random-walk centrality and the Kemeny constant are a partial average of some hitting times.
+However, the exact value of hitting time between any pair of vertices in a graph involves all eigenvalues and eigenvectors of (normalized) Laplacian matrix associated with the graph~\cite{Lo93,LiZh13PRE}, the computation complexity of which is the cube of the vertex number.
+Thus, for large realistic networks with millions of vertices, we cannot obtain their absorbing random-walk centrality and the Kemeny constant by resorting this straightforward method for computing hitting time.
+It is then of theoretical and practical interest to seek for alternative approximate approaches that scale to large networks.
 
-Despite the wide range of applications of the absorbing random-walk centrality and the Kemeny constant, it is a computational challenge to obtain their exact values. By definition, both the absorbing random-walk centrality and the Kemeny constant are a partial average of some hitting times. However, the exact value of hitting time between any pair of vertices in a graph involves all eigenvalues and eigenvectors of (normalized) Laplacian matrix associated with the graph~\cite{Lo93,LiZh13PRE}, the computation complexity of which is the cube of the vertex number. Thus, for large realistic networks with millions of vertices, we cannot obtain their absorbing random-walk centrality and the Kemeny constant by resorting this straightforward method for computing hitting time.  It is then of theoretical and practical interest to seek for alternative approximate approaches that scale to large networks.
+While computing absorbing random-walk centrality for a single vertex can be difficult, it is even more complex to find a group of \(k\) important vertices, which arises in many studies.
+For instance, in the field of wireless networks, sensor placement involves selecting an optimal subset of vertices to place sensors to sample physical signals~\cite{KrSiGu08,RaChVe13}, such as radiation or temperature.
+Another example is point cloud sampling~\cite{DiChWaBa20,ChTiFeVeKo17}, which requires selecting a representative subset of points to preserve the geometric features of reconstruction.
+Traditional methods of ranking individual vertices may not meet these requirements, making it necessary to propose a vertex group centrality.
 
-In this paper, we propose a nearly linear time algorithm to address the computation issue for absorbing random-walk centrality  \(H_j\) and Kemeny constant \(K\) in large networks. We focus on a special absorbing random-walk centrality \(H_j=\sum_{i} \rho(i) H_{ij}\), with the starting probability distribution \(\rho(\cdot)\) being the stationary distribution \(\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}\) of the random walk. In other words,  we study \(H_j=\sum_{i} \pi_i H_{ij}\), which has received considerable attention~\cite{TeBeVo09,Be09,Be16}. We first  express \(K\) in terms of \(H_j\) for all vertices, and further  express \(H_j\) and \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix. We then propose a fast algorithm to compute approximate \(H_j\) for all vertices and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16}. Finally, we experimentally demonstrate that our algorithm is accurate and is significantly faster than the direct exact computation of related quantities according to their definitions.
+We introduce a new vertex group centrality called Absorbing Group Centrality (AGC) by extending absorbing random-walk centrality to the case of multiple vertices.
+For a connected undirected graph and a vertex group \(S\), AGC \(\manc{S}\) is the expected hitting time for a random walker starting from a vertex \(u\) to an arbitary vertex in \(S\). Here, vertex \(u\) is chosen based on the stationary distribution \(\vecpi\).
+We also introduce the AGC minimization problem, which involves identifying the vertex group \(S^*\) with capacity \(k\) that minimizes AGC \(\manc{S^*}\).
+
+In this paper, we present algorithms that can address the following tasks in large networks with nearly linear time complexity:
+\begin{itemize}
+    \item Computing absorbing random-walk centrality \(H_j\) and Kemeny constant \(K\);
+    \item Computing Absorbing Group Centrality (AGC) \(\manc{S}\);
+    \item Solving the AGC minimization problem with an approximate factor.
+\end{itemize}
+
+We focus on a special absorbing random-walk centrality \(H_j=\sum_{i} \rho(i) H_{ij}\), with the starting probability distribution \(\rho(\cdot)\) being the stationary distribution \(\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}\) of the random walk.
+In other words,  we study \(H_j=\sum_{i} \pi_i H_{ij}\), which has received considerable attention~\cite{TeBeVo09,Be09,Be16}.
+We first express \(K\) in terms of \(H_j\) for all vertices, and further express \(H_j\) and \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix.
+
+We then propose a fast algorithm to compute approximate \(H_j\) for all vertices and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16,GaKySp23}.
+
+For Absorbing Group Centrality (AGC), we reformulate it as the inverse of a SDDM matrix.
+Although the AGC minimization problem is proved to be NP-hard, we can utilize the monotonicity and supermodularity of AGC to develop a fast greedy algorithm that yields an approximate factor of \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) for any \(\epsilon\in(0,1)\).
+
+Finally, we experimentally demonstrate that our algorithms are accurate and are significantly faster than the direct exact computation of related quantities according to their definitions.
 
 \section{Preliminary}
 
-In this section, we give a brief introduction to some basic concepts about graphs, Laplacian matrix, resistance distance, random walks, hitting times and some quantities derived from hitting times. %, some quantitelectrical networks and biharmonic distance.
+In this section, we give a brief introduction to some notations as well as some basic concepts about graphs, Laplacian matrix, resistance distance, random walks, hitting times and some quantities derived from hitting times.
 
-\subsection{Graph and  Laplacian Matrix}
+\subsection{Notations}
+
+In our notation, we use normal lowercase letters such as \(a,b,c\) to represent scalars in \(\rea\). We denote vectors with bold lowercase letters such as \(\veca,\vecb,\vecc\), and matrices with bold uppercase letters like \(\mata,\matb,\matc\).
+
+For the convenience of representing specific elements in vectors and matrices, we use \(\veca_{i}\) to represent the \(\myord{i}\) element of vector \(\veca\), and \(\mata_{[i,j]}\) to represent the entry at position \((i,j)\) in matrix \(\mata\).
+We also use \(\mata_{[i,:]}\) and \(\mata_{[:,j]}\) to denote the \(\myord{i}\) row and \(\myord{j}\) column of matrix \(\mata\), respectively.
+
+Moreover, we write sets in subscripts to denote subvectors and submatrices.
+For example, \(\veca_{-S}\) represents the subvector of \(\veca\) obtained by removing elements with indices in set \(S\), \(\mata_{-S}\) represents the submatrix of \(\mata\) obtained by removing elements with row indices or column indices in set \(S\).
+Note that the subscript takes precedence over the superscript, thus \(\mata_{-S}^{-1}\) denotes the inverse of \(\mata_{-S}\) rather than the submatrix of \(\mata^{-1}\).
+
+Finally, we use \(\vece_i\) to denote the \(\myord{i}\) standard basis vector of particular dimensions, and \(\vecone_n\in \rea^n\) to denote a vector of \(n\) dimensions with all elements set to \(1\).
+Sometimes we skip subscripts if there is no ambiguity.
+
+For a matrix \(\mata\in\rea^{m\times n}\), its Frobenius form is \(\Abs{\mata}_F=\sqrt{\trace{\mata^\top\mata}}\).
+
+As we will prove the approximation guarantee of our algorithms in \todo{later}, it is necessary to give the definition of approximate factor.
+
+\begin{definition}[\(\epsilon\)-approximation]
+    Let \(x\) and \(\tilde{x}\) be positive scalars, with \(\epsilon\) as the error parameter such that \(\epsilon\in(0,1)\). We refer to \(\tilde{x}\) as an \(\epsilon\)-approximation of \(x\) if the inequality \((1-\epsilon)\tilde{x}\le x\le(1+\epsilon)\tilde{x}\) holds. For convenience, we write this as \(x\approx_{\epsilon}\tilde{x}\).
+\end{definition}
+
+\subsection{Supermodular Functions}
+
+Subsequently, we give the definitions of monotone and supermodular set functions. For simplicity, we denote \(S\cup\setof{u}\) as \(S+u\).
+
+\begin{definition}[Monotonicity]
+    A set function \(f:2^{V}\to\rea^+\) is considered monotonic if and only if the inequality \(f(X)\ge f(Y)\) holds for any nonempty sets \(X\) and \(Y\) that satisfy \(X\subseteq Y\subseteq V\).
+\end{definition}
+
+\begin{definition}[Supermodularity]
+    A set function \(f:2^{V}\to\rea^+\) is considered supermodular if and only if the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds for any nonempty sets \(X\) and \(Y\) that satisfy \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\).
+\end{definition}
+
+\subsection{Graph and Laplacian Matrix}
 
 Let \(\gr=(V,E,w)\) denote a connected undirected weighted graph or network,  where \(V\) is the set of vertices,  \(E\) is the set of edges, and  \(w: E\to \mathbb{R}_{+}\) is the positive edge weight function, with \(w_e\) being the weight for edge \(e\). Then, there are total \(n=|V|\) vertices and \(m=|E|\) edges in graph \(\gr\). We use \(u \sim v\) to indicate that two vertices \(u\) and \(v\) are connected by an edge. Let \(w_{\max}\) and \(w_{\min}\) denote the maximum edge weight and minimum edge weight, respectively. Namely, \(w_{\max}=\max_{e\in E} w_e \) and \(w_{\min}=\min_{e\in E} w_e\).
 
@@ -55,18 +135,27 @@ The Laplacian matrix \(\lap\) is symmetric and positive semidefinite. All  its e
 Since \(\lap\) is not invertible, we use \(\lap^{\dagger}\) to denote its pseudoinverse, which can be written as \(\lap^{\dagger}=\sum_{i=2}^{n}\frac{1}{\lambda_i}u_iu_i^{\top}\). Let \(\matj\) denote the matrix with all entries being ones. Then the pseudoinverse \(\lap^{\dagger}\) can also be recast as \(\mypar{\lap +\frac{1}{n}\matj}^{-1} - \frac{1}{n}\matj\)~\cite{GhBoSa08}. Note that for a general symmetric matrix, it shares the same null space as its Moore-Penrose generalized inverse~\cite{BeGrTh74}.
 Since the  null space of  null of \({\lap}\) is \( \vecone\),  it turns out that \({\lap} \vecone ={\lap}^{\dagger} \vecone =\mathbf{0}\).
 
-\subsection{Electrical Network and Resistance Distance}
+Furthermore, the Laplacian matrix possesses several useful properties.
+It is easy to verify that Laplacian matrix is Symmetric Diagonally Dominant(SDD).
+Also, for a connected undirected graph \(\gr=(V,E)\) and any nonempty vertex group \(S\), its corresponding Laplacian submatrix \(\lap_{-S}\) is Symmetric Diagonally Dominant M-matrix(SDDM).
+For \(\lap_{-S}\), we also have the following lemma.
+\begin{lemma}\label{lem:trace-lap}
+    For a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, let \(\lap\) denote the Laplacian matrix of \(\gr\).
+    Then for any nonempty set \(S\subseteq V\),
+    \begin{equation*}
+        \trace{\lap_{-S}^{-1}}\le n^2w_{\min}^{-1}.
+    \end{equation*}
+\end{lemma}
 
+\subsection{Electrical Network and Resistance Distance}
 
 For an arbitrary graph \(\gr=(V,E,w)\), we can define its corresponding electrical network \(\bar{\gr}=(V,E,r)\), which is obtained from \(\gr\)  by considering edges as resistors and considering vertices as junctions between resistors~\cite{DoSn84}. The resistor of an associated  edge \(e\) is \(r_e=w_e^{-1}\).  For graph  \(\gr\), the resistance distance \(R_{ij}\) between two vertices \(i\) and \(j\)  is defined as the effective resistance between \(i\) and \(j\) in the corresponding  electrical network \(\bar{\gr}\)~\cite{KlRa93}, which is equal to the potential difference between \(i\) and \(j\) when a unit current enters one vertex and leaves the other one.
 
-%Let \(\bar{\gr}\) represent the corresponding resistor network of graph \(\gr\), which is obtained from \(\gr\) by arranging a conductance equal to the weight of the edge along every edge of \(\gr\). Let \(R_{ab}\) be the effective resistance, i.e., resistance distance~\cite{KlRa93}, between any pair of vertices a and b in the resistor network, which is defined as the voltage when a unit current enters one vertex and leaves the other.
-
-For  graph \(\gr\), the resistance distance  \(R_{ij}\) between two vertices \(i\) and \(j\) can be expressed in terms of the elements of \(\lap^{\dagger}\) as~\cite{KlRa93}:
+For graph \(\gr\), the resistance distance \(R_{ij}\) between two vertices \(i\) and \(j\) can be expressed in terms of the elements of \(\lap^{\dagger}\) as~\cite{KlRa93}:
 \begin{equation}\label{EE04}
     R_{ij}={\lap}_{ii}^{\dagger}+{\lap}_{jj}^{\dagger}-2{\lap}_{ij}^{\dagger}.
 \end{equation}
-Define \(\matr\) as  the \(n \times n\) resistance matrix of graph \(\gr\), whose entry at row \(i\) and column \(j\) represents the resistance distance  \(R_{ij}\) between  vertices \(i\) and \(j\).
+Define \(\matr\) as the \(n \times n\) resistance matrix of graph \(\gr\), whose entry at row \(i\) and column \(j\) represents the resistance distance \(R_{ij}\) between vertices \(i\) and \(j\).
 
 \begin{lemma}\label{Foster} \cite{Te91}
     Let \(\gr=(V,E,w)\) be a simple connected graph with \(n\) vertices. Then the sum of  weight times resistance distance over all pairs of adjacent vertices in  \(\gr\)  satisfies
@@ -78,7 +167,13 @@ Define \(\matr\) as  the \(n \times n\) resistance matrix of graph \(\gr\), whos
 
 \subsection{Random Walk on a Graph}
 
-For a graph  \(\gr\), one can define a  discrete-time random walk  on it. At any time step, the walker starting from its current location \(i\) moves to  vertex \(j\) with  probability  \(a_{ij}/s_i\). If  \(\gr\) is  finite and non-bipartite, the random walk  has a unique stationary distribution~\cite{LiZh13PRE}
+For a connected weighted graph \(\gr\) with \(n\) vertices, the classical random walk model of \(\gr\) can be described by the transition matrix \(\matp\in\rea^{n\times n}\): at any time step, the walker located at vertex \(i\) moves to vertex \(j\) with probability \({\matp_{[i,j]}=s_i^{-1}\mata_{[i,j]}}\).
+It is easy to verify that
+\begin{equation}\label{eq:trs}
+    \matp=\mats^{-1}\mata.
+\end{equation}
+
+If  \(\gr\) is  finite and non-bipartite, the random walk  has a unique stationary distribution~\cite{LiZh13PRE}
 \begin{equation}\label{EE01}
     \vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}=\left(\frac{s_1}{s}, \frac{s_2}{s}, \cdots, \frac{s_n}{s}\right)^{\top},
 \end{equation}
@@ -92,11 +187,14 @@ A fundamental quantity for random walks is hitting time~\cite{Lo93,CoBeTeVoKl07}
     \end{equation}
 \end{lemma}
 
-A lot of  interesting quantities can be derived from hitting times. Here we only consider two quantities, the absorbing random-walk centrality~\cite{MaMagi15}  and the Kemeny constant~\cite{Hu14}.
+A lot of interesting quantities can be derived from hitting times. Here we only consider three quantities, the absorbing random-walk centrality~\cite{MaMagi15}, the Kemeny constant~\cite{Hu14} and the random detour time.
 
 For a vertex \(j\) in graph \(\gr=(V,E,w)\), its absorbing random-walk centrality \(H_j\) is defined as \(H_j=\sum_{i} \rho(i) H_{ij}\), where \(\rho(\cdot)\) is the starting probability distribution over all vertices in \(V\). By definition, \(H_j\) is a weighted average of hitting times to vertex \(j\). The smaller the value of \(H_j\), the more important the vertex \(j\). The random-walk based centrality has an obvious advantage over those shortest-path based centrality measures~\cite{Ne05}. In this paper, we concentrate on a natural choice of  \(\rho(\cdot)\) by selecting the starting vertex from the stationary distribution \(\vecpi\). In this case, \(H_j=\sum_{i} \pi_i H_{ij}\), which has been much studied~\cite{TeBeVo09,Be09,Be16}. In the following text, we  call \(H_j=\sum_{i} \pi_i H_{ij}\) \textit{walk centrality} for short.
 
 Another quantity we are concerned with is the Kemeny constant \(K\). For a graph \(\gr\), its Kemeny constant \(K\) is defined as the expected steps for a walker starting from  vertex \(i\) to vertex \(j\) selected randomly from the vertex set \(V\), according to the stationary distribution \(\vecpi\). That is, \(K = \sum_{j = 1}^{n} \pi_j H_{ij}\). The Kemeny constant has been used to measure the user navigation efficiency through the WWW~\cite{LeLo02} and  robotic surveillance efficiency in network environments~\cite{PaAgBu15}. It can also measure the mixing rate of random walks~\cite{LePeWi09}.
+
+Subsequently, for graph \(\gr\), its random detour time \(D_{ij}(u)\) is defined as the expected time of a walker who starts from vertex \(i\), must visit vertex \(u\), then first reaches vertex \(j\), where \(i,u,j\in V\) differs from each other.
+That is, \(D_{ij}(u)= H_{iu}+H_{uj}\).
 
 Most quantities for random walks on graph \(\gr\) are determined by the eigenvalues and eigenvectors of the normalized Laplacian matrix~\cite{Ch97}, \({\mats}^{-\frac{1}{2}}\lap {\mats}^{-\frac{1}{2}}\), of \(\gr\), including the walk centrality and Kemeny constant. By definition, \({\mats}^{-\frac{1}{2}}\lap {\mats}^{-\frac{1}{2}}\) is a real, symmetric, semi-definitive matrix. Let \(0=\sigma_1 < \sigma_2 \leq \sigma_3 \leq \cdots \leq \sigma_n \) be the \(n\) eigenvalues of the normalized Laplacian matrix \({\mats}^{-\frac{1}{2}}\lap {\mats}^{-\frac{1}{2}}\). And let \(\vecpsi_1\), \(\vecpsi_2\), \(\vecpsi_3\), \(\ldots\), \(\vecpsi_n\) be their corresponding mutually orthogonal eigenvectors of unit length, where \(\vecpsi_i=(\psi_{i1},\psi_{i2},\ldots,\psi_{in})^{\top}\). Then~\cite{Lo93,Be16},
 \begin{equation}\label{ATT01}
@@ -109,13 +207,23 @@ and
 
 Equations \eqref{ATT01} and \eqref{Kemeny01} provide exact computation for the walk centrality and Kemeny constant, respectively. However, both formulas are expressed in terms of  the eigenvalues and eigenvectors of the normalized Laplacian, the computation complexity for which scale as \(O(n^3)\). Thus, direct  computation for \(H_j\) and \(K\)  using spectral method appears to be prohibitive for large networks, and is  infeasible  to those realistic networks with millions of vertices.
 
+\section{Introduction of Absorbing Group Centrality (AGC)}
 
+\subsection{Definition of AGC}
 
-\section{New Formulas for Markov  Centrality and Kemeny Constant }
+\subsection{Physical explanations of AGC}
 
-In this section, we first establish an explicit relation between the walk centrality \(H_j\) and the Kemeny constant \(K\).  Then we express both quantities in terms of quadratic forms of the pseudoinverse \(\lap^{\dagger}\)  of graph Laplacian \(\lap\), based on which we put forward a random  algorithm  approximately computing \(H_j\) and  \(K\).
+\subsection{Properties of AGC}
 
-%\subsection{Relation between Markov  Centrality and Kemeny Constant }
+% Monotonicity and Supermodularity
+
+\section{Problem Formulation}
+
+In this section, we establish an explicit relation between the walk centrality \(H_j\) and the Kemeny constant \(K\).
+We express both quantities in terms of quadratic forms of the pseudoinverse \(\lap^{\dagger}\) of graph Laplacian \(\lap\), which helps address their computational challenges.
+Additionally, we propose the AGC minimization problem and prove its NP-hardness.
+
+\subsection{New Formulas for Markov Centrality and Kemeny Constant}
 
 Although both the walk centrality \(H_j\) and the Kemeny constant \(K\) have attracted much attention from the scientific community, the relation between  them for a generic  graph  \(\gr\) is still lacking. Below we show that the Kemeny constant \(K\) can be expressed in a linear combination of walk centrality  \(H_j\) for all vertices in \(\gr\), as stated in the following lemma.
 
@@ -177,7 +285,11 @@ After obtaining the relation governing  the Kemeny constant \(K\)  and walk cent
     Substituting~\eqref{EE09}  into~\eqref{HjK01} gives~\eqref{Kemeny03}.
 \end{IEEEproof}
 
-\section{Nearly Linear Time Approximation Algorithm}
+\subsection{AGC minimization problem}
+
+
+
+\section{Nearly Linear Time Approximation Algorithms}
 
 In the preceding section, we reduce the problem of computing  \(H_j\) and \(K\) to evaluating the quadratic forms \((\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), \(u=1,2,\ldots, n\), of matrix  \(\lap^{\dagger}\).  However,  this involves computing the pseudoinverse of \(\lap\), the  straightforward computation for which still has a complexity of \(O(n^3)\), making it infeasible to huge networks. Here, we present an algorithm to compute an approximation of \(H_u\) for all  \(u \in V\) and \(K\)  in nearly linear time with respect to the number of edges,  which has a strict theoretical guarantee with  high probability.
 
@@ -596,7 +708,7 @@ Let \(\mathcal{F}_g\) (\(g \geq 0\)) denote the pseudofractal scale-free web aft
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[!t]
     \centering
-    % \includegraphics[width=0.75\linewidth]{Pseudofractal.eps}
+    \includegraphics[width=0.75\linewidth]{Pseudofractal-eps-converted-to.pdf}
     \caption{ Illustration of the first several iterations of the pseudofractal scale-free web. }
     \label{psfw1}
 \end{figure}
@@ -619,7 +731,7 @@ edges is \(3\times 4^{g}\).  In~\cite{XiLiZh15}, the Kemeny constant \(K(\mathca
 \begin{figure}[!t]
     \centering
     % \includegraphics[width=0.85\linewidth,trim=0 0 0 0]{Koch.eps}
-    % \includegraphics[width=0.85\linewidth]{Koch.eps}
+    \includegraphics[width=0.85\linewidth]{Koch-eps-converted-to.pdf}
     \caption{Construction process for the Koch network.}
     \label{network}
 \end{figure}
