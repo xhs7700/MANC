@@ -105,7 +105,7 @@ Sometimes we skip subscripts if there is no ambiguity.
 
 For a matrix \(\mata\in\rea^{m\times n}\), its Frobenius form is \(\Abs{\mata}_F=\sqrt{\trace{\mata^\top\mata}}\).
 
-As we will prove the approximation guarantee of our algorithms in \todo{later}, it is necessary to give the definition of approximate factor.
+As we will prove the approximation guarantee of our algorithms in \secref{sec:approx-algo}, it is necessary to give the definition of approximate factor.
 
 \begin{definition}[\(\epsilon\)-approximation]
     Let \(x\) and \(\tilde{x}\) be positive scalars, with \(\epsilon\) as the error parameter such that \(\epsilon\in(0,1)\). We refer to \(\tilde{x}\) as an \(\epsilon\)-approximation of \(x\) if the inequality \((1-\epsilon)\tilde{x}\le x\le(1+\epsilon)\tilde{x}\) holds. For convenience, we write this as \(x\approx_{\epsilon}\tilde{x}\).
@@ -123,11 +123,12 @@ Subsequently, we give the definitions of monotone and supermodular set functions
     A set function \(f:2^{V}\to\rea^+\) is considered supermodular if and only if the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds for any nonempty sets \(X\) and \(Y\) that satisfy \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\).
 \end{definition}
 
-\subsection{Graph and Laplacian Matrix}
+\subsection{Graph and Laplacian Matrix}\label{sub:lap}
 
 Let \(\gr=(V,E,w)\) denote a connected undirected weighted graph or network,  where \(V\) is the set of vertices,  \(E\) is the set of edges, and  \(w: E\to \mathbb{R}_{+}\) is the positive edge weight function, with \(w_e\) being the weight for edge \(e\). Then, there are total \(n=|V|\) vertices and \(m=|E|\) edges in graph \(\gr\). We use \(u \sim v\) to indicate that two vertices \(u\) and \(v\) are connected by an edge. Let \(w_{\max}\) and \(w_{\min}\) denote the maximum edge weight and minimum edge weight, respectively. Namely, \(w_{\max}=\max_{e\in E} w_e \) and \(w_{\min}=\min_{e\in E} w_e\).
 
-Mathematically, the topological and weighted properties of a graph \(\gr\) are encoded in its generalized adjacency matrix \(\mata\) with the entry \(a_{ij}\) denoting the adjacency relation between vertices \(i\) and \(j\). If vertices \(i\) and \(j\) are linked to each other by an edge \(e\), then \(a_{ij}= a_{ji}=w_{e}> 0\). Otherwise, \(a_{ij}=a_{ji}=0\) indicating that vertices \(i\) and \(j\) are not adjacent. In a weighted graph \(\gr\), the strength  \(s_i\) of a vertex \(i\) is defined by \(s_i=\sum_{j=1}^n a_{ij}\)~\cite{BaBaPaVe04}. The diagonal strength matrix of graph \(\gr\) is defined to be \({\mats} = {\rm diag}(s_1, s_2, \ldots, s_n)\), and the Laplacian matrix of \(\gr\) is \({\lap}={\mats}-{\mata}\).
+Mathematically, the topological and weighted properties of a graph \(\gr\) are encoded in its generalized adjacency matrix \(\mata\) with the entry \(a_{ij}\) denoting the adjacency relation between vertices \(i\) and \(j\). If vertices \(i\) and \(j\) are linked to each other by an edge \(e\), then \(a_{ij}= a_{ji}=w_{e}> 0\). Otherwise, \(a_{ij}=a_{ji}=0\) indicating that vertices \(i\) and \(j\) are not adjacent. In a weighted graph \(\gr\), the strength  \(s_i\) of a vertex \(i\) is defined by \(s_i=\sum_{j=1}^n a_{ij}\)~\cite{BaBaPaVe04}, where we denote the maximal vertex strength as \(s_{\max}=\max\setof{s_i|i\in V}\).
+The diagonal strength vector of graph \(\gr\) is defined to be \(\vecs=\mypar{s_1,s_2,\cdots,s_n}^\top\), while the diagonal strength matrix of graph \(\gr\) is defined to be \({\mats} = {\rm diag}(s_1, s_2, \ldots, s_n)\), and the Laplacian matrix of \(\gr\) is \({\lap}={\mats}-{\mata}\).
 
 Let \(\matb \in \mathbb{R}^{|E| \times |V|}\) be the incidence matrix of \(\gr\). For each edge \(e\) with two end vertices \(i\) and \(j\), a direction is assigned arbitrarily. Let \(\vecb_e^\top\) be the row of matrix \(\matb\) associated with edge \(e\). Then the element \(b_{eu}\) at row corresponding to edge \(e\) and column corresponding to vertex \(u\) is defined as follows: \(b_{eu} = 1\) if vertex \(u\) is the tail of edge \(e\), \(b_{eu}=-1\) if vertex \(u\) is the head of  edge \(e\), and \(b_{eu}=0\) otherwise. Let \(\vece_u\) be the \(u\)-th canonical basis of the space \(\mathbb{R}^{|V|}\), then for an edge \(e\) connecting two vertices \(i\) and \(j\), \(\vecb_e\) can also be recast as \(\vecb_e=\vece_{i}-\vece_{j}\).  Let  \(\matw \in \mathbb{R}^{|E| \times |E|}\) be a diagonal matrix with the diagonal entry \((e,e)\) being \(w_e\). Then the Laplacian matrix \(\lap\) of graph \(\gr\) can be written as \(\lap=\matb^T\matw\matb=\sum_{e\in E}w_e\vecb_e\vecb_e^{\top}\).
 
@@ -253,9 +254,9 @@ Considering the aforementioned case, we can express AGC \(\manc{S}\) as
 Furthermore, after simplification using~\eqref{eq:trs}, we get the formula of \(\manc{S}\):
 \begin{equation}\label{eq:MANC}
     \begin{split}
-        \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\vecone                          \\
-        & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\matd_{-S}^{-1}\matd_{-S}\vecone \\
-        & =\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}.
+        \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\mats^{-1}\mata}_{-S}^{-1}\vecone                          \\
+        & =\vecpi_{-S}^\top\mypar{\mati-\mats^{-1}\mata}_{-S}^{-1}\mats_{-S}^{-1}\mats_{-S}\vecone \\
+        & =\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}.
     \end{split}
 \end{equation}
 
@@ -435,7 +436,8 @@ After obtaining the relation governing the Kemeny constant \(K\)  and walk centr
     Substituting~\eqref{EE09}  into~\eqref{HjK01} gives~\eqref{Kemeny03}.
 \end{IEEEproof}
 
-\todo{Add words about computing problems}
+According to \lemref{HjK}, we can simplify the task of computing \(H_j\) and \(K\) by evaluating the quadratic forms of matrix \(\lap^{\dagger}\).
+Unfortunately, the direct computation of \(\lap^{\dagger}\) still has a complexity of \(O(n^3)\), which makes it impractical for larger networks.
 
 \subsection{AGC minimization problem}
 
@@ -449,49 +451,169 @@ Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices,
 \end{equation*}
 \end{problem}
 
-To prove the NP-hardness of AGCM, we try to construct a reduction from Vertex Cover to a decision version of AGCM.
+To prove the NP-hardness of AGCM, we try to construct a reduction from the Vertex Cover problem to a decision version of AGCM.
 
 \begin{problem}[Vertex Cover on \(c\)-regular graphs]
-Given a connected \(c\)-regular graph \(G=(V,E)\) and an integer \(k\), the goal is to find out whether there exists a vertex group \(S\subseteq V\) such that \(\abs{S}\le k\) and every edge in \(E\) is incident with at least one vertex in \(S\).
+Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an integer \(k\). The aim is to determine whether a subset of vertices \(S\subseteq V\) exists, with cardinality \(\abs{S}\le k\), such that every edge in \(E\) is incident with at least one vertex in \(S\).
 \end{problem}
 
 \begin{theorem}\label{thm:np-hard}
-    MANCM is NP-hard.
+    AGCM is NP-hard.
 \end{theorem}
-\todo{Fix format problems in the following proof}
 \begin{IEEEproof}
-    For an arbitary connected \(c\)-regular graph \(\gr=(V,E,w)\), where the weights of all edges are equal to \(1\).
-    Let \(S\subseteq V\) be a nonempty node set with capacity \(k\), then we attempt to prove that \(\manc{S}\ge (n-k)/n\), the equality holds if and only if \(S\) is a vertex cover of \(\gr\).
+    For a connected graph \(\gr=(V,E,w)\) that is \(c\)-regular, where the weights of all edges are equal to \(1\), we attempt to prove that \(\manc{S}\ge (n-k)/n\) for any nonempty vertex group \(S\subseteq V\) with capacity \(k\).
+    The equality holds if and only if \(S\) is a vertex cover of \(\gr\).
 
-    We first prove that if \(S\) is a vertex cover of \(\gr\), then \(\manc{S}=(n-k)/n\).
-    When \(S\) is a vertex cover of \(\gr\), because there are no edges between nodes in \(V\setminus S\), we can simplify~\eqref{eq:MANC} as
-    \[\manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\matd_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\vecone.\]
+    We first prove that if \(S\) is a vertex cover of \(\gr\), then \(\manc{S}=(n-k)/n\). When \(S\) is a vertex cover of \(\gr\), there are no edges between vertices in \(V\setminus S\).
+    Thus, we can simplify~\eqref{eq:MANC} as:
+    \begin{equation*}
+        \manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}=\vecpi_{-S}^\top\mats_{-S}^{-1}\vecs_{-S}=\vecpi_{-S}^\top\vecone.
+    \end{equation*}
     Since \(\gr\) is a \(c\)-regular graph, \(\vecpi=\begin{pmatrix}1/n&\cdots&1/n\end{pmatrix}^\top\).
     Thus, \(\manc{S}=\vecpi_{-S}^\top\vecone=(n-k)/n\).
 
-    We then prove that if \(S\) is not a vertex cover of \(\gr\), then \(\manc{S}>(n-k)/n\).
-    For node \(u\in S\) and node \(v\in V\setminus S\), it is obvious that \(H_{u,S}=0\), \(H_{v,S}\ge1\).
-    Meanwhile, because \(S\) is not a vertex cover of \(\gr\), edge set \(E\) has at least one edge \((u',v')\) that is not covered by \(S\).
-    When a walker starting from node \(u'\) moves to node \(v'\) with probability of at least \(\frac{1}{d_{\max}}>\frac{1}{n}\), its walking length is greater than \(1\).
+    We then demonstrate that if \(S\) does not constitute a vertex cover of \(\gr\), then \(\manc{S}>(n-k)/n\).
+    For a vertex \(u\in S\) and a vertex \(v\in V\setminus S\), it is obvious that \(H_{u,S}=0\) and \(H_{v,S}\ge1\).
+    Moreover, since \(S\) is not a vertex cover of \(\gr\), there exists at least one edge \((u',v')\) in edge set \(E\) that is not covered by \(S\).
+    When a walker starts from vertex \(u'\) and moves to vertex \(v'\) with a probability of at least \(\frac{1}{s_{\max}}>\frac{1}{n}\), the walker's path length exceeds \(1\).
     That is,
-    \[H_{u',S}=H_{v',S}>\mypar{1-\frac{1}{n}}+\frac{2}{n}=1+\frac{1}{n}.\]
+    \begin{equation*}
+        H_{u',S}=H_{v',S}>\mypar{1-\frac{1}{n}}+\frac{2}{n}=1+\frac{1}{n}.
+    \end{equation*}
 
-    Therefore, if we denote \(S+u'+v'\) as \(S'\), then we are able to get the lower bound of MANC:
+    Therefore, if we denote \(S+u'+v'\) as \(S'\), then we are able to get the lower bound of AGC:
     \begin{align*}
-        \manc{S} & =\sum_{v\in V}\vecpi_vH_{v,S}                                                          \\
-                 & =\sum_{v\in V\setminus S'}\vecpi_vH_{v,S}+\vecpi_{u'}H_{u',S}+\vecpi_{v'}H_{v',S}      \\
-                 & >\vecpi_{-S'}\vecone+\vecpi_{u'}\mypar{1+\frac{1}{n}}+\vecpi_{v'}\mypar{1+\frac{1}{n}} \\
-                 & =\vecpi_{-S}^\top\vecone+\frac{\vecpi_{u'}+\vecpi_{v'}}n
+        \manc{S} & =\sum_{v\in V\setminus S'}\pi_vH_{v,S}+\pi_{u'}H_{u',S}+\pi_{v'}H_{v',S}         \\
+                 & >\vecpi_{-S'}\vecone+\pi_{u'}\mypar{1+\frac{1}{n}}+\pi_{v'}\mypar{1+\frac{1}{n}} \\
+                 & =\vecpi_{-S}^\top\vecone+\frac{\pi_{u'}+\pi_{v'}}n
         >\vecpi_{-S}^\top\vecone=(n-k)/n.
     \end{align*}
 
-    Based on the above proposition, we can easily construct a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of MANCM, which completes our proof of the NP-hardness of MANCM.
+    According to the proposition above, we can create a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of AGCM, which proves that AGCM is NP-hard.
 
 \end{IEEEproof}
 
-\section{Nearly Linear Time Approximation Algorithms}
+As AGCM is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve AGCM.
+However, the set function \(\manc{\cdot}\) is both monotonic and supermodular, allowing for a simple greedy algorithm with a \(1-\frac{1}{e}\) approximate factor to AGCM~\cite{NeWoFi78}.
+At each iteration, a new absorbing vertex \(u^*\) is chosen from the set of non-absorbing vertices \(V\setminus S\), satisfying
 
-In the preceding section, we reduce the problem of computing  \(H_j\) and \(K\) to evaluating the quadratic forms \((\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), \(u=1,2,\ldots, n\), of matrix  \(\lap^{\dagger}\).  However,  this involves computing the pseudoinverse of \(\lap\), the  straightforward computation for which still has a complexity of \(O(n^3)\), making it infeasible to huge networks. Here, we present an algorithm to compute an approximation of \(H_u\) for all  \(u \in V\) and \(K\)  in nearly linear time with respect to the number of edges,  which has a strict theoretical guarantee with  high probability.
+\begin{gather*}
+    \Delta(u,S)=\manc{S}-\manc{S+u},\\
+    u^*=\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}.
+\end{gather*}
+
+It is evident that the straightforward algorithm presented above requires computing \(\Delta(u,S)\) for every vertex \(u\) in the graph during each iteration, resulting in \(O(n)\) matrix inverse operations.
+If the naive matrix inverse algorithm with complexity \(O(n^3)\) is used, the total complexity of the simple greedy algorithm becomes \(O(kn^4)\).
+By simplifying \(\Delta(u,S)\), our aim is to decrease the time complexity of the greedy algorithm.
+
+For vertex \(u\in V\setminus S\), after adjusting the order of submatrix \(\lap_{-S}\), we rewrite \(\lap_{-S}\) as
+\begin{equation*}
+    \lap_{-S}=\begin{pmatrix}l_u & -\veca^\top \\-\veca&\mata\end{pmatrix},
+\end{equation*}
+where \(\mata\) denotes \(\lap_{-(S+u)}\).
+According to the properties of block matrices, we can get
+\begin{equation*}
+    \lap_{-S}^{-1}=\begin{pmatrix}
+        t & t\veca^\top\mata^{-1} \\t\mata^{-1}\veca&\mata^{-1}+t\mata^{-1}\veca\veca^\top\mata^{-1}
+    \end{pmatrix},
+\end{equation*}
+where \(t=\pinv{l_u-\veca^\top\inv{\mata}}\).
+Therefore, when \(S\neq\varnothing\), \(\Delta(u,S)\) can be rewritten as
+
+\begin{equation}\label{eq:margin-deriv}
+    \begin{split}
+        &\manc{S}-\manc{S+u}\\
+        =&\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecs_{-(S+u)}\\
+        =&\frac1t\mypar{t\vecpi_u+t\vecpi_{-(S+u)}^\top\mata^{-1}\veca}\mypar{td_u+t\veca^\top\mata^{-1}\vecs_{-(S+u)}}\\
+        =&\frac{\mypar{\vecpi_{-S}^\top\lap_{-S}^{-1}\vece_u}\mypar{\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}}}{\vece_u^\top\lap_{-S}^{-1}\vece_u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}}^2}{s\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}}.
+    \end{split}
+\end{equation}
+
+Here we skip some steps for brevity.
+
+However, during the first iteration of the greedy algorithm, when \(S=\varnothing\), \eqref{eq:margin-deriv} becomes invalid due to the singularity of \(\lap\).
+Since \(\manc{\varnothing}=\infty\), we can define \(\Delta(u,\varnothing)\) as \(-\manc{S+u}=-H_u\), which is the negative of absorbing random-walk centrality for vertex \(u\).
+In \lemref{HjK}, we have shown that \(H_u=s\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\).
+
+Equation~\eqref{ATT02} and~\eqref{eq:margin-deriv} demonstrate that we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) by inverting the same matrix \(\lap_{-S}\) or by using the pseudoinverse of the same matrix \(\lap\).
+As a result, we can optimize the simple greedy algorithm outlined in~\algoref{algo:exact}, and reduce the time complexity from \(O(kn^4)\) to \(O(kn^3)\).
+
+\begin{algorithm}
+    \caption{\textsc{Exact}\((\gr,k)\)}
+    \label{algo:exact}
+    \Input{
+        A connected weighted undirected graph \(\gr=(V,E,w)\);
+        an integer \(k\in[1,\abs{V}]\)
+    }
+    \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
+    Compute \(\lap\) and \(\vecs\)\;
+    \(s\gets\vecs\vecone\),\(\vecpi\gets \inv{s}\vecs\)\;
+    \(S_1\gets\setof{\argmin_{u\in V}\setof{s(\vece_u-\vecpi)^\top\lap^\dagger(\vece_u-\vecpi)}}\)\;
+    \For{\(i=2,3,\dots,k\)}{
+        \ForEach{\(u\in V\setminus S\)}{
+            \(\Delta(u,S)\gets\frac{(\vece_u^\top\lap_{-S}^{-1}\vecs_{-S})^2}{s(\vece_u^\top\lap_{-S}^{-1}\vece_u)}\)\;
+        }
+        \(u^*\gets\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}\)\;
+        \(S_i\gets S_{i-1}\cup\setof{u^*}\)
+    }
+    \Return{\(S_k\)}
+\end{algorithm}
+
+Afterwards, we prove that \algoref{algo:exact} has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximate factor.
+\begin{theorem}
+    The algorithm \(S_k=\textsc{Exact}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a vertex group \(S_k\) with capacity \(k\).
+    When \(k>1\), the vertex group \(S\) satisfies
+    \[\manc{\setof{u^*}}-\manc{S_k}\ge\mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}}\mypar{\manc{\setof{u^*}}-\manc{S^*}},\]
+    where
+    \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}},S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
+\end{theorem}
+\begin{IEEEproof}
+    According to the supermodularity of \(\manc{\cdot}\),
+    \[\manc{S_i}-\manc{S_{i+1}}\ge\frac{1}{k}\mypar{\manc{S_i}-\manc{S^*}}\]
+    holds for any positive integer \(i\), which indicates that
+    \[\manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1}{k}}\mypar{\manc{S_i}-\manc{S^*}}.\]
+    Subsequently, we can further obtain that
+    \begin{align*}
+        \manc{S_k}-\manc{S^*}\le & \mypar{1-\frac{1}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}    \\
+        \le                      & \frac{k}{k-1}\cdot\frac{1}{e}\mypar{\manc{S_1}-\manc{S^*}},
+    \end{align*}
+    which completes our proof based on the fact that \(S_1=\setof{u^*}\).
+\end{IEEEproof}
+
+\section{Nearly Linear Time Approximation Algorithms}\label{sec:approx-algo}
+
+In this section, we introduce fast algorithms that provide approximation guarantees for computing \(H_j\) and \(K\), as well as solving the AGC minimization problem.
+First, we introduce several concepts that form the theoretical foundation for our proposed algorithms.
+
+\begin{lemma}[Johnson-Lindenstraus Lemma, JL Lemma~\cite{Ac01}]
+    \label{lemma:JL}
+    Given fixed vectors \(\vecv_1,\vecv_2,\ldots,\vecv_n\in \mathbb{R}^d\) and
+    \(\epsilon>0\), let
+    \(\matq_{k\times d}\),  \(k\ge 24\log n/\epsilon^2\), be a matrix with each  entry equal  to \(1/\sqrt{k}\) or \(- 1/\sqrt{k}\)  with the same probability \(1/2\). Then with probability at least \(1-1/n\),
+    \[(1-\epsilon)\|\vecv_i-\vecv_j\|^2\le \|\matq \vecv_i-\matq \vecv_j\|^2\le
+        (1+\epsilon)\|\vecv_i-\vecv_j\|^2\] for all pairs \(i,j\le n\).
+\end{lemma}
+\lemref{lemma:JL} indicates that,  the pairwise distances \(\|\vecv_i-\vecv_j\|^2\) (\(i,j=1,2,\ldots, n\)) are almost preserved if we project the \(n\) vectors \(\vecv_i\) (\(i=1,2,\ldots, n\))  into a lower-dimensional space, spanned
+by \(O(\log n)\) random vectors.
+
+\begin{lemma}[SDD Solver~\cite{CoKyMiPaPeRaSu14,KySa16,GaKySp23}]
+    \label{lemma:ST}
+    There is an algorithm \(\vecx = \mathtt{Solve}(\lap,\vecy,\delta)\) which
+    takes a SDDM matrix or a Laplacian \(\lap\),
+    a column vector \(\vecy\), and an error
+    parameter \(\delta > 0\), and returns a column vector \(\vecx\) satisfying  \(\boldsymbol{1}^\top\vecx = 0\) and
+    \[
+        \|\vecx - \lap^{-1} \vecy\|_{\lap} \leq \delta \|\lap^{-1} \vecy\|_{\lap},
+    \]
+    where \(\Abs{\vecy}_{\lap} = \sqrt{\vecy^{\top} \lap \vecy}\).
+    The notation \(\lap^{-1}\) is used to represent the inverse matrix for a SDDM matrix or the pseudoinverse matrix for a Laplacian matrix.
+    The algorithm runs in expected time \(\Otil \left(m \log(1/\delta) \right)\).
+\end{lemma}
+
+\subsection{Approximations of the Kemeny constant and the walk centrality}
+
+In the preceding section, we reduce the problem of computing  \(H_j\) and \(K\) to evaluating the quadratic forms \((\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), \(u=1,2,\ldots, n\), of matrix  \(\lap^{\dagger}\).
+However,  this involves computing the pseudoinverse of \(\lap\), the straightforward computation for which still has a complexity of \(O(n^3)\), making it infeasible to huge networks. Here, we present an algorithm to compute an approximation of \(H_u\) for all  \(u \in V\) and \(K\)  in nearly linear time with respect to the number of edges,  which has a strict theoretical guarantee with  high probability.
 
 %\subsection{Random projections for related quantities}
 
@@ -508,19 +630,8 @@ Let \(C(u)=(\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), which c
 \end{small}
 This  in fact  equals the square of the distance between  vectors  \(\matw^{\frac{1}{2}} \matb \lap^{\dagger} \vece_u\) and \(\matw^{\frac{1}{2}} \matb \lap^{\dagger} \vecpi\), which can be evaluated by the Johnson-Lindenstraus
 Lemma~\cite{Ac01}.
-\begin{lemma}%[Johnson-Lindenstrauss Lemma, \cite{Ac01}]
-    \label{lemma:JL}
-    Given fixed vectors \(\vecv_1,\vecv_2,\ldots,\vecv_n\in \mathbb{R}^d\) and
-    \(\epsilon>0\), let
-    \(\matq_{k\times d}\),  \(k\ge 24\log n/\epsilon^2\), be a matrix with each  entry equal  to \(1/\sqrt{k}\) or \(- 1/\sqrt{k}\)  with the same probability \(1/2\). Then with probability at least \(1-1/n\),
-    \[(1-\epsilon)\|\vecv_i-\vecv_j\|^2\le \|\matq \vecv_i-\matq \vecv_j\|^2\le
-        (1+\epsilon)\|\vecv_i-\vecv_j\|^2\] for all pairs \(i,j\le n\).
-\end{lemma}
-Lemma~\ref{lemma:JL} indicates that,  the pairwise distances \(\|\vecv_i-\vecv_j\|^2\) (\(i,j=1,2,\ldots, n\)) are almost preserved if we
-project the \(n\) vectors \(\vecv_i\) (\(i=1,2,\ldots, n\))  into a lower-dimensional space, spanned
-by \(O(\log n)\) random vectors.
 
-In order to compute  \(C(u)\), we use Lemma~\ref{lemma:JL} to reduce the dimension. Let \(\matq\) be a \(k\times m\) random projection matrix. Then  \(\|\matq \matw^{\frac{1}{2}} \matb \lap^{\dagger}(\vece_u-\vecpi)\|\) is a good approximation for \(\|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u - \vecpi)\|\). Here we can use sparse matrix multiplication to compute \(\matq \matw^{\frac{1}{2}} \matb\). However, computing \(\matz=\matq \matw^{\frac{1}{2}} \matb \lap^{\dagger}\) directly involves inverting \(\lap+\frac{1}{n}\matj\). We avoid this by solving the system of equations \(\lap \vecz_i=\vecq_i\), \(i=1,\ldots,k\), where  \(\vecz^\top_i\) and \(\vecq^\top_i\) are, respectively, the \(i\)-th row of \(\matz\) and \(\matq \matw^{\frac{1}{2}} \matb\). For the convenience  of description, in the sequel we use the notation \(\Otil(\cdot)\) to hide \(\mathrm{poly} \log \) factors. By using Laplacian solvers~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16}, \(\vecz^\top _i\) can be efficiently approximated.  We here use the  solver from~\cite{CoKyMiPaPeRaSu14}, the performance of which is characterized in the following lemma.
+In order to compute  \(C(u)\), we use Lemma~\ref{lemma:JL} to reduce the dimension. Let \(\matq\) be a \(k\times m\) random projection matrix. Then  \(\|\matq \matw^{\frac{1}{2}} \matb \lap^{\dagger}(\vece_u-\vecpi)\|\) is a good approximation for \(\|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u - \vecpi)\|\). Here we can use sparse matrix multiplication to compute \(\matq \matw^{\frac{1}{2}} \matb\). However, computing \(\matz=\matq \matw^{\frac{1}{2}} \matb \lap^{\dagger}\) directly involves inverting \(\lap+\frac{1}{n}\matj\). We avoid this by solving the system of equations \(\lap \vecz_i=\vecq_i\), \(i=1,\ldots,k\), where  \(\vecz^\top_i\) and \(\vecq^\top_i\) are, respectively, the \(i\)-th row of \(\matz\) and \(\matq \matw^{\frac{1}{2}} \matb\). For the convenience  of description, in the sequel we use the notation \(\Otil(\cdot)\) to hide \(\mathrm{poly} \log \) factors. By using Laplacian solvers~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16}, \(\vecz^\top _i\) can be efficiently approximated.  We here use the  solver from~\cite{CoKyMiPaPeRaSu14}, the performance of which is characterized in \lemref{lemma:ST}.
 
 %For Major Comments (2): What we need to evaluate ios \(\lap^{\dagger} \vecq_i\) and \(\vecz_i\) is the solution of the equation \(\lap\vecz_i=\vecq_i\) given by the Laplacian Solver in Lemma~\ref{lemma:ST}. Then, we have
 %	\begin{equation}
@@ -531,21 +642,8 @@ In order to compute  \(C(u)\), we use Lemma~\ref{lemma:JL} to reduce the dimensi
 %	\end{equation}
 %Since the null space of \(\lap^{\dagger}\lap\) is \(\vecone\), we can obtain \(\vecz_i - \lap^{\dagger} \vecq_i = c \vecone\), \(c \in \mathbb{R}\). By multiplying \(\vecone^\top\) on both sides, it is easy to derive \(c=0\). Thus, we conclude \(\vecz_i = \lap^{\dagger} \vecq_i\).
 
-\begin{lemma}%[\cite{SpTe04}]
-    \label{lemma:ST}
-    There is an algorithm \(\vecx = \mathtt{LaplSolve}(\lap,\vecy,\delta)\) which
-    takes a Laplacian matrix \(\lap\),
-    a column vector \(\vecy\), and an error
-    parameter \(\delta > 0\), and returns a column vector \(\vecx\) satisfying  \(\boldsymbol{1}^\top\vecx = 0\) and
-    \[
-        \|\vecx - \lap^{\dagger} \vecy\|_{\lap} \leq \delta \|\lap^{\dagger} \vecy\|_{\lap},
-    \]
-    where \(\Abs{\vecy}_{\lap} = \sqrt{\vecy^{\top} \lap \vecy}\).
-    The algorithm runs in expected time \(\Otil \left(m \log(1/\delta) \right)\).
-\end{lemma}
-
 By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST},  one can  approximate  \(C(u)\) arbitrarily well.
-%Lemma~\ref{lemma:ST} shows that \(\vecz^\top _i\) can be efficiently approximated by using \(\mathtt{LaplSolve}\).
+%Lemma~\ref{lemma:ST} shows that \(\vecz^\top _i\) can be efficiently approximated by using \(\mathtt{Solve}\).
 %Before introducing our algorithm, we recall two lemmas that are critical to proving the approximation factor of our algorithm. In what follows we use the notation \(\Otil(\cdot)\) to hide \(\mathrm{poly}(\log n )\) factors.
 %To approximate  \(C(u)\), we need to use the following fact.
 %\begin{fact}
@@ -749,7 +847,7 @@ Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \(\text{Approx}\mathca
     \(\lap=\) Laplacian of \(\gr\),\, \(s_u=\) the strength of \(u\) for all \(u\in V\), \(s=\sum_{u \in V} s_u\)\;  Construct a matrix \(\matq_{k \times m}\),  where \(k=\lceil 24\log n/\epsilon^2 \rceil\) and each entry is \(\pm 1/\sqrt{k}\) with identical probability\;
     \For{\(i=1\) to \(k\)}{
         \(\vecq_i^\top \)=the \(i\)-th row of  \(\matq_{k \times m} \matw^{1/2} \matb\)  \\
-        \(\tilde{\vecz}_i=\mathtt{LaplSolve}(\lap, \vecq_i, \delta)\) where parameter   \(\delta\) is  given by~(\ref{EE14}) \\
+        \(\tilde{\vecz}_i=\mathtt{Solve}(\lap, \vecq_i, \delta)\) where parameter   \(\delta\) is  given by~(\ref{EE14}) \\
     }
     Calculate the constant vector \({\bf p}=\tilmatz \vecpi\)\;
     \For{each \(u\in V\)}{
@@ -759,11 +857,253 @@ Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \(\text{Approx}\mathca
     \Return \(\tilde{H}=\{u,\tilde{H}_u| u \in V\}\) and \(\tilde{K}\)
 \end{algorithm}
 
+\subsection{Approximations of solving AGCM}
+
+Despite the time complexity optimization proposed in \algoref{algo:exact}, this simple greedy algorithm for solving AGCM still requires matrix inversion, making it unsuitable for large networks.
+To speed up the computation of \(\Delta(u,S)\), we use efficient approximations established in \lemref{lemma:JL}, \lemref{lemma:ST} and \thmref{TheoAlg1}.
+
+Our first objective is to estimate \(\Delta(u,\varnothing)=-H_u\), which is the negative of the walk centrality for vertex \(u\).
+We can conveniently use \algoref{ALG01}, which has a proven approximation guarantee as shown in \thmref{TheoAlg1}.
+
+Our second objective is to estimate \(\Delta(u,S)\) when \(S\neq\varnothing\).
+To this end, we need to utilize the following lemma.
+
+\begin{lemma}\label{lem:norm-ineq}
+    Given a connected weighted undirected graph \(\gr=(V,E,w)\), let \(\lap\) denote the Laplacian matrix of the graph.
+    Then for an arbitary vertex group \(S\subseteq V\) and an arbitary vector \(\vecv\in\rea^{n-\abs{S}}\), \(\vecv_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\) holds.
+\end{lemma}
+
+\begin{IEEEproof}
+    As is mentioned in~\secref{sub:lap}, we can decompose Laplacian matrix as \(\lap=\matb^\top\matw\matb\).
+    Similarly, we can decompose SDDM matrix \(\lap_{-S}\) as \(\lap_{-S}=\lap'+\matz=\matb'^\top\matw'\matb'+\matz\), where \(\lap'\) denotes the Laplacian matrix of another graph, \(\matz\) denotes a diagonal matrix.
+
+    If \(\matz_{[i,i]}\neq0\), then we have \(\matz_{[i,i]}\ge w_{\min}\), it is apparent that \(\vecv_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\).
+    If \(\matz_{[i,i]}=0\), there must exist a vertex \(j\) that satisfies \(\matz_{[j,j]}\ge w_{\min}\) in graph component that contains vertex \(i\) after removing vertices in \(S\).
+    Let \(\pscr_{ij}\) denotes the simple path connecting vertex \(i\) and vertex \(j\), then we have
+    \begin{align*}
+        \Abs{\vecv}^2_{\lap_{-S}}
+         & \ge w_{\min}\sum_{\edge{a}{b}\in\pscr_{ij}}(\vecv_a-\vecv_b)^2+w_{\min}\vecv_j^2     \\
+         & \ge w_{\min}n^{-1}\mypar{\sum_{\edge{a}{b}\in\pscr_{ij}}(\vecv_a-\vecv_b)+\vecv_j}^2 \\
+         & \ge w_{\min}n^{-1}\vecv_i^2,
+    \end{align*}
+    which completes our proof.
+\end{IEEEproof}
+
+We first approximate the numerator of \(\Delta(u,S)\), which requires the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}\).
+Since \(\lap_{-S}\) is a SDDM matrix, we can use~\lemref{lemma:ST} to avoid computing matrix inverse \(\lap_{-S}^{-1}\).
+\begin{lemma}\label{lem:approx-numer}
+    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty vertex group \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\), let \(\vecx'=\mathtt{Solve}(\lap_{-S},\vecs_{-S},\delta_1)\) where \(\delta_1=\frac{w_{\min}\epsilon}{7n^3w_{\max}}\). Then for any vertex \(i\in V\setminus S\), we have
+    \begin{equation}\label{eq:approx-numer}
+        \vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecs_{-S}\approx_{\epsilon/7}\vecx'_i.
+    \end{equation}
+\end{lemma}
+\begin{IEEEproof}
+
+    Combining \lemref{lemma:ST} and \lemref{lem:norm-ineq}, we can bound \((\vecx'_i-\vecx_i)^2\) as
+    \begin{align*}
+        (\vecx'_i-\vecx_i)^2
+         & \le nw_{\min}^{-1}\Abs{\vecx'-\vecx}^2_{\lap_{-S}}
+        \le nw_{\min}^{-1}\delta_1^2\Abs{\vecx}^2_{\lap_{-S}}        \\
+         & \le n^4w_{\min}^{-1}w_{\max}^2\delta_1^2\trace{\lap_{-S}}
+        \le n^6w_{\min}^{-2}w_{\max}^2\delta_1^2,
+    \end{align*}
+    where the last inequality is due to \lemref{lem:trace-lap}.
+    On the other hand, since \(\vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecs_{-S}\) denotes the expected hitting time of a random walker starting from vertex \(i\), we have \(\vecx_i\ge1\).
+    Finally, we are able to give the approximation of \(\vecx_i\) as
+    \[\frac{\abs{\vecx'_i-\vecx_i}}{\vecx_i}\le n^3w_{\max}w_{\min}^{-1}\delta_1=\epsilon/7.\]
+\end{IEEEproof}
+
+Subsequently, we attempt to approximate the denominator of \(\Delta(u,S)\), which can be recast in an euclidian norm by using \lemref{lemma:JL}:
+\begin{equation}\label{eq:denom-solver}
+    \begin{split}
+        \vece_i^\top\lap_{-S}^{-1}\vece_i
+        =&\vece_i^\top\lap_{-S}^{-1}(\matb'^\top\matw'\matb'+\matz)\lap_{-S}^{-1}\vece_i\\
+        =&\vece_i^\top\lap_{-S}^{-1}\matb'^\top\matw'\matb'\lap_{-S}^{-1}\vece_i+\vece_i^\top\lap_{-S}^{-1}\matz\lap_{-S}^{-1}\vece_i\\
+        =&\Abs{\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2.
+    \end{split}
+\end{equation}
+
+Although~\eqref{eq:denom-solver} indicates that we can avoid matrix inversion by using~\lemref{lemma:ST}, due to the dimension of the matrices \(\matw'\) and \(\matz\) being \(\abs{E}=m\) and \(\abs{V}=n\) respectively, the number of calls to \(\mathtt{Solve}\) is still unacceptable.
+Therefore, we need to use~\lemref{lemma:JL} to reduce the dimension of the corresponding matrices.
+
+From~\lemref{lemma:JL}, let \(\matq\in\rea^{q\times m},\matr\in\rea^{r\times n}\) denote the projection matrix constructed according to the definition of~\lemref{lemma:JL}, where \(q=r=\ceil{24\epsilon^{-2}\log n}\), then we have
+\begin{equation}\label{eq:denom-jl}
+    \begin{split}
+        &\Abs{\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2\\
+        \approx_\epsilon&\Abs{\matq\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matr\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2.
+    \end{split}
+\end{equation}
+
+For the convenience of writing, we denote \(\matw'^{1/2}\matb'\lap_{-S}^{-1}\) and \(\matq\matw'^{1/2}\matb'\lap_{-S}^{-1}\) as \(\matx\) and \(\tilde{\matx}\) respectively, denote \(\matz^{1/2}\lap_{-S}^{-1}\) and \(\matr\matz^{1/2}\lap_{-S}^{-1}\) as \(\maty\) and \(\tilde{\maty}\) respectively.
+Then~\eqref{eq:denom-solver} and~\eqref{eq:denom-jl} can be rewritten as
+\begin{equation}\label{eq:denom-solver-simp}
+    \vece_i^\top\lap_{-S}^{-1}\vece_i=\Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2,
+\end{equation}
+\begin{equation}\label{eq:denom-jl-simp}
+    \Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2\approx_\epsilon\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2.
+\end{equation}
+
+Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can efficiently approximate the denominator of \(\Delta(u,S)\).
+\begin{lemma}\label{lem:approx-denom}
+    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty vertex group \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\).
+    Let \(\overline{\matx}\) and \(\overline{\maty}\) denote \(\matq\matw^{1/2}\matb\) and \(\matr\matz^{1/2}\) respectively.
+    Let \(\matx'\in\rea^{q\times n}\) and \(\maty'\in\rea^{r\times n}\) be matrices such that \(\matx'_{[i,:]}=\mathtt{Solve}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\), \(\maty'_{[i,:]}=\mathtt{Solve}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\), where \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\), \(\delta_2=\frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\). Then for any vertex \(i\in V\setminus S\), we have
+    \begin{equation}\label{eq:approx-denom}
+        \Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2=\vece_i^\top\lap_{-S}^{-1}\vece_i\approx_{\epsilon/3}\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2.
+    \end{equation}
+\end{lemma}
+\begin{IEEEproof}
+    According to triangle inequality, we have
+    \begin{align*}
+            & \abs{\Abs{\tilde{\matx}\vece_i}-\Abs{\matx'\vece_i}}\le\Abs{(\tilde{\matx}-\matx)\vece_i}                                                   \\
+        \le & \Abs{\tilde{\matx}-\matx'}_{F}= \sqrt{\sum_{j=1}^q\Abs{\tilde{\matx}_{[j,:]}-\matx'_{[j,:]}}^2}                                             \\
+        \le & \sqrt{\sum_{j=1}^qnw_{\min}^{-1}\Abs{\tilde{\matx}_{[j,:]}-\matx'_{[j,:]}}_{\lap_{-S}}^2}                                                   \\
+        \le & \sqrt{\sum_{j=1}^qnw_{\min}^{-1}\delta_2^2\Abs{\tilde{\matx}_{[j,:]}}_{\lap_{-S}}^2}\le n\delta_2\sqrt{w_{\min}^{-1}}\Abs{\tilde{\matx}}_F,
+    \end{align*}
+    where the third inequality and the fourth inequality are due to \lemref{lem:norm-ineq} and \lemref{lemma:ST} respectively.
+
+    As \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\), by using \lemref{lemma:JL}, we are able to further obtain
+    \begin{align*}
+            & n\delta_2\sqrt{w_{\min}^{-1}}\Abs{\tilde{\matx}}_F\le n\delta_2\sqrt{w_{\min}^{-1}(1+\epsilon/7)\sum_{i\in V\setminus S}\Abs{\matx\vece_i}^2} \\
+        \le & n\delta_2\sqrt{w_{\min}^{-1}(1+\epsilon/7)\trace{\lap_{-S}^{-1}}}\le n^2\delta_2w_{\min}^{-1}\sqrt{1+\epsilon/7},
+    \end{align*}
+    where the last inequality is due to \lemref{lem:trace-lap}.
+    Similarly, for \(\abs{\Abs{\tilde{\maty}\vece_i}-\Abs{\maty'\vece_i}}\), we have
+    \begin{equation}\label{eq:approx-maty-raw}
+        \abs{\Abs{\tilde{\maty}\vece_i}-\Abs{\maty'\vece_i}}\le n^2\delta_2w_{\min}^{-1}\sqrt{1+\epsilon/7}.
+    \end{equation}
+    On the other hand, according to \lemref{lemma:JL},
+    \[\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2\ge(1-\epsilon/7)\vece_i^\top\lap_{-S}^{-1}\vece_i\ge(1-\epsilon/7)n^{-2}w_{\max}^{-1}\]
+    where the last inequality is due to the scaling of \(\vece_i^\top\lap_{-S}^{-1}\vecs_{-S}\ge1\).
+
+    According to the Pigeonhole Principle, at least one element of \(\setof{\Abs{\tilde{\matx}\vece_i},\Abs{\tilde{\maty}\vece_i}}\) is no less than \(\frac{1}{n}\sqrt{\frac{1-\epsilon/7}{2w_{\max}}}\).
+    Without loss of generality, we let \(\Abs{\tilde{\matx}\vece_i}\ge\frac{1}{n}\sqrt{\frac{1-\epsilon/7}{2w_{\max}}}\), then we have
+    \[\frac{\abs{\Abs{\tilde{\matx}\vece_i}-\Abs{\matx'\vece_i}}}{\Abs{\tilde{\matx}\vece_i}}\le n\delta_2w_{\min}^{-1}\sqrt{\frac{2w_{\max}(1+\epsilon/7)}{1-\epsilon/7}}=\frac{\epsilon}{31}.\]
+    According to the inequality above, we can further obtain
+    \begin{align*}
+            & \frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2}                                                   \\
+        =   & \frac{\abs{\Abs{\tilde{\matx}\vece_i}-\Abs{\matx'\vece_i}}\mypar{\Abs{\tilde{\matx}\vece_i}+\Abs{\matx'\vece_i}}}{\Abs{\tilde{\matx}\vece_i}^2} \\
+        \le & \frac{\epsilon}{31}\mypar{2+\frac{\epsilon}{31}}\le\frac{\epsilon}{15},
+    \end{align*}
+    which means
+    \begin{equation}\label{eq:approx-matx}
+        \frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2}\le\frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2}\le\frac{\epsilon}{15}.
+    \end{equation}
+    For the case of \(\Abs{\maty'\vece_i}^2\), as~\eqref{eq:approx-maty-raw} still holds, we can obtain
+    \[\frac{\abs{\Abs{\tilde{\maty}\vece_i}-\Abs{\maty'\vece_i}}}{\Abs{\tilde{\matx}\vece_i}}\le n\delta_2w_{\min}^{-1}\sqrt{\frac{2w_{\max}(1+\epsilon/7)}{1-\epsilon/7}}=\frac{\epsilon}{31},\]
+    thus indicating that
+    \begin{equation}\label{eq:approx-maty}
+        \begin{split}
+            &\frac{\abs{\Abs{\tilde{\maty}\vece_i}^2-\Abs{\maty'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2}\\
+            \le&\frac{\abs{\Abs{\tilde{\maty}\vece_i}-\Abs{\maty'\vece_i}}\mypar{\Abs{\tilde{\maty}\vece_i}+\Abs{\maty'\vece_i}}}{\Abs{\tilde{\matx}\vece_i}^2}\\
+            \le&\frac{\epsilon}{31}\mypar{2+\frac{\epsilon}{31}}\le\frac{\epsilon}{15}.
+        \end{split}
+    \end{equation}
+    Combining~\eqref{eq:approx-matx} and~\eqref{eq:approx-maty}, we are finally able to get
+    \begin{align*}
+            & \frac{\abs{\mypar{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}-\mypar{\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2}}}{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}             \\
+        \le & \frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}+\abs{\Abs{\tilde{\maty}\vece_i}^2-\Abs{\maty'\vece_i}^2}}{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}\le\frac{\epsilon}{7},
+    \end{align*}
+    which completes our proof in conjunction with \lemref{lemma:JL}.
+\end{IEEEproof}
+
+\todo{Polishing content below}
+
+Combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we finally propose the approximate algorithm \textsc{ApproxDelta} of computing \(\Delta(u,S)\) when \(S\neq\varnothing\).
+Because \textsc{ApproxDelta} calls algorithm \(\mathtt{Solve}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, the complexity of \textsc{ApproxDelta} is \(\tilde{O}\mypar{m\epsilon^{-2}}\), where \(\tilde{O}(\cdot)\) hides the poly(\(\log n\)) factors.
+Furthermore, we are able to provide its approximation guarantee.
+
+\begin{algorithm}
+    \caption{\textsc{ApproxDelta}\((\gr,S,\epsilon)\)}
+    \label{algo:approxdelta}
+    \Input{
+        A connected weighted undirected graph \(\gr=(V,E,w)\);
+        The absorbing vertex group \(S\subseteq V\);
+        an error parameter \(\epsilon\in(0,1)\)
+    }
+    \Output{
+        The margin \(\Delta(u,S)\) of MANC created by adding vertex \(u\) to \(S\) for any vertex \(u\in V\setminus S\)
+    }
+    Compute \(\lap\) and \(\vecs\)\;
+    \(n\gets\abs{V},m\gets\abs{E}\)\;
+    \(w_{\min}\gets\min\setof{w_e|e\in E},w_{\max}\gets\max\setof{w_e|e\in E}\)\;
+    \(d\gets\vecs\vecone\),\(q,r\gets\ceil{24(\epsilon/7)^{-2}\log n}\)\;
+    \(\delta_1\gets \frac{w_{\min}\epsilon}{7n^2w_{\max}}\),\(\delta_2\gets \frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\)\;
+    \(\vecx'\gets\mathtt{Solve}(\lap_{-S},\vecs_{-S},\delta_1)\)\;
+    \(\matq\gets\textsc{GenerateRandomMatrix}(q,m)\)\;
+    \(\matr\gets\textsc{GenerateRandomMatrix}(r,n)\)\;
+    Decompose \(\lap_{-S}\) into \(\matb'\in\rea^{m\times n}\), \(\matw'\in\rea^{m\times m}\) and \(\matz\in\rea^{n\times n}\), where \(\lap_{-S}=\matb'^\top\matw'\matb'+\matz\)\;
+    \(\overline{\matx}\gets\matq\matw^{1/2}\matb\),\(\overline{\maty}\gets\matr\matz^{1/2}\)\;
+    \For{\(i=1,2,\dots,q\)}{
+    \(\matx'_{[i,:]}\gets\mathtt{Solve}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\)\;
+    \(\maty'_{[i,:]}\gets\mathtt{Solve}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\)\;
+    }
+    \ForEach{\(u\in V\setminus S\)}{
+        \(\Delta'(u,S)\gets\frac{\vecx'^2}{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}\)\;
+    }
+    \Return{\(\setof{\Delta'(u,S)|u\in V\setminus S}\)}
+
+\end{algorithm}
+
+\begin{lemma}\label{lem:approx-marginest}
+    For any real number \(\epsilon\in(0,1)\), \(\Delta'(u,S)\) satisfies
+    \[\Delta(u,S)\approx_\epsilon \Delta'(u,S)\]
+    with high probability.
+\end{lemma}
+% \begin{IEEEproof}
+
+% \end{IEEEproof}
+
+Combining \algoref{ALG01} and \algoref{algo:approxdelta}, we can give the faster greedy algorithm \textsc{ApproxAGCM} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor.
+Since \textsc{ApproxAGCM} calls \(\text{Approx\(\mathcal{HK}\)}\) once and calls \textsc{ApproxDelta} \(k-1\) times, the complexity of \textsc{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear.
+
+\begin{algorithm}
+    \caption{\textsc{ApproxAGCM}\((\gr,k,\epsilon)\)}
+    \label{algo:approx}
+    \Input{
+        A connected weighted undirected graph \(\gr=(V,E,w)\);
+        an integer \(k\in[1,\abs{V}]\);
+        an error parameter \(\epsilon\in(0,1)\)
+    }
+    \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
+    \(d\gets\vecs\vecone\),\(\vecpi\gets d^{-1}\vecs\)\;
+    \(\setof{\tilde{H}_u|u\in V }\gets\text{Approx\(\mathcal{HK}\)}(\gr,\epsilon)\)\;
+    \(S_1\gets\setof{\argmin_{u\in V}\setof{\tilde{H}_u}}\)\;
+    \For{\(i=2,3,\dots,k\)}{
+        \(\setof{\Delta'(u,S)|u\in V\setminus S}\gets\textsc{ApproxDelta}(\gr,S,\epsilon)\)\;
+        \(u^*\gets\argmax_{u\in V\setminus S}\setof{\Delta'(u,S)}\)\;
+        \(S_i\gets S_{i-1}\cup\setof{u^*}\)\;
+    }
+    \Return{\(S_k\)}
+\end{algorithm}
+
+\begin{theorem}
+    The algorithm \(S_k=\textsc{ApproxAGCM}(\gr,k,\epsilon)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) ,a positive integer \(k\) and an error parameter \(\epsilon\in(0,1)\), then returns a vertex group \(S_k\) with capacity \(k\). When \(k>1\), the vertex group \(S\) satisfies
+    \begin{align*}
+        \mypar{1+\epsilon} & \manc{\setof{u^*}}-\manc{S_k}\ge                                                                         \\
+                           & \mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon}\mypar{\mypar{1+\epsilon}\manc{\setof{u^*}}-\manc{S^*}},
+    \end{align*}
+    where
+    \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}},S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
+\end{theorem}
+\begin{IEEEproof}
+    Since \algoref{algo:approx} use \(\Delta'(u,S)\) computed by \algoref{algo:approxdelta} instead of \(\Delta(u,S)\), combining \lemref{lem:approx-marginest} and supermodularity, we are able to obtain that
+    \[\manc{S_i}-\manc{S_{i+1}}\ge\frac{1-\epsilon}{k}\mypar{\manc{S_i}-\manc{S^*}}\]
+    holds for any positive integer \(i\), which indicates that
+    \[\manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1-\epsilon}{k}}\mypar{\manc{S_i}-\manc{S^*}}.\]
+    Subsequently, we can further obtain that
+    \begin{align*}
+        \manc{S_k}-\manc{S^*} \le & \mypar{1-\frac{1-\epsilon}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}            \\
+        \le                       & \mypar{\frac{k}{k-1}\cdot\frac{1}{e}+\epsilon}\mypar{\manc{S_1}-\manc{S^*}},
+    \end{align*}
+    which completes our proof based on the fact that \(\manc{S_1}\le\mypar{1+\epsilon}\manc{\setof{u^*}}\).
+\end{IEEEproof}
+
 \section{Numerical Experiments}
 
 In this section, we present experimental results for various real and model networks to demonstrate the  efficiency and accuracy of our approximation algorithm \(\text{Approx}\mathcal{HK}\) for computing the walk centrality \(H_u\) of  every vertex and the Kemeny constant \(K\).
 
-All   experiments are conducted on  a machine  with 4-core 4.2GHz  Intel i7-7700K CPU and with  32GB of RAM. We implement the approximation algorithm \(\text{Approx}\mathcal{HK}\) in \textit{Julia v0.6.0}, where  the \(\mathtt{LaplSolve}\) is from~\cite{KySa16}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
+All   experiments are conducted on  a machine  with 4-core 4.2GHz  Intel i7-7700K CPU and with  32GB of RAM. We implement the approximation algorithm \(\text{Approx}\mathcal{HK}\) in \textit{Julia v0.6.0}, where  the \(\mathtt{Solve}\) is from~\cite{KySa16}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
 
 \subsection{Results for Vertex Centrality of Real Networks }
 
