@@ -539,7 +539,7 @@ Equation~\eqref{ATT02} and~\eqref{eq:margin-deriv} demonstrate that we can calcu
 As a result, we can optimize the simple greedy algorithm outlined in~\algoref{algo:exact}, and reduce the time complexity from \(O(kn^4)\) to \(O(kn^3)\).
 
 \begin{algorithm}
-    \caption{\textsc{Exact}\((\gr,k)\)}
+    \caption{\textsc{ExactAGCM}\((\gr,k)\)}
     \label{algo:exact}
     \Input{
         A connected weighted undirected graph \(\gr=(V,E,w)\);
@@ -561,7 +561,7 @@ As a result, we can optimize the simple greedy algorithm outlined in~\algoref{al
 
 Afterwards, we prove that \algoref{algo:exact} has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximate factor.
 \begin{theorem}
-    The algorithm \(S_k=\textsc{Exact}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a vertex group \(S_k\) with capacity \(k\).
+    The algorithm \(S_k=\textsc{ExactAGCM}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a vertex group \(S_k\) with capacity \(k\).
     When \(k>1\), the vertex group \(S\) satisfies
     \[\manc{\setof{u^*}}-\manc{S_k}\ge\mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}}\mypar{\manc{\setof{u^*}}-\manc{S^*}},\]
     where
@@ -889,8 +889,8 @@ To this end, we need to utilize the following lemma.
     which completes our proof.
 \end{IEEEproof}
 
-We first approximate the numerator of \(\Delta(u,S)\), which requires the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}\).
-Since \(\lap_{-S}\) is a SDDM matrix, we can use~\lemref{lemma:ST} to avoid computing matrix inverse \(\lap_{-S}^{-1}\).
+We first approximate the numerator of \(\Delta(u,S)\), which involves the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}\).
+Since \(\lap_{-S}\) is a SDDM matrix, we can apply~\lemref{lemma:ST} to avoid computing the matrix inverse \(\lap_{-S}^{-1}\).
 \begin{lemma}\label{lem:approx-numer}
     Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty vertex group \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\), let \(\vecx'=\mathtt{Solve}(\lap_{-S},\vecs_{-S},\delta_1)\) where \(\delta_1=\frac{w_{\min}\epsilon}{7n^3w_{\max}}\). Then for any vertex \(i\in V\setminus S\), we have
     \begin{equation}\label{eq:approx-numer}
@@ -908,12 +908,14 @@ Since \(\lap_{-S}\) is a SDDM matrix, we can use~\lemref{lemma:ST} to avoid comp
         \le n^6w_{\min}^{-2}w_{\max}^2\delta_1^2,
     \end{align*}
     where the last inequality is due to \lemref{lem:trace-lap}.
-    On the other hand, since \(\vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecs_{-S}\) denotes the expected hitting time of a random walker starting from vertex \(i\), we have \(\vecx_i\ge1\).
-    Finally, we are able to give the approximation of \(\vecx_i\) as
-    \[\frac{\abs{\vecx'_i-\vecx_i}}{\vecx_i}\le n^3w_{\max}w_{\min}^{-1}\delta_1=\epsilon/7.\]
+    On the other hand, as \(\vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecs_{-S}\) represents the expected hitting time for a random walker starting at vertex \(i\), it follows that \(\vecx_i\ge1\).
+    Finally, we can estimate \(\vecx_i\) as follows:
+    \begin{equation*}
+        \frac{\abs{\vecx'_i-\vecx_i}}{\vecx_i}\le n^3w_{\max}w_{\min}^{-1}\delta_1=\epsilon/7.
+    \end{equation*}
 \end{IEEEproof}
 
-Subsequently, we attempt to approximate the denominator of \(\Delta(u,S)\), which can be recast in an euclidian norm by using \lemref{lemma:JL}:
+Next, we aim to estimate the denominator of \(\Delta(u,S)\). This can be represented as a Euclidian norm through the use of \lemref{lemma:JL}.
 \begin{equation}\label{eq:denom-solver}
     \begin{split}
         \vece_i^\top\lap_{-S}^{-1}\vece_i
@@ -923,10 +925,11 @@ Subsequently, we attempt to approximate the denominator of \(\Delta(u,S)\), whic
     \end{split}
 \end{equation}
 
-Although~\eqref{eq:denom-solver} indicates that we can avoid matrix inversion by using~\lemref{lemma:ST}, due to the dimension of the matrices \(\matw'\) and \(\matz\) being \(\abs{E}=m\) and \(\abs{V}=n\) respectively, the number of calls to \(\mathtt{Solve}\) is still unacceptable.
-Therefore, we need to use~\lemref{lemma:JL} to reduce the dimension of the corresponding matrices.
+Although~\eqref{eq:denom-solver} suggests that we can avoid matrix inversion by utilizing \lemref{lemma:ST}, the size of the matrices \(\matw'\) and \(\matz\) being \(\abs{E}=m\) and \(\abs{V}=n\) respectively, results in an unacceptable number of calls to the \(\mathtt{Solve}\) function.
+As a solution, it is necessary to use \lemref{lemma:JL} to reduce the size of the corresponding matrices.
 
-From~\lemref{lemma:JL}, let \(\matq\in\rea^{q\times m},\matr\in\rea^{r\times n}\) denote the projection matrix constructed according to the definition of~\lemref{lemma:JL}, where \(q=r=\ceil{24\epsilon^{-2}\log n}\), then we have
+According to \lemref{lemma:JL}, let us denote the projection matrices as \(\matq\in\rea^{q\times m}\) and \(\matr\in\rea^{r\times n}\), where \(q=r=\ceil{24\epsilon^{-2}\log n}\).
+Then we can infer that
 \begin{equation}\label{eq:denom-jl}
     \begin{split}
         &\Abs{\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2\\
@@ -934,8 +937,9 @@ From~\lemref{lemma:JL}, let \(\matq\in\rea^{q\times m},\matr\in\rea^{r\times n}\
     \end{split}
 \end{equation}
 
-For the convenience of writing, we denote \(\matw'^{1/2}\matb'\lap_{-S}^{-1}\) and \(\matq\matw'^{1/2}\matb'\lap_{-S}^{-1}\) as \(\matx\) and \(\tilde{\matx}\) respectively, denote \(\matz^{1/2}\lap_{-S}^{-1}\) and \(\matr\matz^{1/2}\lap_{-S}^{-1}\) as \(\maty\) and \(\tilde{\maty}\) respectively.
-Then~\eqref{eq:denom-solver} and~\eqref{eq:denom-jl} can be rewritten as
+For the sake of simplicity, we refer to \(\matw'^{1/2}\matb'\lap_{-S}^{-1}\) and \(\matq\matw'^{1/2}\matb'\lap_{-S}^{-1}\) as \(\matx\) and \(\tilde{\matx}\), respectively.
+We also refer to \(\matz^{1/2}\lap_{-S}^{-1}\) and \(\matr\matz^{1/2}\lap_{-S}^{-1}\) as \(\maty\) and \(\tilde{\maty}\), respectively.
+Then~\eqref{eq:denom-solver} and~\eqref{eq:denom-jl} can be rephrased as follows:
 \begin{equation}\label{eq:denom-solver-simp}
     \vece_i^\top\lap_{-S}^{-1}\vece_i=\Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2,
 \end{equation}
@@ -946,7 +950,7 @@ Then~\eqref{eq:denom-solver} and~\eqref{eq:denom-jl} can be rewritten as
 Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can efficiently approximate the denominator of \(\Delta(u,S)\).
 \begin{lemma}\label{lem:approx-denom}
     Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty vertex group \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\).
-    Let \(\overline{\matx}\) and \(\overline{\maty}\) denote \(\matq\matw^{1/2}\matb\) and \(\matr\matz^{1/2}\) respectively.
+    We define \(\overline{\matx}\) and \(\overline{\maty}\) as \(\matq\matw^{1/2}\matb\) and \(\matr\matz^{1/2}\) respectively.
     Let \(\matx'\in\rea^{q\times n}\) and \(\maty'\in\rea^{r\times n}\) be matrices such that \(\matx'_{[i,:]}=\mathtt{Solve}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\), \(\maty'_{[i,:]}=\mathtt{Solve}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\), where \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\), \(\delta_2=\frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\). Then for any vertex \(i\in V\setminus S\), we have
     \begin{equation}\label{eq:approx-denom}
         \Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2=\vece_i^\top\lap_{-S}^{-1}\vece_i\approx_{\epsilon/3}\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2.
@@ -1007,11 +1011,10 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
     which completes our proof in conjunction with \lemref{lemma:JL}.
 \end{IEEEproof}
 
-\todo{Polishing content below}
-
-Combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we finally propose the approximate algorithm \textsc{ApproxDelta} of computing \(\Delta(u,S)\) when \(S\neq\varnothing\).
-Because \textsc{ApproxDelta} calls algorithm \(\mathtt{Solve}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, the complexity of \textsc{ApproxDelta} is \(\tilde{O}\mypar{m\epsilon^{-2}}\), where \(\tilde{O}(\cdot)\) hides the poly(\(\log n\)) factors.
-Furthermore, we are able to provide its approximation guarantee.
+By combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose the \textsc{ApproxDelta} algorithm for approximating \(\Delta(u,S)\) when \(S\neq\varnothing\).
+The \textsc{ApproxDelta} algorithm calls algorithm \(\mathtt{Solve}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\).
+Here, \(\tilde{O}(\cdot)\) hides the poly(\(\log n\)) factors.
+Additionally, we can provide an approximation guarantee for this algorithm.
 
 \begin{algorithm}
     \caption{\textsc{ApproxDelta}\((\gr,S,\epsilon)\)}
@@ -1047,15 +1050,17 @@ Furthermore, we are able to provide its approximation guarantee.
 
 \begin{lemma}\label{lem:approx-marginest}
     For any real number \(\epsilon\in(0,1)\), \(\Delta'(u,S)\) satisfies
-    \[\Delta(u,S)\approx_\epsilon \Delta'(u,S)\]
+    \begin{equation*}
+        \Delta(u,S)\approx_\epsilon \Delta'(u,S)
+    \end{equation*}
     with high probability.
 \end{lemma}
 % \begin{IEEEproof}
 
 % \end{IEEEproof}
 
-Combining \algoref{ALG01} and \algoref{algo:approxdelta}, we can give the faster greedy algorithm \textsc{ApproxAGCM} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor.
-Since \textsc{ApproxAGCM} calls \(\text{Approx\(\mathcal{HK}\)}\) once and calls \textsc{ApproxDelta} \(k-1\) times, the complexity of \textsc{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear.
+By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we are able to create a faster greedy algorithm called \textsc{ApproxAGCM} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor.
+The complexity of \textsc{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear, as it calls \(\text{Approx\(\mathcal{HK}\)}\) once and \textsc{ApproxDelta} \(k-1\) times.
 
 \begin{algorithm}
     \caption{\textsc{ApproxAGCM}\((\gr,k,\epsilon)\)}
@@ -1066,7 +1071,7 @@ Since \textsc{ApproxAGCM} calls \(\text{Approx\(\mathcal{HK}\)}\) once and calls
         an error parameter \(\epsilon\in(0,1)\)
     }
     \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
-    \(d\gets\vecs\vecone\),\(\vecpi\gets d^{-1}\vecs\)\;
+    \(s\gets\vecs\vecone\),\(\vecpi\gets s^{-1}\vecs\)\;
     \(\setof{\tilde{H}_u|u\in V }\gets\text{Approx\(\mathcal{HK}\)}(\gr,\epsilon)\)\;
     \(S_1\gets\setof{\argmin_{u\in V}\setof{\tilde{H}_u}}\)\;
     \For{\(i=2,3,\dots,k\)}{
@@ -1088,9 +1093,13 @@ Since \textsc{ApproxAGCM} calls \(\text{Approx\(\mathcal{HK}\)}\) once and calls
 \end{theorem}
 \begin{IEEEproof}
     Since \algoref{algo:approx} use \(\Delta'(u,S)\) computed by \algoref{algo:approxdelta} instead of \(\Delta(u,S)\), combining \lemref{lem:approx-marginest} and supermodularity, we are able to obtain that
-    \[\manc{S_i}-\manc{S_{i+1}}\ge\frac{1-\epsilon}{k}\mypar{\manc{S_i}-\manc{S^*}}\]
+    \begin{equation*}
+        \manc{S_i}-\manc{S_{i+1}}\ge\frac{1-\epsilon}{k}\mypar{\manc{S_i}-\manc{S^*}}
+    \end{equation*}
     holds for any positive integer \(i\), which indicates that
-    \[\manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1-\epsilon}{k}}\mypar{\manc{S_i}-\manc{S^*}}.\]
+    \begin{equation*}
+        \manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1-\epsilon}{k}}\mypar{\manc{S_i}-\manc{S^*}}.
+    \end{equation*}
     Subsequently, we can further obtain that
     \begin{align*}
         \manc{S_k}-\manc{S^*} \le & \mypar{1-\frac{1-\epsilon}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}            \\
