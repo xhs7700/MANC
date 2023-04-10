@@ -1159,7 +1159,7 @@ We begin by evaluating the effectiveness of algorithm \(\text{Approx}\mathcal{HK
             CA-HepPh                         & 12,008    & 118,521   & 11,204    & 117,619 \cr
             Astro-ph                         & 18,772    & 198,110   & 17,903    & 196,972 \cr
             CAIDA                            & 26,475    & 53,381    & 26,475    & 53,381\cr
-            Brightkite                       & 58,228    & 214,078   & 56,739    & 212,945 \cr
+            Brightkite*                      & 58,228    & 214,078   & 56,739    & 212,945 \cr
             Livemocha*                       & 104,103   & 2,193,083 & 104,103   & 2,193,083\cr
             WordNet*                         & 146,005   & 656,999   & 145,145   & 656,230 \cr
             Gowalla*                         & 196,591   & 950,327   & 196,591   & 950,327 \cr
@@ -1176,7 +1176,7 @@ We begin by evaluating the effectiveness of algorithm \(\text{Approx}\mathcal{HK
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-In \tabref{tab:runtime_comparison}, we report the running time of \(\text{Approx}\mathcal{HK}\) and that of the direct accurate algorithm called \(\text{Exact}\mathcal{HK}\) that calculates the centrality \(H_u\) for each \(u \in V\) by calculating the pseudoinverse of \(\lap\) as given  in \lemref{HjK}. To objectively evaluate the running time, for both \(\text{Exact}\mathcal{HK}\) and \(\text{Approx}\mathcal{HK}\) on all considered networks except the last seven ones marked with \(\ast\), we enforce the program to run on 16 threads. From \tabref{tab:runtime_comparison} we can see that for  moderate approximation parameter \(\epsilon\), the computational time for \(\text{Approx}\mathcal{HK}\) is significantly  smaller than  that  for \(\text{Exact}\mathcal{HK}\), especially for large-scale networks tested.  Thus,   \(\text{Approx}\mathcal{HK}\) can significantly improve the performance compared with  \(\text{Exact}\mathcal{HK}\). For the  seven networks marked with \(\ast\), the number of vertices for which ranges from \(10^5\) to \(10^6\), we cannot run the \(\text{Exact}\mathcal{HK}\) algorithm on the machine due to the limits of memory and time. However, for these networks, we can approximately compute their walk centrality for all vertices by using algorithm \(\text{Approx}\mathcal{HK}\), which further show that   \(\text{Approx}\mathcal{HK}\) is  efficient and scalable to large networks.
+In \tabref{tab:runtime_comparison}, we report the running time of \(\text{Approx}\mathcal{HK}\) and that of the direct accurate algorithm called \(\text{Exact}\mathcal{HK}\) that calculates the centrality \(H_u\) for each \(u \in V\) by calculating the pseudoinverse of \(\lap\) as given  in \lemref{HjK}. To objectively evaluate the running time, for both \(\text{Exact}\mathcal{HK}\) and \(\text{Approx}\mathcal{HK}\) on all considered networks except the last ten ones marked with \(\ast\), we enforce the program to run on 16 threads. From \tabref{tab:runtime_comparison} we can see that for  moderate approximation parameter \(\epsilon\), the computational time for \(\text{Approx}\mathcal{HK}\) is significantly  smaller than  that  for \(\text{Exact}\mathcal{HK}\), especially for large-scale networks tested.  Thus,   \(\text{Approx}\mathcal{HK}\) can significantly improve the performance compared with  \(\text{Exact}\mathcal{HK}\). For the  ten networks marked with \(\ast\), the number of vertices for which ranges from \(10^5\) to \(10^6\), we cannot run the \(\text{Exact}\mathcal{HK}\) algorithm on the machine due to the limits of memory and time. However, for these networks, we can approximately compute their walk centrality for all vertices by using algorithm \(\text{Approx}\mathcal{HK}\), which further show that   \(\text{Approx}\mathcal{HK}\) is  efficient and scalable to large networks.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{table*}[htbp]
@@ -1420,8 +1420,8 @@ This indicates that our proposed algorithms have a much better approximation rat
 
 We then compare the performance of \textsc{ExactAGCM} and \textsc{ApproxAGCM} with three other algorithms: \textsc{Top-Absorb}, \textsc{Top-Degree}, and \textsc{Top-PageRank}.
 \textsc{Top-Absorb} simply selects \(k\) absorbing vertices with the lowest absorbing random-walk centrality, while \textsc{Top-Degree} and \textsc{Top-PageRank} select the vertices with the largest degrees and PageRank values, respectively.
-We execute these four algorithms on four medium-sized networks, and the results are shown in \figref{pic:compare-effect}.
-As displayed in \figref{pic:compare-effect}, both of our algorithms produce similar approximate solutions in larger networks, which outperform the solutions of other algorithms.
+We execute these four algorithms on eight medium-sized networks, and the results are shown in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}.
+As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, both of our algorithms produce similar approximate solutions in larger networks, which outperform the solutions of other algorithms.
 
 \begin{figure}
     \centering
@@ -1523,7 +1523,110 @@ As displayed in \figref{pic:compare-effect}, both of our algorithms produce simi
             \node [font=\huge] at (10,90) {(d)};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{ExactAGCM},\textsc{ApproxAGCM},\textsc{Top-Absorb} and \textsc{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d).\label{pic:compare-effect}}
+    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{ExactAGCM},\textsc{ApproxAGCM},\textsc{Top-Absorb} and \textsc{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d).\label{pic:compare-effect1}}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \begin{semilogyaxis}[
+                xlabel=\Large{\(k\)},
+                ylabel=\Large{\(H(S)\)},
+                minor x tick num=1,
+                minor y tick num=4,
+                legend style={
+                        font=\footnotesize,
+                        legend columns=2,
+                    },
+                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                % ymax=800,
+            ]
+            \addplot+[
+                mark=pentagon*,
+                mark size = 3pt
+            ] table {compare_effects/exact/Hamsterster friends/Approx.dat};
+            \addplot table {compare_effects/exact/Hamsterster friends/Exact.dat};
+            \addplot table {compare_effects/exact/Hamsterster friends/Top-Absorb.dat};
+            \addplot table {compare_effects/exact/Hamsterster friends/Top-Degree.dat};
+            \addplot table {compare_effects/exact/Hamsterster friends/Top-PageRank.dat};
+            \node [font=\huge] at (15,7) {(a)};
+        \end{semilogyaxis}
+    \end{tikzpicture}
+    \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \begin{semilogyaxis}[
+                xlabel=\Large{\(k\)},
+                ylabel=\Large{\(H(S)\)},
+                minor x tick num=1,
+                minor y tick num=4,
+                legend style={
+                        font=\footnotesize,
+                        legend columns=2,
+                    },
+                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                % ymax=4500,
+            ]
+            \addplot+[
+                mark=pentagon*,
+                mark size = 3pt
+            ] table {compare_effects/exact/Hamsterster full/Approx.dat};
+            \addplot table {compare_effects/exact/Hamsterster full/Exact.dat};
+            \addplot table {compare_effects/exact/Hamsterster full/Top-Absorb.dat};
+            \addplot table {compare_effects/exact/Hamsterster full/Top-Degree.dat};
+            \addplot table {compare_effects/exact/Hamsterster full/Top-PageRank.dat};
+            \node [font=\huge] at (15,10) {(b)};
+        \end{semilogyaxis}
+    \end{tikzpicture}
+
+    \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \begin{semilogyaxis}[
+                xlabel=\Large{\(k\)},
+                ylabel=\Large{\(H(S)\)},
+                ytick distance=10^1,
+                minor x tick num=1,
+                minor y tick num=4,
+                legend style={
+                        font=\footnotesize,
+                        legend columns=2,
+                    },
+                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                % ymax=1600,
+            ]
+            \addplot+[
+                mark=pentagon*,
+                mark size = 3pt
+            ] table {compare_effects/exact/Reactome/Approx.dat};
+            \addplot table {compare_effects/exact/Reactome/Exact.dat};
+            \addplot table {compare_effects/exact/Reactome/Top-Absorb.dat};
+            \addplot table {compare_effects/exact/Reactome/Top-Degree.dat};
+            \addplot table {compare_effects/exact/Reactome/Top-PageRank.dat};
+            \node [font=\huge] at (15,25) {(c)};
+        \end{semilogyaxis}
+    \end{tikzpicture}
+    \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \begin{semilogyaxis}[
+                xlabel=\Large{\(k\)},
+                ylabel=\Large{\(H(S)\)},
+                minor x tick num=1,
+                minor y tick num=4,
+                legend style={
+                        font=\footnotesize,
+                        legend columns=2,
+                    },
+                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                % ymax=12000,
+            ]
+            \addplot+[
+                mark=pentagon*,
+                mark size = 3pt
+            ] table {compare_effects/exact/Route views/Approx.dat};
+            \addplot table {compare_effects/exact/Route views/Exact.dat};
+            \addplot table {compare_effects/exact/Route views/Top-Absorb.dat};
+            \addplot table {compare_effects/exact/Route views/Top-Degree.dat};
+            \addplot table {compare_effects/exact/Route views/Top-PageRank.dat};
+            \node [font=\huge] at (15,4) {(d)};
+        \end{semilogyaxis}
+    \end{tikzpicture}
+    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{ExactAGCM},\textsc{ApproxAGCM},\textsc{Top-Absorb} and \textsc{Top-Degree}) on four networks: Hamster friends (a), Hamster full (b), Reactome (c) and Route views (d).\label{pic:compare-effect2}}
 \end{figure}
 
 Finally, we demonstrate that the \textsc{ApproxAGCM} algorithm is significantly more efficient than the \textsc{ExactAGCM} algorithm, particularly when applied to large networks.
@@ -1551,30 +1654,30 @@ This result demonstrates the scalability of \text{ApproxAGCM} when applied to la
             \cmidrule{3-5}
                                             & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\)\cr
             \midrule
-            Jazz musicians                  & --      & --      & --       & --\cr
-            Euroroads                       & 0.498   & --      & --       & --\cr
-            Hamster friends                 & 1.183   & --      & --       & --\cr
-            Hamster full                    & 1.267   & --      & --       & --\cr
-            Facebook (NIPS)                 & 10.20   & --      & --       & --\cr
-            CA-GrQc                         & 10.74   & --      & --       & --\cr
-            US power grid                   & 17.62   & --      & --       & --\cr
-            Reactome                        & 30.13   & --      & --       & --\cr
-            Route views                     & 37.55   & --      & --       & --\cr
-            CA-HepTh                        & 85.83   & --      & --       & --\cr
-            Sister cities                   & 143.3   & --      & --       & --\cr
-            Pretty Good Privacy             & 157.7   & --      & --       & --\cr
-            CA-HepPh                        & 180.8   & --      & --       & --\cr
-            Astro-ph                        & 715.8   & --      & --       & --\cr
-            CAIDA                           & 2272    & --      & --       & --\cr
-            Brightkite*                     & --      & --      & --       & --\cr
-            Livemocha*                      & --      & --      & --       & --\cr
-            WordNet*                        & --      & --      & --       & --\cr
-            Gowalla*                        & --      & --      & --       & --\cr
-            com-DBLP*                       & --      & --      & --       & --\cr
-            Amazon*                         & --      & --      & --       & --\cr
-            roadNet-PA*                     & --      & --      & --       & --\cr
+            Jazz musicians                  & --      & 0.157   & 0.178    & 0.194\cr
+            Euroroads                       & 0.498   & 0.239   & 0.277    & 0.281\cr
+            Hamster friends                 & 1.183   & 0.348   & 0.450    & 0.629\cr
+            Hamster full                    & 1.267   & 0.402   & 0.525    & 1.049\cr
+            Facebook (NIPS)                 & 10.20   & 1.956   & 2.919    & 4.349\cr
+            CA-GrQc                         & 10.74   & 0.686   & 0.896    & 0.968\cr
+            US power grid                   & 17.62   & 0.500   & 0.634    & 0.977\cr
+            Reactome                        & 30.13   & 3.593   & 4.680    & 7.329\cr
+            Route views                     & 37.55   & 0.582   & 0.704    & 1.024\cr
+            CA-HepTh                        & 85.83   & 1.108   & 1.602    & 2.476\cr
+            Sister cities                   & 143.3   & 3.246   & 3.974    & 7.013\cr
+            Pretty Good Privacy             & 157.7   & 3.844   & 5.170    & 7.657\cr
+            CA-HepPh                        & 180.8   & 6.601   & 9.775    & 15.74\cr
+            Astro-ph                        & 715.8   & 13.51   & 18.26    & 31.31\cr
+            CAIDA                           & 2272    & 6.355   & 7.838    & 11.28\cr
+            Brightkite*                     & --      & 23.31   & 32.68    & 54.21\cr
+            Livemocha*                      & --      & 177.0   & 250.6    & 392.1\cr
+            WordNet*                        & --      & 83.89   & 124.5    & 221.4\cr
+            Gowalla*                        & --      & 129.1   & 195.7    & 342.8\cr
+            com-DBLP*                       & --      & 232.7   & 399.1    & 756.8\cr
+            Amazon*                         & --      & 349.5   & 652.3    & 1082\cr
+            roadNet-PA*                     & --      & 2215    & 3349     & 5714\cr
             YouTube*                        & --      & --      & --       & --\cr
-            roadNet-TX*                     & --      & --      & --       & --\cr
+            roadNet-TX*                     & --      & 3135    & 4464     & 9338\cr
             roadNet-CA*                     & --      & --      & --       & --\cr
             \bottomrule
         \end{tabularx}
