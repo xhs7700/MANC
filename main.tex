@@ -1,8 +1,9 @@
-\documentclass[journal]{IEEEtran}
-\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
-    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+% \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+%     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
 \input{headers.tex}
+\newcommand{\biophoto}[1]{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{#1}}
 \newcommand{\todo}[1]{{\bf \color{red} TODO: #1}}
 \hyphenation{Exact-AGCM}
 
@@ -10,29 +11,38 @@
 
 \title{Absorbing Time of Random Walks\\ as a Node Group Centrality}
 \author{Haisong~Xia,
+    Wanyue~Xu~\IEEEmembership{Student Member,~IEEE},
     Zuobai~Zhang,
-    Xiaotian~Zhou,
     Zhuoqing~Song,
     Zhongzhi~Zhang~\IEEEmembership{Member,~IEEE}
-    \thanks{Haisong Xia, Xiaotian Zhou and Zhongzhi Zhang are with the Shanghai Key Laboratory of Intelligent Information Processing, School of Computer Science, Fudan University, Shanghai 200433, China;Zhongzhi Zhang is also with the Shanghai Engineering Research Institute of Blockchain, Shanghai 200433, China.}
+    \thanks{Haisong Xia, Wanyue Xu and Zhongzhi Zhang are with the Shanghai Key Laboratory of Intelligent Information Processing, School of Computer Science, Fudan University, Shanghai 200433, China; Zhongzhi Zhang is also with the Shanghai Engineering Research Institute of Blockchain, Shanghai 200433, China.}
+}
+
+\markboth{IEEE Transactions on Knowledge and Data Engineering}
+{Xia \MakeLowercase{\textit{et al.}}: Absorbing Time of Random Walks as a Node Group Centrality}
+
+\IEEEtitleabstractindextext{
+    \begin{abstract}
+        For random walks on a graph, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution.
+        Both quantities have found a large variety of applications in different areas.
+        However, their high computational complexity limits their applications, especially for large networks with millions of vertices.
+        In this paper, we first establish a connection between the two quantities, representing \(K\) in terms of \(H_j\) for all vertices.
+        Subsequently, we extend the notion of mean hitting time to the case of multiple vertices, proposing a vertex group centrality and its minimization problem.
+        We then express these quantities in terms of either the pseudoinverse for graph Laplacian or the inverse for a SDDM matrix, based on which we develop an efficient algorithm that provides an approximation of \(H_j\) for all vertices and \(K\) in nearly linear time with respect to the edge number, with high probability.
+        Based on the aforementioned algorithm, we provide another nearly linear greedy algorithm to solve the minimization problem of our proposed vertex group centrality with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any \(\epsilon\in(0,1)\).
+        Extensive experiment results on real-life and model networks validate both the efficiency and accuracy of our proposed algorithms.
+    \end{abstract}
+
+    \begin{IEEEkeywords}
+        Random walk, hitting time, Kemeny constant, spectral algorithm, complex network, vertex centrality.
+    \end{IEEEkeywords}
 }
 
 \maketitle
 
-\begin{abstract}
-    For random walks on a graph, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution.
-    Both quantities have found a large variety of applications in different areas.
-    However, their high computational complexity limits their applications, especially for large networks with millions of vertices.
-    In this paper, we first establish a connection between the two quantities, representing \(K\) in terms of \(H_j\) for all vertices.
-    Subsequently, we extend the notion of mean hitting time to the case of multiple vertices, proposing a vertex group centrality and its minimization problem.
-    We then express these quantities in terms of either the pseudoinverse for graph Laplacian or the inverse for a SDDM matrix, based on which we develop an efficient algorithm that provides an approximation of \(H_j\) for all vertices and \(K\) in nearly linear time with respect to the edge number, with high probability.
-    Based on the aforementioned algorithm, we provide another nearly linear greedy algorithm to solve the minimization problem of our proposed vertex group centrality with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any \(\epsilon\in(0,1)\).
-    Extensive experiment results on real-life and model networks validate both the efficiency and accuracy of our proposed algorithms.
-\end{abstract}
+\IEEEdisplaynontitleabstractindextext
 
-\begin{IEEEkeywords}
-    Random walk, hitting time, Kemeny constant, spectral algorithm, complex network, vertex centrality.
-\end{IEEEkeywords}
+\IEEEpeerreviewmaketitle
 
 \section{Introduction}\label{sec:intro}
 
@@ -51,7 +61,7 @@ For random walks on a graph with \(n\) vertices, the Kemeny constant \(K\) is de
 The Kemeny constant has also found a wealth of applications in different fields~\cite{Hu14}.
 It can be utilized to gauge the efficiency of user navigation through the World Wide Web (WWW)~\cite{LeLo02}.
 Moreover, the Kemeny constant is related to the mixing rate of an irreducible Markov chain~\cite{LePeWi09}, by regarding it as the expected time to mixing of the Markov chain~\cite{Hu06}.
-Recently, the Kemeny constant has been applied to measure the efficiency of robotic surveillance in network environments~\cite{PaAgBu15} and to characterize the noise robustness of a class of protocols for formation control~\cite{JaOl15}
+Recently, the Kemeny constant has been applied to measure the efficiency of robotic surveillance in network environments~\cite{PaAgBu15} and to characterize the noise robustness of a class of protocols for formation control~\cite{JaOl15}.
 
 Despite the wide range of applications of the absorbing random-walk centrality and the Kemeny constant, it is a computational challenge to obtain their exact values.
 By definition, both the absorbing random-walk centrality and the Kemeny constant are a partial average of some hitting times.
@@ -1699,5 +1709,26 @@ Finally, we conducted extensive experiments on various real-world and model netw
 \bibliographystyle{IEEEtran}
 \balance
 \bibliography{refs}
+
+\begin{IEEEbiography}[\biophoto{xhs.jpg}]{Haisong Xia}
+    received the B.S. degree in computer science from Fudan University, Shanghai, China, in 2022. He is currently pursuing the master's degree in the School of Computer Science at Fudan University.\\
+    His current research interests include network science, spectral graph theory and social network analysis.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}{Wanyue Xu}
+    (Student Member, IEEE) received the B.Eng. degree in computer science and technology from Shangdong University, Weihai, China, in 2019. She is currently pursuing the master's degree with the School of Computer Science, Fudan University, Shanghai, China.\\
+    Her research interests include network science, graph data mining, social network analysis, and random walks.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}{Zuobai Zhang}
+    received the B.S. degree  in computer science from Fudan University, Shanghai, China, in 2021. 	He is currently pursuing the Ph.D. degree at Mila - Qu\'{e}bec AI Institute, Canada. His research interests include graph algorithms, graph representation learning, and drug discovery.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}[\biophoto{zzz.jpg}]{Zhongzhi Zhang}
+    (Member, IEEE) received the B.Sc. degree in applied mathematics from Anhui University, Hefei, China, in 1997 and the Ph.D. degree in management science and engineering from Dalian University of Technology, Dalian, China, in 2006. \\
+    From 2006 to 2008, he was a Post-Doctoral Research Fellow with Fudan University, Shanghai, China, where he is currently a Full Professor with the School of Computer Science. He has published over 150 papers in international journals or conferences. He has over 3300 ISI Web of Science citations with an H-index of 33 according to the Clarivate. He was selected as one of the most cited Chinese researchers
+    (Elsevier) in 2019 and 2020. His current research interests include network science, graph data mining, social network analysis, spectral graph theory, and random walks. \\
+    Dr. Zhang was a recipient of the Excellent Doctoral Dissertation Award of Liaoning Province, China, in 2007, the Excellent Post-Doctor Award of Fudan University in 2008, the Shanghai Natural Science Award (third class) in 2013, and the Wilkes Award for the best paper published in The Computer Journal in 2019. He is a member of the IEEE.
+\end{IEEEbiography}
 
 \end{document}
