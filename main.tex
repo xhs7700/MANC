@@ -1,4 +1,4 @@
-\documentclass[10pt,journal,compsoc]{IEEEtran}
+\documentclass[10pt,journal,compsoc,twocolumn,twoside]{IEEEtran}
 % \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
 %     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
@@ -23,13 +23,14 @@
 
 \IEEEtitleabstractindextext{
     \begin{abstract}
-        For random walks on a graph, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution.
+        For random walks on an undirected graph, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution.
         Both quantities have found a large variety of applications in different areas.
         However, their high computational complexity limits their applications, especially for large networks with millions of vertices.
         In this paper, we first establish a connection between the two quantities, representing \(K\) in terms of \(H_j\) for all vertices.
-        Subsequently, we extend the notion of mean hitting time to the case of multiple vertices, proposing a vertex group centrality and its minimization problem.
+        Subsequently, we extend the notion of mean hitting time to the case of multiple vertices, proposing a vertex group centrality called Absorbing Group Centrality (AGC).
         We then express these quantities in terms of either the pseudoinverse for graph Laplacian or the inverse for a SDDM matrix, based on which we develop an efficient algorithm that provides an approximation of \(H_j\) for all vertices and \(K\) in nearly linear time with respect to the edge number, with high probability.
-        Based on the aforementioned algorithm, we provide another nearly linear greedy algorithm to solve the minimization problem of our proposed vertex group centrality with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any \(\epsilon\in(0,1)\).
+        Moreover, we study the problem of finding a subset \(S\) of \(k\) vertices to minimize its AGC \(\manc{S}\), proving its NP-hardness.
+        Based on the aforementioned algorithm, we provide another nearly linear greedy algorithm to solve the AGC minimization problem with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor for any error parameter \(\epsilon\in(0,1)\).
         Extensive experiment results on real-life and model networks validate both the efficiency and accuracy of our proposed algorithms.
     \end{abstract}
 
@@ -78,23 +79,44 @@ We introduce a new vertex group centrality called Absorbing Group Centrality (AG
 For a connected undirected graph and a vertex group \(S\), AGC \(\manc{S}\) is the expected hitting time for a random walker starting from a vertex \(u\) to an arbitary vertex in \(S\). Here, vertex \(u\) is chosen based on the stationary distribution \(\vecpi\).
 We also introduce the AGC minimization problem, which involves identifying the vertex group \(S^*\) with capacity \(k\) that minimizes AGC \(\manc{S^*}\).
 
-In this paper, we present algorithms that can address the following tasks in large networks with nearly linear time complexity:
-\begin{itemize}
-    \item Computing absorbing random-walk centrality \(H_j\) and Kemeny constant \(K\);
-    \item Computing Absorbing Group Centrality (AGC) \(\manc{S}\);
-    \item Solving the AGC minimization problem with an approximate factor.
-\end{itemize}
+% In this paper, we present algorithms that can address the following tasks in large networks with nearly linear time complexity:
+% \begin{itemize}
+%     \item Computing absorbing random-walk centrality \(H_j\) and Kemeny constant \(K\);
+%     \item Computing Absorbing Group Centrality (AGC) \(\manc{S}\);
+%     \item Solving the AGC minimization problem with an approximation factor.
+% \end{itemize}
 
-We focus on a special absorbing random-walk centrality \(H_j=\sum_{i} \rho(i) H_{ij}\), with the starting probability distribution \(\rho(\cdot)\) being the stationary distribution \(\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}\) of the random walk.
-In other words,  we study \(H_j=\sum_{i} \pi_i H_{ij}\), which has received considerable attention~\cite{TeBeVo09,Be09,Be16}.
+For the absorbing random-walk centrality \(H_j=\sum_{i} \rho(i) H_{ij}\), we focus on the special case when the starting probability distribution \(\rho(\cdot)\) is the stationary distribution \(\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}\) of the random walk.
+In other words, we study \(H_j=\sum_{i} \pi_i H_{ij}\), which has received considerable attention~\cite{TeBeVo09,Be09,Be16}.
 We first express \(K\) in terms of \(H_j\) for all vertices, and further express \(H_j\) and \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix.
 
-We then propose a fast algorithm to compute approximate \(H_j\) for all vertices and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16,GaKySp23}.
+We then propose a fast algorithm called \(\text{Approx}\mathcal{HK}\) to compute approximate \(H_j\) for all vertices and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16,GaKySp23}.
 
 For Absorbing Group Centrality (AGC), we reformulate it as the inverse of a SDDM matrix.
-Although the AGC minimization problem is proved to be NP-hard, we can utilize the monotonicity and supermodularity of AGC to develop a fast greedy algorithm that yields an approximate factor of \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) for any \(\epsilon\in(0,1)\).
+Although the AGC minimization problem is proved to be NP-hard, we can utilize the monotonicity and supermodularity of AGC to develop a fast greedy algorithm called \textsc{ApproxAGCM}.
+\textsc{ApproxAGCM} is based on \(\text{Approx}\mathcal{HK}\) and yields an approximation factor of \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) for any error parameter \(\epsilon\in(0,1)\).
 
 Finally, we experimentally demonstrate that our algorithms are accurate and are significantly faster than the direct exact computation of related quantities according to their definitions.
+
+The primary version of our work has been published in WSDM '20: The Thirteenth ACM International Conference on Web Search and Data Mining~\cite{ZhXuZh20}. The contributions of the conference version are summarized as follows:
+
+\begin{itemize}
+    \item We express the absorbing random-walk centrality \(H_j\) and the Kemeny constant \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix.
+    \item We propose an approximation algorithm called \(\text{Approx}\mathcal{HK}\) to compute \(H_j\) and \(K\) in nearly linear time of the number of graph edges.
+    \item Numerical experiments reveal the accuracy and efficiency of \(\text{Approx}\mathcal{HK}\).
+\end{itemize}
+
+In the conference version~\cite{ZhXuZh20}, we focus solely on the mean hitting time for a single vertex.
+In the extended version, we broaden the concept of mean hitting time to encompass multiple vertices and introduce a vertex group centrality along with a corresponding minimization problem.
+The following are our primary additional contributions:
+
+\begin{itemize}
+    \item We propose a vertex group centrality called Absorbing Group Centrality (AGC) based on the group hitting time.
+    \item We introduce the AGC minimization problem, proving its NP-hardness.
+    \item Due to the monotonicity and supermodularity of AGC, we develop an efficient greedy algorithm called \textsc{ApproxAGCM} based on \(\text{Approx}\mathcal{HK}\) to approximately solve the AGC minimization problem.
+    \item Extensive experiment results demonstrate that both of \(\text{Approx}\mathcal{HK}\) and \textsc{ApproxAGCM} are accurate and scalable, which can be applied to networks with millions of vertices.
+\end{itemize}
+
 
 \section{Preliminary}
 
@@ -116,7 +138,7 @@ Sometimes we skip subscripts if there is no ambiguity.
 
 For a matrix \(\mata\in\rea^{m\times n}\), its Frobenius form is \(\Abs{\mata}_F=\sqrt{\trace{\mata^\top\mata}}\).
 
-As we will prove the approximation guarantee of our algorithms in \secref{sec:approx-algo}, it is necessary to give the definition of approximate factor.
+As we will prove the approximation guarantee of our algorithms in \secref{sec:approx-algo}, it is necessary to give the definition of approximation factor.
 
 \begin{definition}[\(\epsilon\)-approximation]
     Let \(x\) and \(\tilde{x}\) be positive scalars, with \(\epsilon\) as the error parameter such that \(\epsilon\in(0,1)\). We refer to \(\tilde{x}\) as an \(\epsilon\)-approximation of \(x\) if the inequality \((1-\epsilon)\tilde{x}\le x\le(1+\epsilon)\tilde{x}\) holds. For convenience, we write this as \(x\approx_{\epsilon}\tilde{x}\).
@@ -505,7 +527,7 @@ Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an inte
 \end{IEEEproof}
 
 As AGCM is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve AGCM.
-However, the set function \(\manc{\cdot}\) is both monotonic and supermodular, allowing for a simple greedy algorithm with a \(1-\frac{1}{e}\) approximate factor to AGCM~\cite{NeWoFi78}.
+However, the set function \(\manc{\cdot}\) is both monotonic and supermodular, allowing for a simple greedy algorithm with a \(1-\frac{1}{e}\) approximation factor to AGCM~\cite{NeWoFi78}.
 At each iteration, a new absorbing vertex \(u^*\) is chosen from the set of non-absorbing vertices \(V\setminus S\), satisfying
 
 \begin{gather*}
@@ -570,7 +592,7 @@ As a result, we can optimize the simple greedy algorithm outlined in~\algoref{al
     \Return{\(S_k\)}
 \end{algorithm}
 
-Afterwards, we prove that \algoref{algo:exact} has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximate factor.
+Afterwards, we prove that \algoref{algo:exact} has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
 \begin{theorem}
     The algorithm \(S_k=\textsc{ExactAGCM}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a vertex group \(S_k\) with capacity \(k\).
     When \(k>1\), the vertex group \(S\) satisfies
@@ -667,7 +689,7 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST},  one can  approximate  \(C(u)\) arb
 %	\]
 %\end{fact}
 \begin{lemma}\label{lem:error1}
-    Given an approximate factor \(\epsilon \le 1/2\) and a \(k\times n\) matrix \(\matz\) that satisfies
+    Given an approximation factor \(\epsilon \le 1/2\) and a \(k\times n\) matrix \(\matz\) that satisfies
     \[
         (1-\epsilon) C(u)
         \leq
@@ -1073,7 +1095,7 @@ Additionally, we can provide an approximation guarantee for this algorithm.
 
 % \end{IEEEproof}
 
-By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we are able to create a faster greedy algorithm called \textsc{ApproxAGCM} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor.
+By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we are able to create a faster greedy algorithm called \textsc{ApproxAGCM} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor.
 The complexity of \textsc{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear, as it calls \(\text{Approx\(\mathcal{HK}\)}\) once and \textsc{ApproxDelta} \(k-1\) times.
 
 \begin{algorithm}
@@ -1711,12 +1733,12 @@ Finally, we conducted extensive experiments on various real-world and model netw
 \bibliography{refs}
 
 \begin{IEEEbiography}[\biophoto{xhs.jpg}]{Haisong Xia}
-    received the B.S. degree in computer science from Fudan University, Shanghai, China, in 2022. He is currently pursuing the master's degree in the School of Computer Science at Fudan University.\\
+    received the B.S. degree in computer science from Fudan University, Shanghai, China, in 2022. He is currently pursuing the master's degree in the School of Computer Science at Fudan University.
     His current research interests include network science, spectral graph theory and social network analysis.
 \end{IEEEbiography}
 
 \begin{IEEEbiography}{Wanyue Xu}
-    (Student Member, IEEE) received the B.Eng. degree in computer science and technology from Shangdong University, Weihai, China, in 2019. She is currently pursuing the master's degree with the School of Computer Science, Fudan University, Shanghai, China.\\
+    (Student Member, IEEE) received the B.Eng. degree in computer science and technology from Shangdong University, Weihai, China, in 2019. She is currently pursuing the master's degree with the School of Computer Science, Fudan University, Shanghai, China.
     Her research interests include network science, graph data mining, social network analysis, and random walks.
 \end{IEEEbiography}
 
