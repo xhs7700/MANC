@@ -648,7 +648,7 @@ However, the algorithm mentioned above is not our main focus in this paper, as i
 
 \subsection{Approximations of the Kemeny constant and the walk centrality}
 
-In the preceding section, we reduce the problem of computing  \(H_j\) and \(K\) to evaluating the quadratic forms \((\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), \(u=1,2,\ldots, n\), of matrix  \(\lap^{\dagger}\).
+In the preceding subsection, we reduce the problem of computing  \(H_j\) and \(K\) to evaluating the quadratic forms \((\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), \(u=1,2,\ldots, n\), of matrix  \(\lap^{\dagger}\).
 However,  this involves computing the pseudoinverse of \(\lap\), the straightforward computation for which still has a complexity of \(O(n^3)\), making it infeasible to huge networks. Here, we present an algorithm to compute an approximation of \(H_u\) for all  \(u \in V\) and \(K\)  in nearly linear time with respect to the number of edges,  which has a strict theoretical guarantee with  high probability.
 
 %\subsection{Random projections for related quantities}
@@ -657,7 +657,7 @@ Let \(C(u)=(\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), which c
 \begin{small}
     \begin{equation}\label{EE12}
         \begin{split}
-            &\quad C(u)=(\vece_u - \vecpi)^{\top} \lap^{\dagger} \lap \lap^{\dagger} (\vece_u - \vecpi) \\
+            C(u)&=(\vece_u - \vecpi)^{\top} \lap^{\dagger} \lap \lap^{\dagger} (\vece_u - \vecpi) \\
             &=(\vece_u - \vecpi)^{\top} \lap^{\dagger} \matb^{\top} \matw \matb \lap^{\dagger} (\vece_u - \vecpi) \\
             &=(\vece_u - \vecpi)^{\top} \lap^{\dagger} \matb^{\top} \matw^{\frac{1}{2}} \matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u - \vecpi) \\
             &=\|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u - \vecpi)\|^2.
