@@ -111,7 +111,7 @@ The following are our primary additional contributions:
 \end{itemize}
 
 
-\section{Preliminary}
+\section{Preliminaries}
 
 In this section, we give a brief introduction to some notations as well as some basic concepts about graphs, Laplacian matrix, resistance distance, random walks, hitting times and some quantities derived from hitting times.
 
@@ -131,22 +131,10 @@ Sometimes we skip subscripts if there is no ambiguity.
 
 For a matrix \(\mata\in\rea^{m\times n}\), its Frobenius form is \(\Abs{\mata}_F=\sqrt{\trace{\mata^\top\mata}}\).
 
-As we will prove the approximation guarantee of our algorithms in \secref{sec:approx-algo}, it is necessary to give the definition of approximation factor.
+As we will prove the approximation guarantee of our algorithms in \secref{sec:approx-algo1} and \secref{sec:approx-algo2}, it is necessary to give the definition of approximation factor.
 
 \begin{definition}[\(\epsilon\)-approximation]
     Let \(x\) and \(\tilde{x}\) be positive scalars, with \(\epsilon\) as the error parameter such that \(\epsilon\in(0,1)\). We refer to \(\tilde{x}\) as an \(\epsilon\)-approximation of \(x\) if the inequality \((1-\epsilon)\tilde{x}\le x\le(1+\epsilon)\tilde{x}\) holds. For convenience, we write this as \(x\approx_{\epsilon}\tilde{x}\).
-\end{definition}
-
-\subsection{Supermodular Functions}
-
-Subsequently, we give the definitions of monotone and supermodular set functions. For simplicity, we denote \(S\cup\setof{u}\) as \(S+u\).
-
-\begin{definition}[Monotonicity]
-    A set function \(f:2^{V}\to\rea^+\) is considered monotonic if and only if the inequality \(f(X)\ge f(Y)\) holds for any nonempty sets \(X\) and \(Y\) that satisfy \(X\subseteq Y\subseteq V\).
-\end{definition}
-
-\begin{definition}[Supermodularity]
-    A set function \(f:2^{V}\to\rea^+\) is considered supermodular if and only if the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds for any nonempty sets \(X\) and \(Y\) that satisfy \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\).
 \end{definition}
 
 \subsection{Graph and Laplacian Matrix}\label{sub:lap}
@@ -236,171 +224,13 @@ and
 
 Equations \eqref{ATT01} and \eqref{Kemeny01} provide exact computation for the walk centrality and Kemeny constant, respectively. However, both formulas are expressed in terms of the eigenvalues and eigenvectors of the normalized Laplacian, the computation complexity for which scale as \(O(n^3)\). Thus, direct  computation for \(H_j\) and \(K\)  using spectral method appears to be prohibitive for large networks, and is infeasible to those realistic networks with millions of vertices.
 
-\section{Introduction of Absorbing Group Centrality (AGC)}
+\section{Connections between the Walk Centrality and the Kemeny Constant}
 
-In this section, we introduce the definition of Absorbing Group Centrality (AGC).
-By establishing connection between AGC, the Kemeny constant and the random detour time, we try to give a physical explanation of AGC.
-Additionally, we demonstrate monotonicity and supermodularity of AGC \(\manc{\cdot}\).
-
-\subsection{Definition of AGC}
-
-We utilize the concept of absorbing random walk to define AGC.
-For a group of vertices \(S\) in a connected graph \(\gr=(V,E)\), the group hitting time \(H_{iS}\) from vertex \(i\) to vertex group \(S\) is the expected number of steps for a walker starting from \(i\) to visit any vertex of \(S\) for the first time.
-Also, if we denote the time steps for a walker starting from \(i\) to first reach an arbitary vertex of \(S\) as random variable \(T_{iS}\), then we have \(H_{iS}=\mean{T_{iS}}\).
-
-It is intuitive that if group hitting time \(H_{iS}\) is relatively small for every vertex \(i\) in \(\gr\), then we can consider vertex group \(S\) as a central group.
-Building on this idea, we give the definition of AGC.
-
-\begin{definition}[Absorbing Group Centrality, AGC]\label{def:manc}
-    For a given vertex group \(S\) in a connected undirected graph \(\gr=(V,E)\), we define its AGC \(\manc{S}\) to be the expected time it takes a random walker, starting from any vertex in the graph, to reach any vertex in \(S\). Here, the starting vertex is chosen according to the stationary distribution \(\vecpi\). We can calculate \(\manc{S}\) using the following formula:
-    \begin{equation*}
-        \manc{S}=\sum_{i\in V}\pi_i H_{iS}.
-    \end{equation*}
-\end{definition}
-
-It is obvious that when \(S\) contains only one vertex \(j\), AGC \(\manc{S}\) automatically reduces to walk centrality \(H_j\).
-
-As stated in~\cite{KeSn76}, we can convert the AGC definition into the inverse of a SDDM matrix.
-
-\begin{fact}
-    Given the absorbing vertex group \(S\) and transition matrix \(\matp\), then the fundamental matrix \(\matf\) can be denoted as
-    \begin{equation}\label{eq:funda}
-        \matf=\sum_{l=0}^\infty\matp_{-S}^l=(\mati-\matp_{-S})^{-1}=(\mati-\matp)_{-S}^{-1}.
-    \end{equation}
-\end{fact}
-
-Based on~\eqref{eq:funda}, we can express \(\matf_{[i,j]}\) as the expected number of times a random walker passes through vertex \(j\) before being absorbed, starting from vertex \(i\).
-According to the linearity of the mean, the hitting time of a random walker is equivalent to the sum of the expected number of passages through all vertices in the graph. That is, if we let \(l_i\) denote the hitting time of a random walker starting from vertex \(i\), then \(\vecl=\matf\vecone\).
-In particular, if the random walker starts from an absorbing vertex, the hitting time can be considered as zero.
-Considering the aforementioned case, we can express AGC \(\manc{S}\) as
-\begin{equation*}
-    \manc{S}=\vecpi_{-S}^\top\vecl=\vecpi_{-S}^\top\matf\vecone=\vecpi_{-S}^\top(\mati-\matp)_{-S}^{-1}\vecone.
-\end{equation*}
-
-Furthermore, after simplification using~\eqref{eq:trs}, we get the formula of \(\manc{S}\):
-\begin{equation}\label{eq:AGC}
-    \begin{split}
-        \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\mats^{-1}\mata}_{-S}^{-1}\vecone                          \\
-        & =\vecpi_{-S}^\top\mypar{\mati-\mats^{-1}\mata}_{-S}^{-1}\mats_{-S}^{-1}\mats_{-S}\vecone \\
-        & =\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}.
-    \end{split}
-\end{equation}
-
-\subsection{Physical explanations of AGC}
-
-After detailing AGC, we try to establish a connection between AGC \(\manc{S}\), the group random detour time \(D_{ij}(S)\) and the Kemeny constant \(K\).
-This allows us to understand the importance of vertex group \(S\) from a different perspective.
-A similar idea of random detour time was proposed in~\cite{RaZh13}, where the authors proved an equation related to topological centrality and random detour time of a single vertex.
-In this paper, we explore the random detour time of multiple vertices, providing a physical explanation of AGC.
-
-For vertex group \(S\) in graph \(\gr\), the group random detour time \(D_{ij}(S)\) is defined as the expected time of a walker who starts from vertex \(i\), must visit an arbitary vertex in group \(S\), then first reaches vertex \(j\).
-
-\begin{definition}[Group random detour time]\label{def:detour-multiple}
-    If we denote the probability that a walker starting from vertex \(i\) first reaches vertex \(u\) in absorbing group \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpdistr\in\rea^{n\times\abs{S}}\), then we have
-    \begin{equation*}
-        D_{ij}(S)= H_{iS}+\sum_{k=1}^{\abs{S}}\matpdistr_{[i,k]}H_{kj}.
-    \end{equation*}
-\end{definition}
-
-It is natural to assume that as \(D_{ij}(S)\) increases, it becomes more difficult for a walker to reach vertices in \(S\), and \(S\) becomes less significant in the overall network. In fact, we can demonstrate the following theorem, which establishes the link between AGC \(\manc{S}\), the group random detour time \(D_{ij}(S)\), and the Kemeny constant \(K\).
-
-\begin{theorem}\label{thm:connection-multiple}
-    For an arbitary vertex group \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) vertices,
-    \begin{equation}\label{eq:connection-multiple}
-        \sum_{i=1}^n\pi_iH_{iS}+K=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S).
-    \end{equation}
-\end{theorem}
-\begin{IEEEproof}
-    To prove~\eqref{eq:connection-multiple}, we utilize the fundamental matrix \(\matfstar\) in the non-absorbing random walk model.
-    According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\vecone\vecpi^\top)^{-1}\matpi^{-1}\), where \(\matpi\) is defined as \(\rm{diag}\mypar{\vecpi}\).
-    Subsequently, the hitting time \(H_{ij}\) can be represented by \(\matfstar\) as \(H_{ij}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\)~\cite{BoRaZh11}.
-    Then the right side of \eqref{eq:connection-multiple} can be rewritten as
-    \begin{equation}\label{eq:detour}
-        \begin{split}
-            &\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S)\\
-            =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\pi_i\pi_j\matpdistr_{[i,k]}H_{kj}  \\
-            =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{j=1}^n\pi_j\vecpi^\top\matpdistr\mypar{\matfstar_{[j,j]}\vecone-\matfstar_{[S,j]}}                        \\
-            % =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\vecone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
-            =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}-1.
-        \end{split}
-    \end{equation}
-    The final equality is due to the fact that \(\matpdistr\vecone=\vecone\) and \(\matfstar\vecpi=\vecone\).
-
-    Afterwards, we can rewrite Kemeny constant \(K\) as
-    \begin{equation}\label{eq:kemeny}
-        \begin{split}
-            K&=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jH_{ij}\\
-            &=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_j\mypar{\matfstar_{[j,j]}-\matfstar_{[i,j]}}\\
-            &=\sum_{j=1}^n\pi_j\matfstar_{[j,j]}-1.
-        \end{split}
-    \end{equation}
-    The last equality is due to the fact that \(\matfstar\vecpi=\vecone\) and \(\vecpi^\top\vecone=1\).
-    Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes our proof.
-\end{IEEEproof}
-
-Since \(K\) is only related to the structure of graph \(\gr\) itself, equation~\eqref{eq:connection-multiple} indicates a constant difference between AGC \(\manc{S}\) and the group random detour time \(D_{ij}(S)\).
-This equation suggests that AGC \(\manc{S}\) can also reflect the extent of detour in the network when \(S\) is set as the "passing group".
-This is another way of understanding the physical meaning of AGC.
-
-\subsection{Properties of AGC}
-
-% Monotonicity and Supermodularity
-
-After proposing physical explanations of AGC, we then attempt to study its properties.
-Specifically, we demonstrate that the set function \(\manc{\cdot}\) is both monotone and supermodular, providing us with a theoretical basis for designing greedy algorithms that can provide approximation guarantees for solving the AGC minimization problem.
-
-\begin{theorem}[Monotonicity]\label{thm:mono}
-    Let \(S\) be an arbitary nonempty vertex of connected weighted undirected graph \(\gr=(V,E,w)\), then for vertex \(u\in V\setminus S\),
-    \begin{equation*}
-        \manc{S}\ge \manc{S+u}.
-    \end{equation*}
-\end{theorem}
-
-\begin{IEEEproof}
-    According to \defref{def:manc}, when a random walker arrives at vertices within \(S\), it must have arrived at vertices within \(S+u\). Therefore \(H_{v,S}\ge H_{v,S+u}\) holds for any vertex \(v\in V\), which concludes our proof.
-\end{IEEEproof}
-
-\begin{theorem}[Supermodularity]\label{thm:supermod}
-    Let \(S,T\) be arbitary nonempty vertex groups of connected weighted undirected graph \(\gr=(V,E,w)\) such that \(S\subseteq T\subsetneq V\), then for vertex \(u\in V\setminus T\),
-    \begin{equation*}
-        \manc{S}-\manc{S+u}\ge \manc{T}-\manc{T+u}.
-    \end{equation*}
-\end{theorem}
-
-\begin{IEEEproof}
-    For a subset \(A\) of the probability space, we denote \(\indfunc{A}\) as the indicator function of the event \(A\). Then we rewrite \(\manc{S}-\manc{S+u}\) by discussing the absorbing vertex of random walker.
-    \begin{equation}\label{eq:supermod-diff}
-        \begin{split}
-            &\manc{S}-\manc{S+u}\\
-            =&\sum_{v\in V}\pi_v\mypar{\mean{T_{vS}}-\mean{T_{v\mypar{S+u}}}}\\
-            =&\sum_{v\in V}\pi_v\mypar{\mean{T_{vS}}-\mean{\min\setof{T_{vS},T_{vu}}}}
-        \end{split}
-    \end{equation}
-    By introducing the indicator function, \(\min\setof{T_{vS},T_{vu}}\) can be represented as
-    \begin{equation*}
-        \min\setof{T_{vS},T_{vu}}=T_{v,S}\indfunc{\setof{T_{v,S}\le T_{v,u}}}+T_{v,u}\indfunc{\setof{T_{v,u}<T_{v,S}}}.
-    \end{equation*}
-    Combining this equation with~\eqref{eq:supermod-diff} and the linearity of the mean, we can get
-    \begin{equation*}
-        \manc{S}-\manc{S+u}=\sum_{v\in V}\pi_v\mean{(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}}.
-    \end{equation*}
-
-    Similarly, we also have
-    \[\manc{T}-\manc{T+u}=\sum_{v\in V}\vecpi_v\mean{(T_{v,T}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,T}}}}.\]
-    As is mentioned in proof of \thmref{thm:mono}, \(T_{v,S}\ge T_{v,T}\) holds for any vertex \(v\in V\).
-    It is also obvious that \(\indfunc{\setof{T_{v,u}<T_{v,S}}}\ge\indfunc{\setof{T_{v,u}<T_{v,T}}}\).
-    Combining the above two inequalities, we can prove that
-    \[(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}\ge(T_{v,T}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,T}}}\]
-    holds for any vertex \(v\in V\), which completes our proof.
-\end{IEEEproof}
-
-\section{Problem Formulation}
-
+Although both the walk centrality \(H_j\) and the Kemeny constant \(K\) have attracted much attention from the scientific community, the relation between  them for a generic  graph  \(\gr\) is still lacking.
 In this section, we establish an explicit relation between the walk centrality \(H_j\) and the Kemeny constant \(K\).
 We express both quantities in terms of quadratic forms of the pseudoinverse \(\lap^{\dagger}\) of graph Laplacian \(\lap\), which helps address their computational challenges.
-Additionally, we propose the AGC minimization problem and prove its NP-hardness.
 
-\subsection{New Formulas for Markov Centrality and Kemeny Constant}
+First, we show that the Kemeny constant \(K\) can be expressed in a linear combination of the walk centrality  \(H_j\) for all vertices in \(\gr\), as stated in the following lemma.
 
 Although both the walk centrality \(H_j\) and the Kemeny constant \(K\) have attracted much attention from the scientific community, the relation between  them for a generic  graph  \(\gr\) is still lacking. Below we show that the Kemeny constant \(K\) can be expressed in a linear combination of walk centrality  \(H_j\) for all vertices in \(\gr\), as stated in the following lemma.
 
@@ -465,186 +295,10 @@ After obtaining the relation governing the Kemeny constant \(K\)  and walk centr
 According to \lemref{HjK}, we can simplify the task of computing \(H_j\) and \(K\) by evaluating the quadratic forms of matrix \(\lap^{\dagger}\).
 Unfortunately, the direct computation of \(\lap^{\dagger}\) still has a complexity of \(O(n^3)\), which makes it impractical for larger networks.
 
-\subsection{AGC minimization problem}
+\section{Fast Approximation Algorithm for Computing \(H_j\) and \(K\)}\label{sec:approx-algo1}
 
-When considering AGC, we naturally address the issue of selecting a vertex group (\(S\)) with a capacity of \(k\) from a network that minimizes its AGC (\(\manc{S}\)).
-In this subsection, we present the definition of the AGC minimization problem, as well as its NP-hardness.
-
-\begin{problem}[Absorbing Group Centrality Minimization, AGCM]
-Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, \(m\) edges and an integer \(k\ll n\), the goal is to find a vertex group \(S^*\subseteq V\) such that AGC \(\manc{S^*}\) is minimized:
-\begin{equation*}
-    S^*=\argmin_{S\subseteq V,\abs{S}=k}\manc{S}.
-\end{equation*}
-\end{problem}
-
-To prove the NP-hardness of AGCM, we try to construct a reduction from the Vertex Cover problem to a decision version of AGCM.
-
-\begin{problem}[Vertex Cover on \(c\)-regular graphs]
-Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an integer \(k\). The aim is to determine whether a subset of vertices \(S\subseteq V\) exists, with cardinality \(\abs{S}\le k\), such that every edge in \(E\) is incident with at least one vertex in \(S\).
-\end{problem}
-
-\begin{theorem}\label{thm:np-hard}
-    AGCM is NP-hard.
-\end{theorem}
-\begin{IEEEproof}
-    For a connected graph \(\gr=(V,E,w)\) that is \(c\)-regular, where the weights of all edges are equal to \(1\), we attempt to prove that \(\manc{S}\ge (n-k)/n\) for any nonempty vertex group \(S\subseteq V\) with capacity \(k\).
-    The equality holds if and only if \(S\) is a vertex cover of \(\gr\).
-
-    We first prove that if \(S\) is a vertex cover of \(\gr\), then \(\manc{S}=(n-k)/n\). When \(S\) is a vertex cover of \(\gr\), there are no edges between vertices in \(V\setminus S\).
-    Thus, we can simplify~\eqref{eq:AGC} as:
-    \begin{equation*}
-        \manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}=\vecpi_{-S}^\top\mats_{-S}^{-1}\vecs_{-S}=\vecpi_{-S}^\top\vecone.
-    \end{equation*}
-    Since \(\gr\) is a \(c\)-regular graph, \(\vecpi=\begin{pmatrix}1/n&\cdots&1/n\end{pmatrix}^\top\).
-    Thus, \(\manc{S}=\vecpi_{-S}^\top\vecone=(n-k)/n\).
-
-    We then demonstrate that if \(S\) does not constitute a vertex cover of \(\gr\), then \(\manc{S}>(n-k)/n\).
-    For a vertex \(u\in S\) and a vertex \(v\in V\setminus S\), it is obvious that \(H_{u,S}=0\) and \(H_{v,S}\ge1\).
-    Moreover, since \(S\) is not a vertex cover of \(\gr\), there exists at least one edge \((u',v')\) in edge set \(E\) that is not covered by \(S\).
-    When a walker starts from vertex \(u'\) and moves to vertex \(v'\) with a probability of at least \(\frac{1}{s_{\max}}>\frac{1}{n}\), the walker's path length exceeds \(1\).
-    That is,
-    \begin{equation*}
-        H_{u',S}=H_{v',S}>\mypar{1-\frac{1}{n}}+\frac{2}{n}=1+\frac{1}{n}.
-    \end{equation*}
-
-    Therefore, if we denote \(S+u'+v'\) as \(S'\), then we are able to get the lower bound of AGC:
-    \begin{align*}
-        \manc{S} & =\sum_{v\in V\setminus S'}\pi_vH_{v,S}+\pi_{u'}H_{u',S}+\pi_{v'}H_{v',S}         \\
-                 & >\vecpi_{-S'}\vecone+\pi_{u'}\mypar{1+\frac{1}{n}}+\pi_{v'}\mypar{1+\frac{1}{n}} \\
-                 & =\vecpi_{-S}^\top\vecone+\frac{\pi_{u'}+\pi_{v'}}n
-        >\vecpi_{-S}^\top\vecone=(n-k)/n.
-    \end{align*}
-
-    According to the proposition above, we can create a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of AGCM, which proves that AGCM is NP-hard.
-
-\end{IEEEproof}
-
-As AGCM is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve AGCM.
-However, the set function \(\manc{\cdot}\) is both monotonic and supermodular, allowing for a simple greedy algorithm with a \(1-\frac{1}{e}\) approximation factor to AGCM~\cite{NeWoFi78}.
-At each iteration, a new absorbing vertex \(u^*\) is chosen from the set of non-absorbing vertices \(V\setminus S\), satisfying
-
-\begin{gather*}
-    \Delta(u,S)=\manc{S}-\manc{S+u},\\
-    u^*=\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}.
-\end{gather*}
-
-It is evident that the straightforward algorithm presented above requires computing \(\Delta(u,S)\) for every vertex \(u\) in the graph during each iteration, resulting in \(O(n)\) matrix inverse operations.
-If the naive matrix inverse algorithm with complexity \(O(n^3)\) is used, the total complexity of the simple greedy algorithm becomes \(O(kn^4)\).
-By simplifying \(\Delta(u,S)\), our aim is to decrease the time complexity of the greedy algorithm.
-
-For vertex \(u\in V\setminus S\), after adjusting the order of submatrix \(\lap_{-S}\), we rewrite \(\lap_{-S}\) as
-\begin{equation*}
-    \lap_{-S}=\begin{pmatrix}l_u & -\veca^\top \\-\veca&\mata\end{pmatrix},
-\end{equation*}
-where \(\mata\) denotes \(\lap_{-(S+u)}\).
-According to the properties of block matrices, we can get
-\begin{equation*}
-    \lap_{-S}^{-1}=\begin{pmatrix}
-        t & t\veca^\top\mata^{-1} \\t\mata^{-1}\veca&\mata^{-1}+t\mata^{-1}\veca\veca^\top\mata^{-1}
-    \end{pmatrix},
-\end{equation*}
-where \(t=\pinv{l_u-\veca^\top\inv{\mata}}\).
-Therefore, when \(S\neq\varnothing\), \(\Delta(u,S)\) can be rewritten as
-
-\begin{equation}\label{eq:margin-deriv}
-    \begin{split}
-        &\manc{S}-\manc{S+u}\\
-        =&\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecs_{-(S+u)}\\
-        =&\frac1t\mypar{t\vecpi_u+t\vecpi_{-(S+u)}^\top\mata^{-1}\veca}\mypar{td_u+t\veca^\top\mata^{-1}\vecs_{-(S+u)}}\\
-        =&\frac{\mypar{\vecpi_{-S}^\top\lap_{-S}^{-1}\vece_u}\mypar{\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}}}{\vece_u^\top\lap_{-S}^{-1}\vece_u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}}^2}{s\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}}.
-    \end{split}
-\end{equation}
-
-Here we skip some steps for brevity.
-
-However, during the first iteration of the greedy algorithm, when \(S=\varnothing\), \eqref{eq:margin-deriv} becomes invalid due to the singularity of \(\lap\).
-Since \(\manc{\varnothing}=\infty\), we can define \(\Delta(u,\varnothing)\) as \(-\manc{S+u}=-H_u\), which is the negative of absorbing random-walk centrality for vertex \(u\).
-In \lemref{HjK}, we have shown that \(H_u=s\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\).
-
-Equation~\eqref{ATT02} and~\eqref{eq:margin-deriv} demonstrate that we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) by inverting the same matrix \(\lap_{-S}\) or by using the pseudoinverse of the same matrix \(\lap\).
-As a result, we can optimize the simple greedy algorithm outlined in~\algoref{algo:exact}, and reduce the time complexity from \(O(kn^4)\) to \(O(kn^3)\).
-
-\begin{algorithm}
-    \caption{\textsc{ExactAGCM}\((\gr,k)\)}
-    \label{algo:exact}
-    \Input{
-        A connected weighted undirected graph \(\gr=(V,E,w)\);
-        an integer \(k\in[1,\abs{V}]\)
-    }
-    \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
-    Compute \(\lap\) and \(\vecs\)\;
-    \(s\gets\vecs\vecone\),\(\vecpi\gets \inv{s}\vecs\)\;
-    \(S_1\gets\setof{\argmin_{u\in V}\setof{s(\vece_u-\vecpi)^\top\lap^\dagger(\vece_u-\vecpi)}}\)\;
-    \For{\(i=2,3,\dots,k\)}{
-        \ForEach{\(u\in V\setminus S\)}{
-            \(\Delta(u,S)\gets\frac{(\vece_u^\top\lap_{-S}^{-1}\vecs_{-S})^2}{s(\vece_u^\top\lap_{-S}^{-1}\vece_u)}\)\;
-        }
-        \(u^*\gets\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}\)\;
-        \(S_i\gets S_{i-1}\cup\setof{u^*}\)
-    }
-    \Return{\(S_k\)}
-\end{algorithm}
-
-Afterwards, we prove that \algoref{algo:exact} has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
-\begin{theorem}
-    The algorithm \(S_k=\textsc{ExactAGCM}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a vertex group \(S_k\) with capacity \(k\).
-    When \(k>1\), the vertex group \(S\) satisfies
-    \[\manc{\setof{u^*}}-\manc{S_k}\ge\mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}}\mypar{\manc{\setof{u^*}}-\manc{S^*}},\]
-    where
-    \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}},S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
-\end{theorem}
-\begin{IEEEproof}
-    According to the supermodularity of \(\manc{\cdot}\),
-    \[\manc{S_i}-\manc{S_{i+1}}\ge\frac{1}{k}\mypar{\manc{S_i}-\manc{S^*}}\]
-    holds for any positive integer \(i\), which indicates that
-    \[\manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1}{k}}\mypar{\manc{S_i}-\manc{S^*}}.\]
-    Subsequently, we can further obtain that
-    \begin{align*}
-        \manc{S_k}-\manc{S^*}\le & \mypar{1-\frac{1}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}    \\
-        \le                      & \frac{k}{k-1}\cdot\frac{1}{e}\mypar{\manc{S_1}-\manc{S^*}},
-    \end{align*}
-    which completes our proof based on the fact that \(S_1=\setof{u^*}\).
-\end{IEEEproof}
-
-\section{Nearly Linear Time Approximation Algorithms}\label{sec:approx-algo}
-
-In this section, we introduce fast algorithms that provide approximation guarantees for computing \(H_j\) and \(K\), as well as solving the AGC minimization problem.
-First, we introduce several concepts that form the theoretical foundation for our proposed algorithms.
-
-\begin{lemma}[Johnson-Lindenstraus Lemma, JL Lemma~\cite{Ac01}]
-    \label{lemma:JL}
-    Given fixed vectors \(\vecv_1,\vecv_2,\ldots,\vecv_n\in \mathbb{R}^d\) and
-    \(\epsilon>0\), let
-    \(\matq_{k\times d}\),  \(k\ge 24\log n/\epsilon^2\), be a matrix with each  entry equal  to \(1/\sqrt{k}\) or \(- 1/\sqrt{k}\)  with the same probability \(1/2\). Then with probability at least \(1-1/n\),
-    \[(1-\epsilon)\|\vecv_i-\vecv_j\|^2\le \|\matq \vecv_i-\matq \vecv_j\|^2\le
-        (1+\epsilon)\|\vecv_i-\vecv_j\|^2\] for all pairs \(i,j\le n\).
-\end{lemma}
-\lemref{lemma:JL} indicates that,  the pairwise distances \(\|\vecv_i-\vecv_j\|^2\) (\(i,j=1,2,\ldots, n\)) are almost preserved if we project the \(n\) vectors \(\vecv_i\) (\(i=1,2,\ldots, n\))  into a lower-dimensional space, spanned
-by \(O(\log n)\) random vectors.
-
-\begin{lemma}[SDD Solver~\cite{CoKyMiPaPeRaSu14,KySa16,GaKySp23}]
-    \label{lemma:ST}
-    There is an algorithm \(\vecx = \mathtt{Solve}(\lap,\vecy,\delta)\) which
-    takes a SDDM matrix or a Laplacian \(\lap\),
-    a column vector \(\vecy\), and an error
-    parameter \(\delta > 0\), and returns a column vector \(\vecx\) satisfying  \(\boldsymbol{1}^\top\vecx = 0\) and
-    \[
-        \|\vecx - \lap^{-1} \vecy\|_{\lap} \leq \delta \|\lap^{-1} \vecy\|_{\lap},
-    \]
-    where \(\Abs{\vecy}_{\lap} = \sqrt{\vecy^{\top} \lap \vecy}\).
-    The notation \(\lap^{-1}\) is used to represent the inverse matrix for a SDDM matrix or the pseudoinverse matrix for a Laplacian matrix.
-    The algorithm runs in expected time \(\Otil \left(m \log(1/\delta) \right)\).
-\end{lemma}
-
-Based on \lemref{lemma:ST}, we can design an efficient algorithm that computes AGC in almost linear time relative to the number of graph edges.
-However, the algorithm mentioned above is not our main focus in this paper, as it simply calls \(\mathtt{Solve}\).
-
-\subsection{Approximations of the Kemeny constant and the walk centrality}
-
-In the preceding subsection, we reduce the problem of computing  \(H_j\) and \(K\) to evaluating the quadratic forms \((\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), \(u=1,2,\ldots, n\), of matrix  \(\lap^{\dagger}\).
+In the preceding section, we reduce the problem of computing  \(H_j\) and \(K\) to evaluating the quadratic forms \((\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), \(u=1,2,\ldots, n\), of matrix  \(\lap^{\dagger}\).
 However,  this involves computing the pseudoinverse of \(\lap\), the straightforward computation for which still has a complexity of \(O(n^3)\), making it infeasible to huge networks. Here, we present an algorithm to compute an approximation of \(H_u\) for all  \(u \in V\) and \(K\)  in nearly linear time with respect to the number of edges,  which has a strict theoretical guarantee with  high probability.
-
-%\subsection{Random projections for related quantities}
 
 Let \(C(u)=(\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), which can be written in an Euclidian norm as
 \begin{small}
@@ -660,27 +314,35 @@ Let \(C(u)=(\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), which c
 This  in fact  equals the square of the distance between  vectors  \(\matw^{\frac{1}{2}} \matb \lap^{\dagger} \vece_u\) and \(\matw^{\frac{1}{2}} \matb \lap^{\dagger} \vecpi\), which can be evaluated by the Johnson-Lindenstraus
 Lemma~\cite{Ac01}.
 
+\begin{lemma}[Johnson-Lindenstraus Lemma, JL Lemma~\cite{Ac01}]
+    \label{lemma:JL}
+    Given fixed vectors \(\vecv_1,\vecv_2,\ldots,\vecv_n\in \mathbb{R}^d\) and
+    \(\epsilon>0\), let
+    \(\matq_{k\times d}\),  \(k\ge 24\log n/\epsilon^2\), be a matrix with each  entry equal  to \(1/\sqrt{k}\) or \(- 1/\sqrt{k}\)  with the same probability \(1/2\). Then with probability at least \(1-1/n\),
+    \[(1-\epsilon)\|\vecv_i-\vecv_j\|^2\le \|\matq \vecv_i-\matq \vecv_j\|^2\le
+        (1+\epsilon)\|\vecv_i-\vecv_j\|^2\] for all pairs \(i,j\le n\).
+\end{lemma}
+\lemref{lemma:JL} indicates that,  the pairwise distances \(\|\vecv_i-\vecv_j\|^2\) (\(i,j=1,2,\ldots, n\)) are almost preserved if we project the \(n\) vectors \(\vecv_i\) (\(i=1,2,\ldots, n\))  into a lower-dimensional space, spanned
+by \(O(\log n)\) random vectors.
+
 In order to compute  \(C(u)\), we use Lemma~\ref{lemma:JL} to reduce the dimension. Let \(\matq\) be a \(k\times m\) random projection matrix. Then  \(\|\matq \matw^{\frac{1}{2}} \matb \lap^{\dagger}(\vece_u-\vecpi)\|\) is a good approximation for \(\|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u - \vecpi)\|\). Here we can use sparse matrix multiplication to compute \(\matq \matw^{\frac{1}{2}} \matb\). However, computing \(\matz=\matq \matw^{\frac{1}{2}} \matb \lap^{\dagger}\) directly involves inverting \(\lap+\frac{1}{n}\matj\). We avoid this by solving the system of equations \(\lap \vecz_i=\vecq_i\), \(i=1,\ldots,k\), where  \(\vecz^\top_i\) and \(\vecq^\top_i\) are, respectively, the \(i\)-th row of \(\matz\) and \(\matq \matw^{\frac{1}{2}} \matb\). For the convenience  of description, in the sequel we use the notation \(\Otil(\cdot)\) to hide \(\mathrm{poly} \log \) factors. By using Laplacian solvers~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16}, \(\vecz^\top _i\) can be efficiently approximated.  We here use the  solver from~\cite{CoKyMiPaPeRaSu14}, the performance of which is characterized in \lemref{lemma:ST}.
 
-%For Major Comments (2): What we need to evaluate ios \(\lap^{\dagger} \vecq_i\) and \(\vecz_i\) is the solution of the equation \(\lap\vecz_i=\vecq_i\) given by the Laplacian Solver in Lemma~\ref{lemma:ST}. Then, we have
-%	\begin{equation}
-%		\lap^{\dagger} \lap (\vecz_i - \lap^{\dagger} \vecq_i)
-%		= \lap^{\dagger} (\lap \vecz_i) - (\lap^{\dagger} \lap %\lap^{\dagger}) \vecq_i
-%		= \lap^{\dagger} \vecq_i - \lap^{\dagger} \vecq_i
-%		= 0.
-%	\end{equation}
-%Since the null space of \(\lap^{\dagger}\lap\) is \(\vecone\), we can obtain \(\vecz_i - \lap^{\dagger} \vecq_i = c \vecone\), \(c \in \mathbb{R}\). By multiplying \(\vecone^\top\) on both sides, it is easy to derive \(c=0\). Thus, we conclude \(\vecz_i = \lap^{\dagger} \vecq_i\).
+\begin{lemma}[SDD Solver~\cite{CoKyMiPaPeRaSu14,KySa16,GaKySp23}]
+    \label{lemma:ST}
+    There is an algorithm \(\vecx = \mathtt{Solve}(\lap,\vecy,\delta)\) which
+    takes a SDDM matrix or a Laplacian \(\lap\),
+    a column vector \(\vecy\), and an error
+    parameter \(\delta > 0\), and returns a column vector \(\vecx\) satisfying  \(\boldsymbol{1}^\top\vecx = 0\) and
+    \[
+        \|\vecx - \lap^{-1} \vecy\|_{\lap} \leq \delta \|\lap^{-1} \vecy\|_{\lap},
+    \]
+    where \(\Abs{\vecy}_{\lap} = \sqrt{\vecy^{\top} \lap \vecy}\).
+    The notation \(\lap^{-1}\) is used to represent the inverse matrix for a SDDM matrix or the pseudoinverse matrix for a Laplacian matrix.
+    The algorithm runs in expected time \(\Otil \left(m \log(1/\delta) \right)\).
+\end{lemma}
 
-By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST},  one can  approximate  \(C(u)\) arbitrarily well.
-%Lemma~\ref{lemma:ST} shows that \(\vecz^\top _i\) can be efficiently approximated by using \(\mathtt{Solve}\).
-%Before introducing our algorithm, we recall two lemmas that are critical to proving the approximation factor of our algorithm. In what follows we use the notation \(\Otil(\cdot)\) to hide \(\mathrm{poly}(\log n )\) factors.
-%To approximate  \(C(u)\), we need to use the following fact.
-%\begin{fact}
-%	Given two positive numbers \(a\), \(b\) and their approximation \(\tilde{a}\), \(\tilde{b}\), which satisfy \((1 - \epsilon) a \le \tilde{a} \le (1 + \epsilon) a\) and  \((1 - \epsilon) b \le \tilde{b} \le (1 + \epsilon) b\). Then, we have
-%	\[
-%	(1 - \epsilon) (a+b) \le \tilde{a}+\tilde{b} \le (1 + \epsilon) (a+b).
-%	\]
-%\end{fact}
+By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitrarily well.
+
 \begin{lemma}\label{lem:error1}
     Given an approximation factor \(\epsilon \le 1/2\) and a \(k\times n\) matrix \(\matz\) that satisfies
     \[
@@ -818,7 +480,6 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST},  one can  approximate  \(C(u)\) arb
     %\end{small}
     %The last inequality follows by the fact that  \(\sum_{a\sim b \in E} w_{a\sim b} R_{ab} = n-1\).
 
-
     In addition, \(\Abs{\matz (\vece_u - \vecpi)}^2\) can also be bounded by
     \begin{equation}\label{EE17}
         \begin{split}  \notag
@@ -886,9 +547,321 @@ Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \(\text{Approx}\mathca
     \Return \(\tilde{H}=\{u,\tilde{H}_u| u \in V\}\) and \(\tilde{K}\)
 \end{algorithm}
 
-\subsection{Approximations of solving AGCM}
+\section{Introduction of Absorbing Group Centrality (AGC)}
 
-Despite the time complexity optimization proposed in \algoref{algo:exact}, this simple greedy algorithm for solving AGCM still requires matrix inversion, making it unsuitable for large networks.
+After presenting the walk centrality \(H_j\) and the Kemeny constant \(K\), we extend the notion of mean hitting time to the case of multiple vertices.
+In this section, we introduce the definition of Absorbing Group Centrality (AGC).
+By establishing connection between AGC, the Kemeny constant and the random detour time, we try to give a physical explanation of AGC.
+Additionally, we demonstrate monotonicity and supermodularity of AGC \(\manc{\cdot}\).
+
+\subsection{Definition of AGC}
+
+We utilize the concept of absorbing random walk to define AGC.
+For a group of vertices \(S\) in a connected graph \(\gr=(V,E)\), the group hitting time \(H_{iS}\) from vertex \(i\) to vertex group \(S\) is the expected number of steps for a walker starting from \(i\) to visit any vertex of \(S\) for the first time.
+Also, if we denote the time steps for a walker starting from \(i\) to first reach an arbitary vertex of \(S\) as random variable \(T_{iS}\), then we have \(H_{iS}=\mean{T_{iS}}\).
+
+It is intuitive that if group hitting time \(H_{iS}\) is relatively small for every vertex \(i\) in \(\gr\), then we can consider vertex group \(S\) as a central group.
+Building on this idea, we give the definition of AGC.
+
+\begin{definition}[Absorbing Group Centrality, AGC]\label{def:manc}
+    For a given vertex group \(S\) in a connected undirected graph \(\gr=(V,E)\), we define its AGC \(\manc{S}\) to be the expected time it takes a random walker, starting from any vertex in the graph, to reach any vertex in \(S\). Here, the starting vertex is chosen according to the stationary distribution \(\vecpi\). We can calculate \(\manc{S}\) using the following formula:
+    \begin{equation*}
+        \manc{S}=\sum_{i\in V}\pi_i H_{iS}.
+    \end{equation*}
+\end{definition}
+
+It is obvious that when \(S\) contains only one vertex \(j\), AGC \(\manc{S}\) automatically reduces to walk centrality \(H_j\).
+
+As stated in~\cite{KeSn76}, we can convert the AGC definition into the inverse of a SDDM matrix.
+
+\begin{fact}
+    Given the absorbing vertex group \(S\) and transition matrix \(\matp\), then the fundamental matrix \(\matf\) can be denoted as
+    \begin{equation}\label{eq:funda}
+        \matf=\sum_{l=0}^\infty\matp_{-S}^l=(\mati-\matp_{-S})^{-1}=(\mati-\matp)_{-S}^{-1}.
+    \end{equation}
+\end{fact}
+
+Based on~\eqref{eq:funda}, we can express \(\matf_{[i,j]}\) as the expected number of times a random walker passes through vertex \(j\) before being absorbed, starting from vertex \(i\).
+According to the linearity of the mean, the hitting time of a random walker is equivalent to the sum of the expected number of passages through all vertices in the graph. That is, if we let \(l_i\) denote the hitting time of a random walker starting from vertex \(i\), then \(\vecl=\matf\vecone\).
+In particular, if the random walker starts from an absorbing vertex, the hitting time can be considered as zero.
+Considering the aforementioned case, we can express AGC \(\manc{S}\) as
+\begin{equation*}
+    \manc{S}=\vecpi_{-S}^\top\vecl=\vecpi_{-S}^\top\matf\vecone=\vecpi_{-S}^\top(\mati-\matp)_{-S}^{-1}\vecone.
+\end{equation*}
+
+Furthermore, after simplification using~\eqref{eq:trs}, we get the formula of \(\manc{S}\):
+\begin{equation}\label{eq:AGC}
+    \begin{split}
+        \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\mats^{-1}\mata}_{-S}^{-1}\vecone                          \\
+        & =\vecpi_{-S}^\top\mypar{\mati-\mats^{-1}\mata}_{-S}^{-1}\mats_{-S}^{-1}\mats_{-S}\vecone \\
+        & =\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}.
+    \end{split}
+\end{equation}
+
+According to \eqref{eq:AGC} and \lemref{lemma:ST}, we can easily compute AGC of any given vertex group \(S\) by calling \(\mathtt{Solve}\mypar{\lap_{-S},\vecs_{-S},\delta}\).
+The detail of this approximation algorithm is skipped as it simply utilizes \lemref{lemma:ST}.
+
+\subsection{Physical Explanations of AGC}
+
+After detailing AGC, we try to establish a connection between AGC \(\manc{S}\), the group random detour time \(D_{ij}(S)\) and the Kemeny constant \(K\).
+This allows us to understand the importance of vertex group \(S\) from a different perspective.
+A similar idea of random detour time was proposed in~\cite{RaZh13}, where the authors proved an equation related to topological centrality and random detour time of a single vertex.
+In this paper, we explore the random detour time of multiple vertices, providing a physical explanation of AGC.
+
+For vertex group \(S\) in graph \(\gr\), the group random detour time \(D_{ij}(S)\) is defined as the expected time of a walker who starts from vertex \(i\), must visit an arbitary vertex in group \(S\), then first reaches vertex \(j\).
+
+\begin{definition}[Group random detour time]\label{def:detour-multiple}
+    If we denote the probability that a walker starting from vertex \(i\) first reaches vertex \(u\) in absorbing group \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpdistr\in\rea^{n\times\abs{S}}\), then we have
+    \begin{equation*}
+        D_{ij}(S)= H_{iS}+\sum_{k=1}^{\abs{S}}\matpdistr_{[i,k]}H_{kj}.
+    \end{equation*}
+\end{definition}
+
+It is natural to assume that as \(D_{ij}(S)\) increases, it becomes more difficult for a walker to reach vertices in \(S\), and \(S\) becomes less significant in the overall network. In fact, we can demonstrate the following theorem, which establishes the link between AGC \(\manc{S}\), the group random detour time \(D_{ij}(S)\), and the Kemeny constant \(K\).
+
+\begin{theorem}\label{thm:connection-multiple}
+    For an arbitary vertex group \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) vertices,
+    \begin{equation}\label{eq:connection-multiple}
+        \sum_{i=1}^n\pi_iH_{iS}+K=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S).
+    \end{equation}
+\end{theorem}
+\begin{IEEEproof}
+    To prove~\eqref{eq:connection-multiple}, we utilize the fundamental matrix \(\matfstar\) in the non-absorbing random walk model.
+    According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\vecone\vecpi^\top)^{-1}\matpi^{-1}\), where \(\matpi\) is defined as \(\rm{diag}\mypar{\vecpi}\).
+    Subsequently, the hitting time \(H_{ij}\) can be represented by \(\matfstar\) as \(H_{ij}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\)~\cite{BoRaZh11}.
+    Then the right side of \eqref{eq:connection-multiple} can be rewritten as
+    \begin{equation}\label{eq:detour}
+        \begin{split}
+            &\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S)\\
+            =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\pi_i\pi_j\matpdistr_{[i,k]}H_{kj}  \\
+            =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{j=1}^n\pi_j\vecpi^\top\matpdistr\mypar{\matfstar_{[j,j]}\vecone-\matfstar_{[S,j]}}                        \\
+            % =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\vecone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
+            =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}-1.
+        \end{split}
+    \end{equation}
+    The final equality is due to the fact that \(\matpdistr\vecone=\vecone\) and \(\matfstar\vecpi=\vecone\).
+
+    Afterwards, we can rewrite Kemeny constant \(K\) as
+    \begin{equation}\label{eq:kemeny}
+        \begin{split}
+            K&=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jH_{ij}\\
+            &=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_j\mypar{\matfstar_{[j,j]}-\matfstar_{[i,j]}}\\
+            &=\sum_{j=1}^n\pi_j\matfstar_{[j,j]}-1.
+        \end{split}
+    \end{equation}
+    The last equality is due to the fact that \(\matfstar\vecpi=\vecone\) and \(\vecpi^\top\vecone=1\).
+    Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes our proof.
+\end{IEEEproof}
+
+Since \(K\) is only related to the structure of graph \(\gr\) itself, equation~\eqref{eq:connection-multiple} indicates a constant difference between AGC \(\manc{S}\) and the group random detour time \(D_{ij}(S)\).
+This equation suggests that AGC \(\manc{S}\) can also reflect the extent of detour in the network when \(S\) is set as the "passing group".
+This is another way of understanding the physical meaning of AGC.
+
+\subsection{Properties of AGC}
+
+After proposing physical explanations of AGC, we then attempt to study its properties.
+First, we give the definitions of monotone and supermodular set functions. For simplicity, we denote \(S\cup\setof{u}\) as \(S+u\).
+
+\begin{definition}[Monotonicity]
+    A set function \(f:2^{V}\to\rea^+\) is considered monotonic if and only if the inequality \(f(X)\ge f(Y)\) holds for any nonempty sets \(X\) and \(Y\) that satisfy \(X\subseteq Y\subseteq V\).
+\end{definition}
+
+\begin{definition}[Supermodularity]
+    A set function \(f:2^{V}\to\rea^+\) is considered supermodular if and only if the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds for any nonempty sets \(X\) and \(Y\) that satisfy \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\).
+\end{definition}
+
+Specifically, we demonstrate that the set function \(\manc{\cdot}\) is both monotone and supermodular, providing us with a theoretical basis for designing greedy algorithms that can provide approximation guarantees for solving the AGC minimization problem.
+
+\begin{theorem}[Monotonicity of AGC]\label{thm:mono}
+    Let \(S\) be an arbitary nonempty vertex of connected weighted undirected graph \(\gr=(V,E,w)\), then for vertex \(u\in V\setminus S\),
+    \begin{equation*}
+        \manc{S}\ge \manc{S+u}.
+    \end{equation*}
+\end{theorem}
+
+\begin{IEEEproof}
+    According to \defref{def:manc}, when a random walker arrives at vertices within \(S\), it must have arrived at vertices within \(S+u\). Therefore \(H_{v,S}\ge H_{v,S+u}\) holds for any vertex \(v\in V\), which concludes our proof.
+\end{IEEEproof}
+
+\begin{theorem}[Supermodularity of AGC]\label{thm:supermod}
+    Let \(S,T\) be arbitary nonempty vertex groups of connected weighted undirected graph \(\gr=(V,E,w)\) such that \(S\subseteq T\subsetneq V\), then for vertex \(u\in V\setminus T\),
+    \begin{equation*}
+        \manc{S}-\manc{S+u}\ge \manc{T}-\manc{T+u}.
+    \end{equation*}
+\end{theorem}
+
+\begin{IEEEproof}
+    For a subset \(A\) of the probability space, we denote \(\indfunc{A}\) as the indicator function of the event \(A\). Then we rewrite \(\manc{S}-\manc{S+u}\) by discussing the absorbing vertex of random walker.
+    \begin{equation}\label{eq:supermod-diff}
+        \begin{split}
+            &\manc{S}-\manc{S+u}\\
+            =&\sum_{v\in V}\pi_v\mypar{\mean{T_{vS}}-\mean{T_{v\mypar{S+u}}}}\\
+            =&\sum_{v\in V}\pi_v\mypar{\mean{T_{vS}}-\mean{\min\setof{T_{vS},T_{vu}}}}
+        \end{split}
+    \end{equation}
+    By introducing the indicator function, \(\min\setof{T_{vS},T_{vu}}\) can be represented as
+    \begin{equation*}
+        \min\setof{T_{vS},T_{vu}}=T_{v,S}\indfunc{\setof{T_{v,S}\le T_{v,u}}}+T_{v,u}\indfunc{\setof{T_{v,u}<T_{v,S}}}.
+    \end{equation*}
+    Combining this equation with~\eqref{eq:supermod-diff} and the linearity of the mean, we can get
+    \begin{equation*}
+        \manc{S}-\manc{S+u}=\sum_{v\in V}\pi_v\mean{(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}}.
+    \end{equation*}
+
+    Similarly, we also have
+    \[\manc{T}-\manc{T+u}=\sum_{v\in V}\vecpi_v\mean{(T_{v,T}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,T}}}}.\]
+    As is mentioned in proof of \thmref{thm:mono}, \(T_{v,S}\ge T_{v,T}\) holds for any vertex \(v\in V\).
+    It is also obvious that \(\indfunc{\setof{T_{v,u}<T_{v,S}}}\ge\indfunc{\setof{T_{v,u}<T_{v,T}}}\).
+    Combining the above two inequalities, we can prove that
+    \[(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}\ge(T_{v,T}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,T}}}\]
+    holds for any vertex \(v\in V\), which completes our proof.
+\end{IEEEproof}
+
+\section{Introduction of the AGC Minimization Problem (AGCM)}
+
+When considering AGC, we naturally address the issue of selecting a vertex group (\(S\)) with a capacity of \(k\) from a network that minimizes its AGC (\(\manc{S}\)).
+In this section, we will define the AGC minimization problem (AGCM).
+After demonstrating its NP-hardness, we will provide a greedy algorithm that can solve AGCM with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
+
+\begin{problem}[Absorbing Group Centrality Minimization, AGCM]
+Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, \(m\) edges and an integer \(k\ll n\), the goal is to find a vertex group \(S^*\subseteq V\) such that AGC \(\manc{S^*}\) is minimized:
+\begin{equation*}
+    S^*=\argmin_{S\subseteq V,\abs{S}=k}\manc{S}.
+\end{equation*}
+\end{problem}
+
+To prove the NP-hardness of AGCM, we try to construct a reduction from the Vertex Cover problem to a decision version of AGCM.
+
+\begin{problem}[Vertex Cover on \(c\)-regular graphs]
+Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an integer \(k\). The aim is to determine whether a subset of vertices \(S\subseteq V\) exists, with cardinality \(\abs{S}\le k\), such that every edge in \(E\) is incident with at least one vertex in \(S\).
+\end{problem}
+
+\begin{theorem}\label{thm:np-hard}
+    AGCM is NP-hard.
+\end{theorem}
+\begin{IEEEproof}
+    For a connected graph \(\gr=(V,E,w)\) that is \(c\)-regular, where the weights of all edges are equal to \(1\), we attempt to prove that \(\manc{S}\ge (n-k)/n\) for any nonempty vertex group \(S\subseteq V\) with capacity \(k\).
+    The equality holds if and only if \(S\) is a vertex cover of \(\gr\).
+
+    We first prove that if \(S\) is a vertex cover of \(\gr\), then \(\manc{S}=(n-k)/n\). When \(S\) is a vertex cover of \(\gr\), there are no edges between vertices in \(V\setminus S\).
+    Thus, we can simplify~\eqref{eq:AGC} as:
+    \begin{equation*}
+        \manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}=\vecpi_{-S}^\top\mats_{-S}^{-1}\vecs_{-S}=\vecpi_{-S}^\top\vecone.
+    \end{equation*}
+    Since \(\gr\) is a \(c\)-regular graph, \(\vecpi=\begin{pmatrix}1/n&\cdots&1/n\end{pmatrix}^\top\).
+    Thus, \(\manc{S}=\vecpi_{-S}^\top\vecone=(n-k)/n\).
+
+    We then demonstrate that if \(S\) does not constitute a vertex cover of \(\gr\), then \(\manc{S}>(n-k)/n\).
+    For a vertex \(u\in S\) and a vertex \(v\in V\setminus S\), it is obvious that \(H_{u,S}=0\) and \(H_{v,S}\ge1\).
+    Moreover, since \(S\) is not a vertex cover of \(\gr\), there exists at least one edge \((u',v')\) in edge set \(E\) that is not covered by \(S\).
+    When a walker starts from vertex \(u'\) and moves to vertex \(v'\) with a probability of at least \(\frac{1}{s_{\max}}>\frac{1}{n}\), the walker's path length exceeds \(1\).
+    That is,
+    \begin{equation*}
+        H_{u',S}=H_{v',S}>\mypar{1-\frac{1}{n}}+\frac{2}{n}=1+\frac{1}{n}.
+    \end{equation*}
+
+    Therefore, if we denote \(S+u'+v'\) as \(S'\), then we are able to get the lower bound of AGC:
+    \begin{align*}
+        \manc{S} & =\sum_{v\in V\setminus S'}\pi_vH_{v,S}+\pi_{u'}H_{u',S}+\pi_{v'}H_{v',S}         \\
+                 & >\vecpi_{-S'}\vecone+\pi_{u'}\mypar{1+\frac{1}{n}}+\pi_{v'}\mypar{1+\frac{1}{n}} \\
+                 & =\vecpi_{-S}^\top\vecone+\frac{\pi_{u'}+\pi_{v'}}n
+        >\vecpi_{-S}^\top\vecone=(n-k)/n.
+    \end{align*}
+
+    According to the proposition above, we can create a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of AGCM, which proves that AGCM is NP-hard.
+
+\end{IEEEproof}
+
+As AGCM is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve AGCM.
+However, the set function \(\manc{\cdot}\) is both monotonic and supermodular, allowing for a simple greedy algorithm with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor to AGCM~\cite{NeWoFi78}.
+At each iteration, a new absorbing vertex \(u^*\) is chosen from the set of non-absorbing vertices \(V\setminus S\), satisfying
+
+\begin{gather*}
+    \Delta(u,S)=\manc{S}-\manc{S+u},\\
+    u^*=\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}.
+\end{gather*}
+
+It is evident that the straightforward algorithm presented above requires computing \(\Delta(u,S)\) for every vertex \(u\) in the graph during each iteration, resulting in \(O(n)\) matrix inverse operations.
+If the naive matrix inverse algorithm with complexity \(O(n^3)\) is used, the total complexity of the simple greedy algorithm becomes \(O(kn^4)\).
+By simplifying \(\Delta(u,S)\), our aim is to decrease the time complexity of the greedy algorithm.
+
+For vertex \(u\in V\setminus S\), after adjusting the order of submatrix \(\lap_{-S}\), we rewrite \(\lap_{-S}\) as
+\begin{equation*}
+    \lap_{-S}=\begin{pmatrix}l_u & -\veca^\top \\-\veca&\mata\end{pmatrix},
+\end{equation*}
+where \(\mata\) denotes \(\lap_{-(S+u)}\).
+According to the properties of block matrices, we can get
+\begin{equation*}
+    \lap_{-S}^{-1}=\begin{pmatrix}
+        t & t\veca^\top\mata^{-1} \\t\mata^{-1}\veca&\mata^{-1}+t\mata^{-1}\veca\veca^\top\mata^{-1}
+    \end{pmatrix},
+\end{equation*}
+where \(t=\pinv{l_u-\veca^\top\inv{\mata}}\).
+Therefore, when \(S\neq\varnothing\), \(\Delta(u,S)\) can be rewritten as
+
+\begin{equation}\label{eq:margin-deriv}
+    \begin{split}
+        &\manc{S}-\manc{S+u}\\
+        =&\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecs_{-(S+u)}\\
+        =&\frac1t\mypar{t\vecpi_u+t\vecpi_{-(S+u)}^\top\mata^{-1}\veca}\mypar{td_u+t\veca^\top\mata^{-1}\vecs_{-(S+u)}}\\
+        =&\frac{\mypar{\vecpi_{-S}^\top\lap_{-S}^{-1}\vece_u}\mypar{\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}}}{\vece_u^\top\lap_{-S}^{-1}\vece_u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}}^2}{s\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}}.
+    \end{split}
+\end{equation}
+
+Here we skip some steps for brevity.
+
+However, during the first iteration of the greedy algorithm, when \(S=\varnothing\), \eqref{eq:margin-deriv} becomes invalid due to the singularity of \(\lap\).
+Since \(\manc{\varnothing}=\infty\), we can define \(\Delta(u,\varnothing)\) as \(-\manc{S+u}=-H_u\), which is the negative of absorbing random-walk centrality for vertex \(u\).
+In \lemref{HjK}, we have shown that \(H_u=s\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\).
+
+Equation~\eqref{ATT02} and~\eqref{eq:margin-deriv} demonstrate that we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) by inverting the same matrix \(\lap_{-S}\) or by using the pseudoinverse of the same matrix \(\lap\).
+As a result, we can optimize the simple greedy algorithm outlined in~\algoref{algo:exact-agcm}, and reduce the time complexity from \(O(kn^4)\) to \(O(kn^3)\).
+
+\begin{algorithm}
+    \caption{\textsc{ExactAGCM}\((\gr,k)\)}
+    \label{algo:exact-agcm}
+    \Input{
+        A connected weighted undirected graph \(\gr=(V,E,w)\);
+        an integer \(k\in[1,\abs{V}]\)
+    }
+    \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
+    Compute \(\lap\) and \(\vecs\)\;
+    \(s\gets\vecs\vecone\),\(\vecpi\gets \inv{s}\vecs\)\;
+    \(S_1\gets\setof{\argmin_{u\in V}\setof{s(\vece_u-\vecpi)^\top\lap^\dagger(\vece_u-\vecpi)}}\)\;
+    \For{\(i=2,3,\dots,k\)}{
+        \ForEach{\(u\in V\setminus S\)}{
+            \(\Delta(u,S)\gets\frac{(\vece_u^\top\lap_{-S}^{-1}\vecs_{-S})^2}{s(\vece_u^\top\lap_{-S}^{-1}\vece_u)}\)\;
+        }
+        \(u^*\gets\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}\)\;
+        \(S_i\gets S_{i-1}\cup\setof{u^*}\)
+    }
+    \Return{\(S_k\)}
+\end{algorithm}
+
+Afterwards, we prove that \algoref{algo:exact-agcm} has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
+\begin{theorem}
+    The algorithm \(S_k=\textsc{ExactAGCM}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a vertex group \(S_k\) with capacity \(k\).
+    When \(k>1\), the vertex group \(S\) satisfies
+    \[\manc{\setof{u^*}}-\manc{S_k}\ge\mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}}\mypar{\manc{\setof{u^*}}-\manc{S^*}},\]
+    where
+    \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}},S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
+\end{theorem}
+\begin{IEEEproof}
+    According to the supermodularity of \(\manc{\cdot}\),
+    \[\manc{S_i}-\manc{S_{i+1}}\ge\frac{1}{k}\mypar{\manc{S_i}-\manc{S^*}}\]
+    holds for any positive integer \(i\), which indicates that
+    \[\manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1}{k}}\mypar{\manc{S_i}-\manc{S^*}}.\]
+    Subsequently, we can further obtain that
+    \begin{align*}
+        \manc{S_k}-\manc{S^*}\le & \mypar{1-\frac{1}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}    \\
+        \le                      & \frac{k}{k-1}\cdot\frac{1}{e}\mypar{\manc{S_1}-\manc{S^*}},
+    \end{align*}
+    which completes our proof based on the fact that \(S_1=\setof{u^*}\).
+\end{IEEEproof}
+
+\section{Fast Approximation Algorithm for solving AGCM}\label{sec:approx-algo2}
+
+Despite the time complexity optimization proposed in \algoref{algo:exact-agcm}, this simple greedy algorithm for solving AGCM still requires matrix inversion, making it unsuitable for large networks.
 To speed up the computation of \(\Delta(u,S)\), we use efficient approximations established in \lemref{lemma:JL}, \lemref{lemma:ST} and \thmref{TheoAlg1}.
 
 Our first objective is to estimate \(\Delta(u,\varnothing)=-H_u\), which is the negative of the walk centrality for vertex \(u\).
