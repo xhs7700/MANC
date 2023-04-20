@@ -18,7 +18,7 @@
     \thanks{Haisong Xia, Wanyue Xu and Zhongzhi Zhang are with the Shanghai Key Laboratory of Intelligent Information Processing, School of Computer Science, Fudan University, Shanghai 200433, China; Zhongzhi Zhang is also with the Shanghai Engineering Research Institute of Blockchain, Shanghai 200433, China.}
 }
 
-\markboth{IEEE Transactions on Knowledge and Data Engineering}
+\markboth{IEEE Transactions on Information Theory}
 {Xia \MakeLowercase{\textit{et al.}}: Absorbing Time of Random Walks as a Node Group Centrality}
 
 \IEEEtitleabstractindextext{
@@ -78,13 +78,6 @@ Traditional methods of ranking individual vertices may not meet these requiremen
 We introduce a new vertex group centrality called Absorbing Group Centrality (AGC) by extending absorbing random-walk centrality to the case of multiple vertices.
 For a connected undirected graph and a vertex group \(S\), AGC \(\manc{S}\) is the expected hitting time for a random walker starting from a vertex \(u\) to an arbitary vertex in \(S\). Here, vertex \(u\) is chosen based on the stationary distribution \(\vecpi\).
 We also introduce the AGC minimization problem, which involves identifying the vertex group \(S^*\) with capacity \(k\) that minimizes AGC \(\manc{S^*}\).
-
-% In this paper, we present algorithms that can address the following tasks in large networks with nearly linear time complexity:
-% \begin{itemize}
-%     \item Computing absorbing random-walk centrality \(H_j\) and Kemeny constant \(K\);
-%     \item Computing Absorbing Group Centrality (AGC) \(\manc{S}\);
-%     \item Solving the AGC minimization problem with an approximation factor.
-% \end{itemize}
 
 For the absorbing random-walk centrality \(H_j=\sum_{i} \rho(i) H_{ij}\), we focus on the special case when the starting probability distribution \(\rho(\cdot)\) is the stationary distribution \(\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}\) of the random walk.
 In other words, we study \(H_j=\sum_{i} \pi_i H_{ij}\), which has received considerable attention~\cite{TeBeVo09,Be09,Be16}.
@@ -480,7 +473,7 @@ In this subsection, we present the definition of the AGC minimization problem, a
 \begin{problem}[Absorbing Group Centrality Minimization, AGCM]
 Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, \(m\) edges and an integer \(k\ll n\), the goal is to find a vertex group \(S^*\subseteq V\) such that AGC \(\manc{S^*}\) is minimized:
 \begin{equation*}
-    S^*=\argmax_{S\subseteq V,\abs{S}=k}\manc{S}.
+    S^*=\argmin_{S\subseteq V,\abs{S}=k}\manc{S}.
 \end{equation*}
 \end{problem}
 
@@ -1812,6 +1805,10 @@ Finally, we conducted extensive experiments on various real-world and model netw
 
 \begin{IEEEbiography}{Zuobai Zhang}
     received the B.S. degree  in computer science from Fudan University, Shanghai, China, in 2021. 	He is currently pursuing the Ph.D. degree at Mila - Qu\'{e}bec AI Institute, Canada. His research interests include graph algorithms, graph representation learning, and drug discovery.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}{Zhuoqing Song}
+    received the B.S. degree in mathematics and applied mathematics in 2019 from Fudan University, Shanghai, China, where he is currently working toward the Ph.D. degree in applied mathematics. His research interests include decentralized optimization, graph algorithms, and machine learning.
 \end{IEEEbiography}
 
 \begin{IEEEbiography}[\biophoto{zzz.jpg}]{Zhongzhi Zhang}
