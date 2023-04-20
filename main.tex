@@ -891,6 +891,8 @@ To this end, we need to utilize the following lemma.
     which completes our proof.
 \end{IEEEproof}
 
+\subsection{Approximation of the numerator of \(\Delta(u,S)\)}
+
 We first approximate the numerator of \(\Delta(u,S)\), which involves the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}\).
 Since \(\lap_{-S}\) is a SDDM matrix, we can apply~\lemref{lemma:ST} to avoid computing the matrix inverse \(\lap_{-S}^{-1}\).
 \begin{lemma}\label{lem:approx-numer}
@@ -916,6 +918,8 @@ Since \(\lap_{-S}\) is a SDDM matrix, we can apply~\lemref{lemma:ST} to avoid co
         \frac{\abs{\vecx'_i-\vecx_i}}{\vecx_i}\le n^3w_{\max}w_{\min}^{-1}\delta_1=\epsilon/7.
     \end{equation*}
 \end{IEEEproof}
+
+\subsection{Approximation of the denominator of \(\Delta(u,S)\)}
 
 Next, we aim to estimate the denominator of \(\Delta(u,S)\). This can be represented as a Euclidian norm through the use of \lemref{lemma:JL}.
 \begin{equation}\label{eq:denom-solver}
@@ -1012,6 +1016,8 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
     \end{align*}
     which completes our proof in conjunction with \lemref{lemma:JL}.
 \end{IEEEproof}
+
+\subsection{Details of Algorithms \textsc{ApproxDelta} and \textsc{ApproxAGCM}}
 
 By combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose the \textsc{ApproxDelta} algorithm for approximating \(\Delta(u,S)\) when \(S\neq\varnothing\).
 The \textsc{ApproxDelta} algorithm calls algorithm \(\mathtt{Solve}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\).
