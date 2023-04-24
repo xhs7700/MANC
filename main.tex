@@ -86,8 +86,8 @@ We first express \(K\) in terms of \(H_j\) for all vertices, and further express
 We then propose a fast algorithm called \(\text{Approx}\mathcal{HK}\) to compute approximate \(H_j\) for all vertices and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16,GaKySp23}.
 
 For Absorbing Group Centrality (AGC), we reformulate it as the inverse of a SDDM matrix.
-Although the AGC minimization problem is proved to be NP-hard, we can utilize the monotonicity and supermodularity of AGC to develop a fast greedy algorithm called \textsc{ApproxAGCM}.
-\textsc{ApproxAGCM} is based on \(\text{Approx}\mathcal{HK}\) and yields an approximation factor of \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) for any error parameter \(\epsilon\in(0,1)\).
+Although the AGC minimization problem is proved to be NP-hard, we can utilize the monotonicity and supermodularity of AGC to develop a fast greedy algorithm called \text{ApproxAGCM}.
+\text{ApproxAGCM} is based on \(\text{Approx}\mathcal{HK}\) and yields an approximation factor of \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) for any error parameter \(\epsilon\in(0,1)\).
 
 Finally, we experimentally demonstrate that our algorithms are accurate and are significantly faster than the direct exact computation of related quantities according to their definitions.
 
@@ -106,8 +106,8 @@ The following are our primary additional contributions:
 \begin{itemize}
     \item We propose a vertex group centrality called Absorbing Group Centrality (AGC) based on the group hitting time.
     \item We introduce the AGC minimization problem, proving its NP-hardness.
-    \item Due to the monotonicity and supermodularity of AGC, we develop an efficient greedy algorithm called \textsc{ApproxAGCM} based on \(\text{Approx}\mathcal{HK}\) to approximately solve the AGC minimization problem.
-    \item Extensive experiment results demonstrate that both of \(\text{Approx}\mathcal{HK}\) and \textsc{ApproxAGCM} are accurate and scalable, which can be applied to networks with millions of vertices.
+    \item Due to the monotonicity and supermodularity of AGC, we develop an efficient greedy algorithm called \text{ApproxAGCM} based on \(\text{Approx}\mathcal{HK}\) to approximately solve the AGC minimization problem.
+    \item Extensive experiment results demonstrate that both of \(\text{Approx}\mathcal{HK}\) and \text{ApproxAGCM} are accurate and scalable, which can be applied to networks with millions of vertices.
 \end{itemize}
 
 
@@ -119,7 +119,7 @@ In this section, we give a brief introduction to some notations as well as some 
 
 In our notation, we use normal lowercase letters such as \(a,b,c\) to represent scalars in \(\rea\). We denote vectors with bold lowercase letters such as \(\veca,\vecb,\vecc\), and matrices with bold uppercase letters like \(\mata,\matb,\matc\).
 
-For the convenience of representing specific elements in vectors and matrices, we use \(\veca_{i}\) to represent the \(\myord{i}\) element of vector \(\veca\), and \(\mata_{[i,j]}\) to represent the entry at position \((i,j)\) in matrix \(\mata\).
+For the convenience of representing specific elements in vectors and matrices, we use \(a_{i}\) to represent the \(\myord{i}\) element of vector \(\veca\), and \(\mata_{[i,j]}\) to represent the entry at position \((i,j)\) in matrix \(\mata\).
 We also use \(\mata_{[i,:]}\) and \(\mata_{[:,j]}\) to denote the \(\myord{i}\) row and \(\myord{j}\) column of matrix \(\mata\), respectively.
 
 Moreover, we write sets in subscripts to denote subvectors and submatrices.
@@ -141,8 +141,8 @@ As we will prove the approximation guarantee of our algorithms in \secref{sec:ap
 
 Let \(\gr=(V,E,w)\) denote a connected undirected weighted graph or network,  where \(V\) is the set of vertices,  \(E\) is the set of edges, and  \(w: E\to \mathbb{R}_{+}\) is the positive edge weight function, with \(w_e\) being the weight for edge \(e\). Then, there are total \(n=|V|\) vertices and \(m=|E|\) edges in graph \(\gr\). We use \(u \sim v\) to indicate that two vertices \(u\) and \(v\) are connected by an edge. Let \(w_{\max}\) and \(w_{\min}\) denote the maximum edge weight and minimum edge weight, respectively. Namely, \(w_{\max}=\max_{e\in E} w_e \) and \(w_{\min}=\min_{e\in E} w_e\).
 
-Mathematically, the topological and weighted properties of a graph \(\gr\) are encoded in its generalized adjacency matrix \(\mata\) with the entry \(a_{ij}\) denoting the adjacency relation between vertices \(i\) and \(j\). If vertices \(i\) and \(j\) are linked to each other by an edge \(e\), then \(a_{ij}= a_{ji}=w_{e}> 0\). Otherwise, \(a_{ij}=a_{ji}=0\) indicating that vertices \(i\) and \(j\) are not adjacent. In a weighted graph \(\gr\), the strength  \(s_i\) of a vertex \(i\) is defined by \(s_i=\sum_{j=1}^n a_{ij}\)~\cite{BaBaPaVe04}, where we denote the maximal vertex strength as \(s_{\max}=\max\setof{s_i|i\in V}\).
-The diagonal strength vector of graph \(\gr\) is defined to be \(\vecs=\mypar{s_1,s_2,\cdots,s_n}^\top\), while the diagonal strength matrix of graph \(\gr\) is defined to be \({\mats} = {\rm diag}(s_1, s_2, \ldots, s_n)\), and the Laplacian matrix of \(\gr\) is \({\lap}={\mats}-{\mata}\).
+Mathematically, the topological and weighted properties of a graph \(\gr\) are encoded in its generalized adjacency matrix \(\mata\) with the entry \(a_{ij}\) denoting the adjacency relation between vertices \(i\) and \(j\). If vertices \(i\) and \(j\) are linked to each other by an edge, then we denote this edge as \(e=\edge{u}{v}\), with \(a_{ij}= a_{ji}=w_{e}> 0\). Otherwise, \(a_{ij}=a_{ji}=0\) indicating that vertices \(i\) and \(j\) are not adjacent. In a weighted graph \(\gr\), the degree \(d_i\) of a vertex \(i\) is defined by \(d_i=\sum_{j=1}^n a_{ij}\)~\cite{BaBaPaVe04}, where we denote the maximal vertex degree as \(d_{\max}=\max\setof{d_i|i\in V}\).
+The diagonal degree vector of graph \(\gr\) is defined to be \(\vecd=\mypar{d_1,d_2,\cdots,d_n}^\top\), while the diagonal degree matrix of graph \(\gr\) is defined to be \({\matd} = {\rm diag}(d_1, d_2, \ldots, d_n)\), and the Laplacian matrix of \(\gr\) is \({\lap}={\matd}-{\mata}\).
 
 Let \(\matb \in \mathbb{R}^{|E| \times |V|}\) be the incidence matrix of \(\gr\). For each edge \(e\) with two end vertices \(i\) and \(j\), a direction is assigned arbitrarily. Let \(\vecb_e^\top\) be the row of matrix \(\matb\) associated with edge \(e\). Then the element \(b_{eu}\) at row corresponding to edge \(e\) and column corresponding to vertex \(u\) is defined as follows: \(b_{eu} = 1\) if vertex \(u\) is the tail of edge \(e\), \(b_{eu}=-1\) if vertex \(u\) is the head of  edge \(e\), and \(b_{eu}=0\) otherwise. Let \(\vece_u\) be the \(u\)-th canonical basis of the space \(\mathbb{R}^{|V|}\), then for an edge \(e\) connecting two vertices \(i\) and \(j\), \(\vecb_e\) can also be recast as \(\vecb_e=\vece_{i}-\vece_{j}\).  Let  \(\matw \in \mathbb{R}^{|E| \times |E|}\) be a diagonal matrix with the diagonal entry \((e,e)\) being \(w_e\). Then the Laplacian matrix \(\lap\) of graph \(\gr\) can be written as \(\lap=\matb^T\matw\matb=\sum_{e\in E}w_e\vecb_e\vecb_e^{\top}\).
 
@@ -182,17 +182,17 @@ Define \(\matr\) as the \(n \times n\) resistance matrix of graph \(\gr\), whose
 
 \subsection{Random Walk on a Graph}
 
-For a connected weighted graph \(\gr\) with \(n\) vertices, the classical random walk model of \(\gr\) can be described by the transition matrix \(\matp\in\rea^{n\times n}\): at any time step, the walker located at vertex \(i\) moves to vertex \(j\) with probability \({\matp_{[i,j]}=s_i^{-1}\mata_{[i,j]}}\).
+For a connected weighted graph \(\gr\) with \(n\) vertices, the classical random walk model of \(\gr\) can be described by the transition matrix \(\matp\in\rea^{n\times n}\): at any time step, the walker located at vertex \(i\) moves to vertex \(j\) with probability \({\matp_{[i,j]}=d_i^{-1}\mata_{[i,j]}}\).
 It is easy to verify that
 \begin{equation}\label{eq:trs}
-    \matp=\mats^{-1}\mata.
+    \matp=\matd^{-1}\mata.
 \end{equation}
 
 If  \(\gr\) is  finite and non-bipartite, the random walk  has a unique stationary distribution~\cite{LiZh13PRE}
 \begin{equation}\label{EE01}
-    \vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}=\left(\frac{s_1}{s}, \frac{s_2}{s}, \cdots, \frac{s_n}{s}\right)^{\top},
+    \vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}=\left(\frac{d_1}{d}, \frac{d_2}{d}, \cdots, \frac{d_n}{d}\right)^{\top},
 \end{equation}
-where \(s\) is the sum of strengths over all vertices, namely \(s=\sum_{i=1}^n s_i=\sum_{i=1}^{n}\sum_{j=1}^{n} a_{ij}\).
+where \(d\) is the sum of degrees over all vertices, namely \(d=\sum_{i=1}^n d_i=\sum_{i=1}^{n}\sum_{j=1}^{n} a_{ij}\).
 
 A fundamental quantity for random walks is hitting time~\cite{Lo93,CoBeTeVoKl07}. The hitting time \(H_{ij}\) from vertex \(i\) to vertex \(j\),  is the expected number of jumps for a walker starting  from \(i\) to visit \(j\) for the first time.
 In other words, if we denote the time steps for a walker starting from \(i\) to first reach \(j\) as the random variable \(T_{ij}\), then we have \(H_{ij}=\mean{T_{ij}}\).
@@ -200,7 +200,7 @@ There is an intimate relationship between hitting time and resistance distance~\
 \begin{lemma}
     Let \(\gr\) be a connected weighted graph with  resistance matrix  \(\matr\). Let \(H_{ij}\) be the hitting time  from vertex \(i\) to vertex \(j\). Then,
     \begin{equation}\label{EE03}
-        H_{ij}=\frac{1}{2}\sum_{z=1}^{n} s_z(R_{ij}+R_{jz}-R_{iz}).
+        H_{ij}=\frac{1}{2}\sum_{z=1}^{n} d_z(R_{ij}+R_{jz}-R_{iz}).
     \end{equation}
 \end{lemma}
 
@@ -213,9 +213,9 @@ Another quantity we are concerned with is the Kemeny constant \(K\). For a graph
 Subsequently, for graph \(\gr\), its random detour time \(D_{ij}(u)\) is defined as the expected time of a walker who starts from vertex \(i\), must visit vertex \(u\), then first reaches vertex \(j\), where \(i,u,j\in V\) differs from each other.
 That is, \(D_{ij}(u)= H_{iu}+H_{uj}\).
 
-Most quantities for random walks on graph \(\gr\) are determined by the eigenvalues and eigenvectors of the normalized Laplacian matrix~\cite{Ch97}, \({\mats}^{-\frac{1}{2}}\lap {\mats}^{-\frac{1}{2}}\), of \(\gr\), including the walk centrality and Kemeny constant. By definition, \({\mats}^{-\frac{1}{2}}\lap {\mats}^{-\frac{1}{2}}\) is a real, symmetric, semi-definitive matrix. Let \(0=\sigma_1 < \sigma_2 \leq \sigma_3 \leq \cdots \leq \sigma_n \) be the \(n\) eigenvalues of the normalized Laplacian matrix \({\mats}^{-\frac{1}{2}}\lap {\mats}^{-\frac{1}{2}}\). And let \(\vecpsi_1\), \(\vecpsi_2\), \(\vecpsi_3\), \(\ldots\), \(\vecpsi_n\) be their corresponding mutually orthogonal eigenvectors of unit length, where \(\vecpsi_i=(\psi_{i1},\psi_{i2},\ldots,\psi_{in})^{\top}\). Then~\cite{Lo93,Be16},
+Most quantities for random walks on graph \(\gr\) are determined by the eigenvalues and eigenvectors of the normalized Laplacian matrix~\cite{Ch97}, \({\matd}^{-\frac{1}{2}}\lap {\matd}^{-\frac{1}{2}}\), of \(\gr\), including the walk centrality and Kemeny constant. By definition, \({\matd}^{-\frac{1}{2}}\lap {\matd}^{-\frac{1}{2}}\) is a real, symmetric, semi-definitive matrix. Let \(0=\sigma_1 < \sigma_2 \leq \sigma_3 \leq \cdots \leq \sigma_n \) be the \(n\) eigenvalues of the normalized Laplacian matrix \({\matd}^{-\frac{1}{2}}\lap {\matd}^{-\frac{1}{2}}\). And let \(\vecpsi_1\), \(\vecpsi_2\), \(\vecpsi_3\), \(\ldots\), \(\vecpsi_n\) be their corresponding mutually orthogonal eigenvectors of unit length, where \(\vecpsi_i=(\psi_{i1},\psi_{i2},\ldots,\psi_{in})^{\top}\). Then~\cite{Lo93,Be16},
 \begin{equation}\label{ATT01}
-    H_j=\sum_{i=1}^{n} \pi_i H_{ij}=\frac{s}{s_j}\sum_{k=2}^{n}\frac{1}{\sigma_{k}}\psi_{kj}^{2}
+    H_j=\sum_{i=1}^{n} \pi_i H_{ij}=\frac{d}{d_j}\sum_{k=2}^{n}\frac{1}{\sigma_{k}}\psi_{kj}^{2}
 \end{equation}
 and
 \begin{equation}\label{Kemeny01}
@@ -237,7 +237,7 @@ Although both the walk centrality \(H_j\) and the Kemeny constant \(K\) have att
 \begin{lemma}
     Let \(\gr=(V,E,w)\) be a connected weighted graph. Then, its  Kemeny constant \(K\)  and walk centrality \(H_j\) obey the following relation:
     \begin{equation}\label{HjK01}
-        K=\sum_{j=1}^{n} \pi_j H_j=\sum_{j=1}^{n} \frac{s_j}{s} H_j.
+        K=\sum_{j=1}^{n} \pi_j H_j=\sum_{j=1}^{n} \frac{d_j}{d} H_j.
     \end{equation}
 \end{lemma}
 \begin{IEEEproof}
@@ -245,7 +245,7 @@ Although both the walk centrality \(H_j\) and the Kemeny constant \(K\) have att
     \begin{align}\label{Kemeny02}
         K & =K_i =\sum_{i=1}^{n} \pi_i \left( \sum_{j=1}^{n}\pi_j\,H_{ij}\right) \notag \\
           & =\sum_{j=1}^{n} \pi_j \left( \sum_{i=1}^{n}\pi_i\,H_{ij}\right) \notag      \\
-          & =\sum_{j=1}^{n} \frac{s_j}{s} H_j,\notag
+          & =\sum_{j=1}^{n} \frac{d_j}{d} H_j,\notag
     \end{align}
     which establishes the lemma.
 \end{IEEEproof}
@@ -255,38 +255,38 @@ After obtaining the relation governing the Kemeny constant \(K\)  and walk centr
 \begin{lemma}
     \label{HjK} Let \(\gr=(V,E,w)\) be a connected weighted graph  with  Laplacian matrix \(\lap\). Then, the walk centrality \(H_j\) and Kemeny constant \(K\) can be represented  in terms of quadratic forms of the pseudoinverse \(\lap^{\dagger}\)  of   matrix  \(\lap\) as:
     \begin{equation}\label{ATT02}
-        H_j=s(\vece_j - \vecpi)^{\top} \lap^{\dagger} (\vece_j - \vecpi)
+        H_j=d(\vece_j - \vecpi)^{\top} \lap^{\dagger} (\vece_j - \vecpi)
     \end{equation}
     and
     \begin{equation}\label{Kemeny03}
-        K= \sum_{j=1}^{n} s_j (\vece_j - \vecpi)^{\top} \lap^{\dagger} (\vece_j - \vecpi).
+        K= \sum_{j=1}^{n} d_j (\vece_j - \vecpi)^{\top} \lap^{\dagger} (\vece_j - \vecpi).
     \end{equation}
 \end{lemma}
 \begin{IEEEproof}
     We first prove~\eqref{ATT02}. Inserting~(\ref{EE03}) and~(\ref{EE04}) into~(\ref{ATT01}) leads to
     \begin{equation}\label{EE05}
         \begin{split}
-            H_j&=\frac{1}{2} \sum_{i=1}^{n} \pi_i \sum_{z=1}^{n} s_z(R_{ij}+R_{jz}-R_{iz}) \\
-            &=\frac{1}{s} \sum_{i=1}^{n} s_i \sum_{z=1}^{n} s_z \left({\lap}_{jj}^{\dagger}-{\lap}_{ij}^{\dagger}-{\lap}_{jz}^{\dagger}+{\lap}_{iz}^{\dagger}\right) \\
+            H_j&=\frac{1}{2} \sum_{i=1}^{n} \pi_i \sum_{z=1}^{n} d_z(R_{ij}+R_{jz}-R_{iz}) \\
+            &=\frac{1}{s} \sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z \left({\lap}_{jj}^{\dagger}-{\lap}_{ij}^{\dagger}-{\lap}_{jz}^{\dagger}+{\lap}_{iz}^{\dagger}\right) \\
         \end{split}
     \end{equation}
 
     The four terms in the brackets of~\eqref{EE05} can be sequentially calculated as follows:
     \begin{equation}\label{EE06}
-        \sum_{i=1}^{n} s_i \sum_{z=1}^{n} s_z {\lap}_{jj}^{\dagger}=s^2 \vece_j^{\top} \lap^{\dagger} \vece_j\,,
+        \sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z {\lap}_{jj}^{\dagger}=d^2 \vece_j^{\top} \lap^{\dagger} \vece_j\,,
     \end{equation}
     \begin{equation}\label{EE07}
-        \sum_{i=1}^{n} s_i \sum_{z=1}^{n} s_z {\lap}_{ij}^{\dagger}=\sum_{i=1}^{n} s_i \sum_{z=1}^{n} s_z {\lap}_{jz}^{\dagger}=s^2 \vece_j^{\top} \lap^{\dagger} \vecpi\,,
+        \sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z {\lap}_{ij}^{\dagger}=\sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z {\lap}_{jz}^{\dagger}=d^2 \vece_j^{\top} \lap^{\dagger} \vecpi\,,
     \end{equation}
     and
     \begin{equation}\label{EE08}
-        \sum_{i=1}^{n} s_i  \sum_{z=1}^{n} s_z {\lap}_{iz}^{\dagger}=s^2 \vecpi^{\top} \lap^{\dagger} \vecpi \,.
+        \sum_{i=1}^{n} d_i  \sum_{z=1}^{n} d_z {\lap}_{iz}^{\dagger}=d^2 \vecpi^{\top} \lap^{\dagger} \vecpi \,.
     \end{equation}
     Plugging~\eqref{EE06},~\eqref{EE07}, and~\eqref{EE08}  into~\eqref{EE05}, we obtain
     \begin{equation}\label{EE09}
         \begin{split}
-            H_j&=s(\vece_j^{\top} \lap^{\dagger} \vece_j - 2 \vece_j^{\top} \lap^{\dagger} \vecpi + \vecpi^{\top} \lap^{\dagger} \vecpi) \\
-            &=s(\vece_j - \vecpi)^{\top} \lap^{\dagger} (\vece_j - \vecpi).
+            H_j&=d(\vece_j^{\top} \lap^{\dagger} \vece_j - 2 \vece_j^{\top} \lap^{\dagger} \vecpi + \vecpi^{\top} \lap^{\dagger} \vecpi) \\
+            &=d(\vece_j - \vecpi)^{\top} \lap^{\dagger} (\vece_j - \vecpi).
         \end{split}
     \end{equation}
     Substituting~\eqref{EE09}  into~\eqref{HjK01} gives~\eqref{Kemeny03}.
@@ -421,13 +421,13 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitr
         \begin{align*}
              & \quad \abs{\Abs{\matz(\vece_u-\vecpi)}-\|\tilmatz(\vece_u-\vecpi)\|}                                 \\
              & \le \Abs{(\matz-\tilmatz)(\vece_u-\vecpi)}                                                           \\
-             & = \frac{1}{s} \Abs{\sum_{v=1}^{n} s_v (\matz-\tilmatz)(\vece_u-\vece_v)}                             \\
-             & \le \frac{1}{s} \sum_{v=1}^{n} s_v \Abs{(\matz-\tilmatz)(\vece_u-\vece_v)}                           \\
-             & \le \frac{1}{s} \sqrt{\sum_{v=1}^{n} s_v^2 \sum_{v=1}^{n} \Abs{(\matz-\tilmatz)(\vece_u-\vece_v)}^2} \\
+             & = \frac{1}{d} \Abs{\sum_{v=1}^{n} d_v (\matz-\tilmatz)(\vece_u-\vece_v)}                             \\
+             & \le \frac{1}{d} \sum_{v=1}^{n} d_v \Abs{(\matz-\tilmatz)(\vece_u-\vece_v)}                           \\
+             & \le \frac{1}{d} \sqrt{\sum_{v=1}^{n} d_v^2 \sum_{v=1}^{n} \Abs{(\matz-\tilmatz)(\vece_u-\vece_v)}^2} \\
              & \le \sqrt{\sum_{v=1}^{n} \Abs{(\matz-\tilmatz)(\vece_u-\vece_v)}^2},
         \end{align*}
     \end{small}
-    where the last inequality is due to the fact that \(s=\sum_{v=1}^{n} s_v\ge \sqrt{\sum_{v=1}^{n} s_v^2}\).
+    where the last inequality is due to the fact that \(d=\sum_{v=1}^{n} d_v\ge \sqrt{\sum_{v=1}^{n} d_v^2}\).
 
     Since we only consider connected graphs,   there exists a simple path \(\mathcal{P}_v\) between \(u\) and any other vertex \(v\).  Applying the triangle inequality along path \(\mathcal{P}_v\), the square of the last sum term in the above equation can be evaluated as:
     \begin{small}
@@ -488,7 +488,7 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitr
             (1 - \epsilon) C(u) \\
             &=(1-\epsilon)(\vece_u-\vecpi)^{\top} \lap^{\dagger} (\vece_u-\vecpi) \\
             &\geq (1-\epsilon)\lambda_{n}^{-1} \Abs{\vece_u-\vecpi}^2 \\
-            &	\geq (1-\epsilon)(n w_{\max})^{-1} \frac{(s-s_u)^2}{s^2}.
+            &	\geq (1-\epsilon)(n w_{\max})^{-1} \frac{(d-d_u)^2}{d^2}.
         \end{split}
     \end{equation}
     In the above equation, the first inequation follows due to the following reason.   Note that \(\vece_u-\vecpi\) is orthogonal to  vector \(\vecone\), which is an eigenvector of \(\lap^{\dagger}\) corresponding to the \(0\) eigenvalue. Hence, \((\vece_u-\vecpi)^{\top} \lap^{\dagger} (\vece_u-\vecpi) \ge \lambda_{n}^{-1} \Abs{\vece_u-\vecpi}^2\) always holds true.
@@ -504,7 +504,7 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitr
         }                                                 \\
          & \le
         \delta \left(\frac{n^2(n-1) (1+\epsilon)}{w_{\min}}\right)^{1/2}\left(\frac{n
-        w_{\max}}{1-\epsilon}\right)^{1/2}\frac{s}{s-s_u} \\
+        w_{\max}}{1-\epsilon}\right)^{1/2}\frac{d}{d-d_u} \\
          & \le \frac{\epsilon}{3},
     \end{align*}
     %\end{small}
@@ -534,16 +534,16 @@ Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \(\text{Approx}\mathca
         \(\tilde{H}=\{u,\tilde{H}_u| u \in V\}\): \(\tilde{H}_u\) is an approximation of the walk centrality \(H_u\) of vertex \(u\);
         \(\tilde{K}\): approximation of the Kemeny constant \(K\)
     }
-    \(\lap=\) Laplacian of \(\gr\),\, \(s_u=\) the strength of \(u\) for all \(u\in V\), \(s=\sum_{u \in V} s_u\)\;  Construct a matrix \(\matq_{k \times m}\),  where \(k=\lceil 24\log n/\epsilon^2 \rceil\) and each entry is \(\pm 1/\sqrt{k}\) with identical probability\;
+    \(\lap=\) Laplacian of \(\gr\),\, \(d_u=\) the degree of \(u\) for all \(u\in V\), \(d=\sum_{u \in V} d_u\)\;  Construct a matrix \(\matq_{k \times m}\),  where \(k=\lceil 24\log n/\epsilon^2 \rceil\) and each entry is \(\pm 1/\sqrt{k}\) with identical probability\;
     \For{\(i=1\) to \(k\)}{
         \(\vecq_i^\top \)=the \(i\)-th row of  \(\matq_{k \times m} \matw^{1/2} \matb\)  \\
         \(\tilde{\vecz}_i=\mathtt{Solve}(\lap, \vecq_i, \delta)\) where parameter   \(\delta\) is  given by~(\ref{EE14}) \\
     }
     Calculate the constant vector \({\bf p}=\tilmatz \vecpi\)\;
     \For{each \(u\in V\)}{
-    \(\tilde{H}_u=s \|\tilmatz_{:,u}-{\bf p}\|^2\)
+    \(\tilde{H}_u=d \|\tilmatz_{:,u}-{\bf p}\|^2\)
     }
-    \(\tilde{K}=\sum_{u \in V} \frac{s_u}{s} \tilde{H}_u\)\;
+    \(\tilde{K}=\sum_{u \in V} \frac{d_u}{d} \tilde{H}_u\)\;
     \Return \(\tilde{H}=\{u,\tilde{H}_u| u \in V\}\) and \(\tilde{K}\)
 \end{algorithm}
 
@@ -592,13 +592,13 @@ Considering the aforementioned case, we can express AGC \(\manc{S}\) as
 Furthermore, after simplification using~\eqref{eq:trs}, we get the formula of \(\manc{S}\):
 \begin{equation}\label{eq:AGC}
     \begin{split}
-        \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\mats^{-1}\mata}_{-S}^{-1}\vecone                          \\
-        & =\vecpi_{-S}^\top\mypar{\mati-\mats^{-1}\mata}_{-S}^{-1}\mats_{-S}^{-1}\mats_{-S}\vecone \\
-        & =\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}.
+        \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\vecone                          \\
+        & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\matd_{-S}^{-1}\matd_{-S}\vecone \\
+        & =\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}.
     \end{split}
 \end{equation}
 
-According to \eqref{eq:AGC} and \lemref{lemma:ST}, we can easily compute AGC of any given vertex group \(S\) by calling \(\mathtt{Solve}\mypar{\lap_{-S},\vecs_{-S},\delta}\).
+According to \eqref{eq:AGC} and \lemref{lemma:ST}, we can easily compute AGC of any given vertex group \(S\) by calling \(\mathtt{Solve}\mypar{\lap_{-S},\vecd_{-S},\delta}\).
 The detail of this approximation algorithm is skipped as it simply utilizes \lemref{lemma:ST}.
 
 \subsection{Physical Explanations of AGC}
@@ -665,7 +665,7 @@ Given a graph \(\gr=\mypar{V,E,w}\) with a group of absorbing vertices \(S\), we
 For edges \(e=\edge{u}{v}\) in the original graph:
 \begin{enumerate}
     \item If both \(u\) and \(v\) are in \(V\) but not in \(S\), we'll keep \(e\) in the augmented graph, where \(w'_e=w_e\);
-    \item If \(u\) is in \(V\) but not in \(S\), and \(v\) is in \(S\), we'll add \(e'=\edge{u}{s}\) to the augmented graph. Note that there may be multiple vertices in \(S\) connected to \(u\), so the weight of this new edge should be the sum of the weights of all corresponding old edges. That is, \(w'e=\sum\limits{e=\edge{u}{v},v\in S}w_e\);
+    \item If \(u\) is in \(V\) but not in \(S\), and \(v\) is in \(S\), we'll add \(e'=\edge{u}{s}\) to the augmented graph. Note that there may be multiple vertices in \(S\) connected to \(u\), so the weight of this new edge should be the sum of the weights of all corresponding old edges. That is, \(w'_e=\sum\limits_{e=\edge{u}{v},v\in S}w_e\);
     \item If \(u\) is in \(S\) and \(v\) is in \(V\) but not in \(S\), we'll treat \(e\) as \(e=\edge{v}{u}\), since \(\gr\) is undirected;
     \item If both \(u\) and \(v\) are in \(S\), \(e\) is redundant as both vertices are absorbing.
 \end{enumerate}
@@ -796,7 +796,7 @@ Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an inte
     We first prove that if \(S\) is a vertex cover of \(\gr\), then \(\manc{S}=(n-k)/n\). When \(S\) is a vertex cover of \(\gr\), there are no edges between vertices in \(V\setminus S\).
     Thus, we can simplify~\eqref{eq:AGC} as:
     \begin{equation*}
-        \manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}=\vecpi_{-S}^\top\mats_{-S}^{-1}\vecs_{-S}=\vecpi_{-S}^\top\vecone.
+        \manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\mats_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\vecone.
     \end{equation*}
     Since \(\gr\) is a \(c\)-regular graph, \(\vecpi=\begin{pmatrix}1/n&\cdots&1/n\end{pmatrix}^\top\).
     Thus, \(\manc{S}=\vecpi_{-S}^\top\vecone=(n-k)/n\).
@@ -804,7 +804,7 @@ Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an inte
     We then demonstrate that if \(S\) does not constitute a vertex cover of \(\gr\), then \(\manc{S}>(n-k)/n\).
     For a vertex \(u\in S\) and a vertex \(v\in V\setminus S\), it is obvious that \(H_{u,S}=0\) and \(H_{v,S}\ge1\).
     Moreover, since \(S\) is not a vertex cover of \(\gr\), there exists at least one edge \((u',v')\) in edge set \(E\) that is not covered by \(S\).
-    When a walker starts from vertex \(u'\) and moves to vertex \(v'\) with a probability of at least \(\frac{1}{s_{\max}}>\frac{1}{n}\), the walker's path length exceeds \(1\).
+    When a walker starts from vertex \(u'\) and moves to vertex \(v'\) with a probability of at least \(\frac{1}{d_{\max}}>\frac{1}{n}\), the walker's path length exceeds \(1\).
     That is,
     \begin{equation*}
         H_{u',S}=H_{v',S}>\mypar{1-\frac{1}{n}}+\frac{2}{n}=1+\frac{1}{n}.
@@ -842,7 +842,8 @@ For vertex \(u\in V\setminus S\), after adjusting the order of submatrix \(\lap_
 where \(\mata\) denotes \(\lap_{-(S+u)}\).
 According to the properties of block matrices, we can get
 \begin{equation*}
-    \lap_{-S}^{-1}=\begin{pmatrix}
+    \lap_{-S}^{-1}=
+    \begin{pmatrix}
         t & t\veca^\top\mata^{-1} \\t\mata^{-1}\veca&\mata^{-1}+t\mata^{-1}\veca\veca^\top\mata^{-1}
     \end{pmatrix},
 \end{equation*}
@@ -852,9 +853,9 @@ Therefore, when \(S\neq\varnothing\), \(\Delta(u,S)\) can be rewritten as
 \begin{equation}\label{eq:margin-deriv}
     \begin{split}
         &\manc{S}-\manc{S+u}\\
-        =&\vecpi_{-S}^\top\lap_{-S}^{-1}\vecs_{-S}-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecs_{-(S+u)}\\
-        =&\frac1t\mypar{t\vecpi_u+t\vecpi_{-(S+u)}^\top\mata^{-1}\veca}\mypar{td_u+t\veca^\top\mata^{-1}\vecs_{-(S+u)}}\\
-        =&\frac{\mypar{\vecpi_{-S}^\top\lap_{-S}^{-1}\vece_u}\mypar{\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}}}{\vece_u^\top\lap_{-S}^{-1}\vece_u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}}^2}{s\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}}.
+        =&\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecd_{-(S+u)}\\
+        =&\frac1t\mypar{t\vecpi_u+t\vecpi_{-(S+u)}^\top\mata^{-1}\veca}\mypar{td_u+t\veca^\top\mata^{-1}\vecd_{-(S+u)}}\\
+        =&\frac{\mypar{\vecpi_{-S}^\top\lap_{-S}^{-1}\vece_u}\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}}{\vece_u^\top\lap_{-S}^{-1}\vece_u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}^2}{d\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}}.
     \end{split}
 \end{equation}
 
@@ -862,25 +863,25 @@ Here we skip some steps for brevity.
 
 However, during the first iteration of the greedy algorithm, when \(S=\varnothing\), \eqref{eq:margin-deriv} becomes invalid due to the singularity of \(\lap\).
 Since \(\manc{\varnothing}=\infty\), we can define \(\Delta(u,\varnothing)\) as \(-\manc{S+u}=-H_u\), which is the negative of absorbing random-walk centrality for vertex \(u\).
-In \lemref{HjK}, we have shown that \(H_u=s\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\).
+In \lemref{HjK}, we have shown that \(H_u=d\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\).
 
 Equation~\eqref{ATT02} and~\eqref{eq:margin-deriv} demonstrate that we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) by inverting the same matrix \(\lap_{-S}\) or by using the pseudoinverse of the same matrix \(\lap\).
 As a result, we can optimize the simple greedy algorithm outlined in~\algoref{algo:exact-agcm}, and reduce the time complexity from \(O(kn^4)\) to \(O(kn^3)\).
 
 \begin{algorithm}
-    \caption{\textsc{ExactAGCM}\((\gr,k)\)}
+    \caption{\text{ExactAGCM}\((\gr,k)\)}
     \label{algo:exact-agcm}
     \Input{
         A connected weighted undirected graph \(\gr=(V,E,w)\);
         an integer \(k\in[1,\abs{V}]\)
     }
     \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
-    Compute \(\lap\) and \(\vecs\)\;
-    \(s\gets\vecs\vecone\),\(\vecpi\gets \inv{s}\vecs\)\;
-    \(S_1\gets\setof{\argmin_{u\in V}\setof{s(\vece_u-\vecpi)^\top\lap^\dagger(\vece_u-\vecpi)}}\)\;
+    Compute \(\lap\) and \(\vecd\)\;
+    \(d\gets\vecd\vecone\),\(\vecpi\gets \inv{d}\vecd\)\;
+    \(S_1\gets\setof{\argmin_{u\in V}\setof{d(\vece_u-\vecpi)^\top\lap^\dagger(\vece_u-\vecpi)}}\)\;
     \For{\(i=2,3,\dots,k\)}{
         \ForEach{\(u\in V\setminus S\)}{
-            \(\Delta(u,S)\gets\frac{(\vece_u^\top\lap_{-S}^{-1}\vecs_{-S})^2}{s(\vece_u^\top\lap_{-S}^{-1}\vece_u)}\)\;
+            \(\Delta(u,S)\gets\frac{(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S})^2}{d(\vece_u^\top\lap_{-S}^{-1}\vece_u)}\)\;
         }
         \(u^*\gets\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}\)\;
         \(S_i\gets S_{i-1}\cup\setof{u^*}\)
@@ -890,7 +891,7 @@ As a result, we can optimize the simple greedy algorithm outlined in~\algoref{al
 
 Afterwards, we prove that \algoref{algo:exact-agcm} has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
 \begin{theorem}
-    The algorithm \(S_k=\textsc{ExactAGCM}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a vertex group \(S_k\) with capacity \(k\).
+    The algorithm \(S_k=\text{ExactAGCM}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a vertex group \(S_k\) with capacity \(k\).
     When \(k>1\), the vertex group \(S\) satisfies
     \[\manc{\setof{u^*}}-\manc{S_k}\ge\mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}}\mypar{\manc{\setof{u^*}}-\manc{S^*}},\]
     where
@@ -943,12 +944,12 @@ To this end, we need to utilize the following lemma.
 
 \subsection{Approximation of the numerator of \(\Delta(u,S)\)}
 
-We first approximate the numerator of \(\Delta(u,S)\), which involves the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecs_{-S}\).
+We first approximate the numerator of \(\Delta(u,S)\), which involves the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}\).
 Since \(\lap_{-S}\) is a SDDM matrix, we can apply~\lemref{lemma:ST} to avoid computing the matrix inverse \(\lap_{-S}^{-1}\).
 \begin{lemma}\label{lem:approx-numer}
-    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty vertex group \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\), let \(\vecx'=\mathtt{Solve}(\lap_{-S},\vecs_{-S},\delta_1)\) where \(\delta_1=\frac{w_{\min}\epsilon}{7n^3w_{\max}}\). Then for any vertex \(i\in V\setminus S\), we have
+    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty vertex group \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\), let \(\vecx'=\mathtt{Solve}(\lap_{-S},\vecd_{-S},\delta_1)\) where \(\delta_1=\frac{w_{\min}\epsilon}{7n^3w_{\max}}\). Then for any vertex \(i\in V\setminus S\), we have
     \begin{equation}\label{eq:approx-numer}
-        \vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecs_{-S}\approx_{\epsilon/7}\vecx'_i.
+        \vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\approx_{\epsilon/7}\vecx'_i.
     \end{equation}
 \end{lemma}
 \begin{IEEEproof}
@@ -962,7 +963,7 @@ Since \(\lap_{-S}\) is a SDDM matrix, we can apply~\lemref{lemma:ST} to avoid co
         \le n^6w_{\min}^{-2}w_{\max}^2\delta_1^2,
     \end{align*}
     where the last inequality is due to \lemref{lem:trace-lap}.
-    On the other hand, as \(\vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecs_{-S}\) represents the expected hitting time for a random walker starting at vertex \(i\), it follows that \(\vecx_i\ge1\).
+    On the other hand, as \(\vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\) represents the expected hitting time for a random walker starting at vertex \(i\), it follows that \(\vecx_i\ge1\).
     Finally, we can estimate \(\vecx_i\) as follows:
     \begin{equation*}
         \frac{\abs{\vecx'_i-\vecx_i}}{\vecx_i}\le n^3w_{\max}w_{\min}^{-1}\delta_1=\epsilon/7.
@@ -1034,7 +1035,7 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
     \end{equation}
     On the other hand, according to \lemref{lemma:JL},
     \[\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2\ge(1-\epsilon/7)\vece_i^\top\lap_{-S}^{-1}\vece_i\ge(1-\epsilon/7)n^{-2}w_{\max}^{-1}\]
-    where the last inequality is due to the scaling of \(\vece_i^\top\lap_{-S}^{-1}\vecs_{-S}\ge1\).
+    where the last inequality is due to the scaling of \(\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\ge1\).
 
     According to the Pigeonhole Principle, at least one element of \(\setof{\Abs{\tilde{\matx}\vece_i},\Abs{\tilde{\maty}\vece_i}}\) is no less than \(\frac{1}{n}\sqrt{\frac{1-\epsilon/7}{2w_{\max}}}\).
     Without loss of generality, we let \(\Abs{\tilde{\matx}\vece_i}\ge\frac{1}{n}\sqrt{\frac{1-\epsilon/7}{2w_{\max}}}\), then we have
@@ -1067,15 +1068,15 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
     which completes our proof in conjunction with \lemref{lemma:JL}.
 \end{IEEEproof}
 
-\subsection{Details of Algorithms \textsc{ApproxDelta} and \textsc{ApproxAGCM}}
+\subsection{Details of Algorithms \text{ApproxDelta} and \text{ApproxAGCM}}
 
-By combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose the \textsc{ApproxDelta} algorithm for approximating \(\Delta(u,S)\) when \(S\neq\varnothing\).
-The \textsc{ApproxDelta} algorithm calls algorithm \(\mathtt{Solve}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\).
+By combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose the \text{ApproxDelta} algorithm for approximating \(\Delta(u,S)\) when \(S\neq\varnothing\).
+The \text{ApproxDelta} algorithm calls algorithm \(\mathtt{Solve}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\).
 Here, \(\tilde{O}(\cdot)\) hides the poly(\(\log n\)) factors.
 Additionally, we can provide an approximation guarantee for this algorithm.
 
 \begin{algorithm}
-    \caption{\textsc{ApproxDelta}\((\gr,S,\epsilon)\)}
+    \caption{\text{ApproxDelta}\((\gr,S,\epsilon)\)}
     \label{algo:approxdelta}
     \Input{
         A connected weighted undirected graph \(\gr=(V,E,w)\);
@@ -1085,14 +1086,14 @@ Additionally, we can provide an approximation guarantee for this algorithm.
     \Output{
         The margin \(\Delta(u,S)\) of AGC created by adding vertex \(u\) to \(S\) for any vertex \(u\in V\setminus S\)
     }
-    Compute \(\lap\) and \(\vecs\)\;
+    Compute \(\lap\) and \(\vecd\)\;
     \(n\gets\abs{V},m\gets\abs{E}\)\;
     \(w_{\min}\gets\min\setof{w_e|e\in E},w_{\max}\gets\max\setof{w_e|e\in E}\)\;
-    \(s\gets\vecs\vecone\),\(q,r\gets\ceil{24(\epsilon/7)^{-2}\log n}\)\;
+    \(d\gets\vecd\vecone\),\(q,r\gets\ceil{24(\epsilon/7)^{-2}\log n}\)\;
     \(\delta_1\gets \frac{w_{\min}\epsilon}{7n^2w_{\max}}\),\(\delta_2\gets \frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\)\;
-    \(\vecx'\gets\mathtt{Solve}(\lap_{-S},\vecs_{-S},\delta_1)\)\;
-    \(\matq\gets\textsc{GenerateRandomMatrix}(q,m)\)\;
-    \(\matr\gets\textsc{GenerateRandomMatrix}(r,n)\)\;
+    \(\vecx'\gets\mathtt{Solve}(\lap_{-S},\vecd_{-S},\delta_1)\)\;
+    \(\matq\gets\text{GenerateRandomMatrix}(q,m)\)\;
+    \(\matr\gets\text{GenerateRandomMatrix}(r,n)\)\;
     Decompose \(\lap_{-S}\) into \(\matb'\in\rea^{m\times n}\), \(\matw'\in\rea^{m\times m}\) and \(\matz\in\rea^{n\times n}\), where \(\lap_{-S}=\matb'^\top\matw'\matb'+\matz\)\;
     \(\overline{\matx}\gets\matq\matw^{1/2}\matb\),\(\overline{\maty}\gets\matr\matz^{1/2}\)\;
     \For{\(i=1,2,\dots,q\)}{
@@ -1117,15 +1118,15 @@ Additionally, we can provide an approximation guarantee for this algorithm.
 
 % \end{IEEEproof}
 
-By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we are able to create a faster greedy algorithm called \textsc{ApproxAGCM} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor.
-The complexity of \textsc{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear, as it calls \(\text{Approx\(\mathcal{HK}\)}\) once and \textsc{ApproxDelta} \(k-1\) times.
+By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we are able to create a faster greedy algorithm called \text{ApproxAGCM} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor.
+The complexity of \text{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear, as it calls \(\text{Approx\(\mathcal{HK}\)}\) once and \text{ApproxDelta} \(k-1\) times.
 
 \begin{algorithm}
-    \caption{\textsc{ApproxAGCM}\((\gr,k,\epsilon)\)}
+    \caption{\text{ApproxAGCM}\((\gr,k,\epsilon)\)}
     \label{algo:approx}
     \Input{
         A connected weighted undirected graph \(\gr=(V,E,w)\);
-        an integer \(k\in[1,\abs{V}]\);
+        an integer \(k\ll\abs{V}\);
         an error parameter \(\epsilon\in(0,1)\)
     }
     \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
@@ -1133,7 +1134,7 @@ The complexity of \textsc{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), w
     \(\setof{\tilde{H}_u|u\in V }\gets\text{Approx\(\mathcal{HK}\)}(\gr,\epsilon)\)\;
     \(S_1\gets\setof{\argmin_{u\in V}\setof{\tilde{H}_u}}\)\;
     \For{\(i=2,3,\dots,k\)}{
-        \(\setof{\Delta'(u,S)|u\in V\setminus S}\gets\textsc{ApproxDelta}(\gr,S,\epsilon)\)\;
+        \(\setof{\Delta'(u,S)|u\in V\setminus S}\gets\text{ApproxDelta}(\gr,S,\epsilon)\)\;
         \(u^*\gets\argmax_{u\in V\setminus S}\setof{\Delta'(u,S)}\)\;
         \(S_i\gets S_{i-1}\cup\setof{u^*}\)\;
     }
@@ -1141,7 +1142,7 @@ The complexity of \textsc{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), w
 \end{algorithm}
 
 \begin{theorem}
-    The algorithm \(S_k=\textsc{ApproxAGCM}(\gr,k,\epsilon)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) ,a positive integer \(k\) and an error parameter \(\epsilon\in(0,1)\), then returns a vertex group \(S_k\) with capacity \(k\). When \(k>1\), the vertex group \(S\) satisfies
+    The algorithm \(S_k=\text{ApproxAGCM}(\gr,k,\epsilon)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) ,a positive integer \(k\) and an error parameter \(\epsilon\in(0,1)\), then returns a vertex group \(S_k\) with capacity \(k\). When \(k>1\), the vertex group \(S\) satisfies
     \begin{align*}
         \mypar{1+\epsilon} & \manc{\setof{u^*}}-\manc{S_k}\ge                                                                         \\
                            & \mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon}\mypar{\mypar{1+\epsilon}\manc{\setof{u^*}}-\manc{S^*}},
@@ -1171,12 +1172,12 @@ The complexity of \textsc{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), w
 In this section, we present experimental results for various real and model networks to demonstrate the  efficiency and accuracy of our approximation algorithms:
 \begin{itemize}
     \item \(\text{Approx}\mathcal{HK}\) for computing the walk centrality \(H_u\) of  every vertex and the Kemeny constant \(K\);
-    \item \textsc{ExactAGCM} and \textsc{ApproxAGCM} for solving the AGC Minimization problem.
+    \item \text{ExactAGCM} and \text{ApproxAGCM} for solving the AGC Minimization problem.
 \end{itemize}
 
 The data of these networks are taken from the Koblenz Network Collection~\cite{Ku13} and SNAP~\cite{LeKr14}. For those networks that are disconnected originally, we perform our experiments on their largest connected components (LCC). Related information about the number of vertices and edges for the studied real networks and their LCC is shown  in \tabref{tab:network_size},  where networks are listed in an increasing order of the number of vertices in the original networks. The smallest network has 198 vertices, while the largest one consists of more than \(1.9 \times 10^{6}\) vertices.
 
-All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement the approximation algorithms \(\text{Approx}\mathcal{HK}\) and \textsc{ApproxAGCM} in \textit{Julia v1.8.5}, where the \(\mathtt{Solve}\) is from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
+All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement the approximation algorithms \(\text{Approx}\mathcal{HK}\) and \text{ApproxAGCM} in \textit{Julia v1.8.5}, where the \(\mathtt{Solve}\) is from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
 
 \subsection{Results for \(\text{Approx}\mathcal{HK}\)}
 
@@ -1320,7 +1321,7 @@ In addition to the high efficiency,  our algorithm  \(\text{Approx}\mathcal{HK}\
 \end{table}
 
 To further demonstrate the performance of our proposed algorithm \(\text{Approx}\mathcal{HK}\), we use it to compute the Kemeny constant for some model networks.  Although for a general graph, the exact result for its  Kemeny constant is difficult to obtain, for some model networks generated by an iterative way, their Kemeny constant can be determined explicitly.
-For example, for the pseudofractal scale-free web~\cite{XiZhCo16}, the Koch network~\cite{XiLiZh15},Cayley tree~\cite{CaCh97,ChCa99}, and the extended Tower of Hanoi graph~\cite{KlMo05}, one can obtain exact expressions for their Kemeny constant.
+For example, for the pseudofractal scale-free web~\cite{XiZhCo16}, the Koch network~\cite{XiLiZh15}, Cayley tree~\cite{CaCh97,ChCa99}, and the extended Tower of Hanoi graph~\cite{KlMo05}, one can obtain exact expressions for their Kemeny constant.
 
 In the following we use algorithm \(\text{Approx}\mathcal{HK}\) to approximately compute the Kemeny constant for the aforementioned four model networks. One main justification for selecting  these four networks lies in their relevance to real-world systems. For example,  the pseudofractal scale-free web and the Koch network display the remarkable scale-free small-world properties as observed in most real networks~\cite{Ne03}, while  Cayley trees are useful for parallel and distributed computing, since they can be embedded into many other interconnection architectures, such as butterfly networks~\cite{GuHa91} and M{\"o}bius cubes~\cite{LiFaJi16}.
 
@@ -1387,8 +1388,6 @@ the periphery vertex. \figref{Cayley} illustrates a special Cayley tree,
     \label{Cayley}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\subsubsection{Extended Tower of Hanoi graphs}
 
 As the name suggests, the extended Tower of Hanoi graph is constructed  based on the Tower of Hanoi graph.  Let \(\mathcal{H}_{g}\)  be the  Tower of Hanoi graph of generation \(g\)~\cite{HiKlMiPeSt13}. The vertex set of \(\mathcal{H}_{g}\) consists of all \(3\)-tuples of integers \(1,2,3\), i.e., \(V(\mathcal{H}_{g})=\{1,2,3\}^g\). All vertices in \(\mathcal{H}_{g}\) are labelled as \((x_1,x_2,\cdots,x_g)\), hereafter written in regular expression form \(x_1x_2\cdots x_g\), with \(x_i\in\{1,2,3\}\) for \(i=1,2,...,g\). Two vertices \(u=u_1u_2\cdots u_g\) and \(v=v_1v_2\cdots v_g\) in \(\mathcal{H}_{g}\) are directly connected by an edge if and only if there exists an \(h(1\le h\le g)\) such that
 \begin{enumerate}
@@ -1460,13 +1459,13 @@ We use our algorithm \(\text{Approx}\mathcal{HK}\) to compute the Kemeny constan
     \end{threeparttable}
 \end{table*}
 
-\subsection{Results for \textsc{ExactAGCM} and \textsc{ApproxAGCM}}
+\subsection{Results for \text{ExactAGCM} and \text{ApproxAGCM}}
 
-We first compare the performance of \textsc{ExactAGCM} and \textsc{ApproxAGCM} with the optimum solution on four toy networks~\cite{Ku13}: \(\mathit{Zebra}\) with 23 vertices, \(\mathit{Zachary\ karate\ club}\) with 34 vertices, \(\mathit{Contiguous\ USA}\) with 49 vertices and \(\mathit{Les\ Miserables}\) with 77 vertices.
+We first compare the performance of \text{ExactAGCM} and \text{ApproxAGCM} with the optimum solution on four toy networks~\cite{Ku13}: \(\mathit{Zebra}\) with 23 vertices, \(\mathit{Zachary\ karate\ club}\) with 34 vertices, \(\mathit{Contiguous\ USA}\) with 49 vertices and \(\mathit{Les\ Miserables}\) with 77 vertices.
 
 To find the set of \(k\) elements with the lowest AGC value for each network \(\gr=(V,E)\), the optimum solution iterates through all the \(k\)-element subsets of \(V\), where \(k\) ranges from \(1\) to \(5\).
-We then compare the smallest AGC value with the solution provided by \textsc{ExactAGCM} and \textsc{ApproxAGCM}, whose results are shown in \figref{pic:compare-effect-optimum}.
-During the execution of \textsc{ApproxAGCM}, we set the error parameter \(\epsilon\) to \(0.2\).
+We then compare the smallest AGC value with the solution provided by \text{ExactAGCM} and \text{ApproxAGCM}, whose results are shown in \figref{pic:compare-effect-optimum}.
+During the execution of \text{ApproxAGCM}, we set the error parameter \(\epsilon\) to \(0.2\).
 The results in \figref{pic:compare-effect-optimum} demonstrate that the solutions provided by our algorithms are almost identical to each other, and both are very close to the optimum solution.
 This indicates that our proposed algorithms have a much better approximation ratio than the theoretical guarantees.
 
@@ -1537,12 +1536,14 @@ This indicates that our proposed algorithms have a much better approximation rat
             \node [font=\huge] at (3.5,9) {(d)};
         \end{axis}
     \end{tikzpicture}
-    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by three different algorithms(\textsc{ExactAGCM},\textsc{ApproxAGCM} and \textsc{OptimumAGCM}) on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c) and Les Miserables (d).\label{pic:compare-effect-optimum}}
+    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by three different algorithms(\text{ExactAGCM},\text{ApproxAGCM} and \text{OptimumAGCM}) on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c) and Les Miserables (d).\label{pic:compare-effect-optimum}}
 \end{figure}
 
-We then compare the performance of \textsc{ExactAGCM} and \textsc{ApproxAGCM} with three other algorithms: \textsc{Top-Absorb}, \textsc{Top-Degree}, and \textsc{Top-PageRank}.
-\textsc{Top-Absorb} simply selects \(k\) absorbing vertices with the lowest absorbing random-walk centrality, while \textsc{Top-Degree} and \textsc{Top-PageRank} select the vertices with the largest degrees and PageRank values, respectively.
-We execute these four algorithms on eight medium-sized networks, and the results are shown in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}.
+We then compare the performance of \text{ExactAGCM} and \text{ApproxAGCM} with three other algorithms: \text{Top-Absorb}, \text{Top-Degree}, and \text{Top-PageRank}.
+\text{Top-Absorb} simply selects \(k\) absorbing vertices with the lowest absorbing random-walk centrality, while \text{Top-Degree} and \text{Top-PageRank} select the vertices with the largest degrees and PageRank values, respectively.
+We execute these four algorithms on eight medium-sized networks.
+During the execution of \text{ApproxAGCM}, we set the error parameter \(\epsilon\) to \(0.2\).
+The results are shown in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}.
 As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, both of our algorithms produce similar approximate solutions in larger networks, which outperform the solutions of other algorithms.
 
 \begin{figure}[!t]
@@ -1645,7 +1646,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
             \node [font=\huge] at (10,90) {(d)};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{ExactAGCM},\textsc{ApproxAGCM},\textsc{Top-Absorb} and \textsc{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d).\label{pic:compare-effect1}}
+    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\text{ExactAGCM},\text{ApproxAGCM},\text{Top-Absorb} and \text{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d).\label{pic:compare-effect1}}
 \end{figure}
 
 \begin{figure}[!t]
@@ -1748,17 +1749,17 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
             \node [font=\huge] at (15,4) {(d)};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{ExactAGCM},\textsc{ApproxAGCM},\textsc{Top-Absorb} and \textsc{Top-Degree}) on four networks: Hamster friends (a), Hamster full (b), Reactome (c) and Route views (d).\label{pic:compare-effect2}}
+    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\text{ExactAGCM},\text{ApproxAGCM},\text{Top-Absorb} and \text{Top-Degree}) on four networks: Hamster friends (a), Hamster full (b), Reactome (c) and Route views (d).\label{pic:compare-effect2}}
 \end{figure}
 
-Finally, we demonstrate that the \textsc{ApproxAGCM} algorithm is significantly more efficient than the \textsc{ExactAGCM} algorithm, particularly when applied to large networks.
+Finally, we demonstrate that the \text{ApproxAGCM} algorithm is significantly more efficient than the \text{ExactAGCM} algorithm, particularly when applied to large networks.
 We test both algorithms on a wider range of real networks.
-For each network, we use \textsc{ExactAGCM} and \textsc{ApproxAGCM} separately to solve the AGC minimization problem, with \(k=10\) and \(\epsilon=0.2\).
+For each network, we use \text{ExactAGCM} and \text{ApproxAGCM} separately to solve the AGC minimization problem, with \(k=10\) and \(\epsilon=0.2\).
 The running times of both algorithms are shown in \tabref{tab:running-time}.
 
-From \tabref{tab:running-time}, we can observe that the running time of \textsc{ApproxAGCM} is proportional to the number of edges in the network, leading to an increase in the speedup ratio of \textsc{ApproxAGCM} as the network size grows.
+From \tabref{tab:running-time}, we can observe that the running time of \text{ApproxAGCM} is proportional to the number of edges in the network, leading to an increase in the speedup ratio of \text{ApproxAGCM} as the network size grows.
 Furthermore, \tabref{tab:running-time} indicates that when processing networks marked with \(\ast\),
-\textsc{ApproxAGCM} remains usable while \textsc{ExactAGCM} fails due to its high time complexity.
+\text{ApproxAGCM} remains usable while \text{ExactAGCM} fails due to its high time complexity.
 This result demonstrates the scalability of \text{ApproxAGCM} when applied to large networks.
 
 \begin{table}[htbp]
@@ -1766,41 +1767,41 @@ This result demonstrates the scalability of \text{ApproxAGCM} when applied to la
     \centering
     \fontsize{8.0}{8.8}\selectfont
     \begin{threeparttable}
-        \caption{The running time (seconds, \(s\)) of \textsc{ExactAGCM} and \textsc{ApproxAGCM} (denoted as \textsc{Exact} and \textsc{Approx} in the table to save space) with various \(\epsilon\) on several realistic networks}
+        \caption{The running time (seconds, \(s\)) of \text{ExactAGCM} and \text{ApproxAGCM} (denoted as \text{Exact} and \text{Approx} in the table to save space) with various \(\epsilon\) on several realistic networks}
         \label{tab:running-time}
         \begin{tabularx}{8.25cm}{c p{1cm} p{0.5cm} p{0.5cm} p{0.5cm}}
             \toprule[1pt]
-            \multirow{2}{*}{Network}        &
-            \multirow{2}{*}{\textsc{Exact}} &
-            \multicolumn{3}{c}{\textsc{Approx} for various \(\epsilon\)}\cr
+            \multirow{2}{*}{Network}      &
+            \multirow{2}{*}{\text{Exact}} &
+            \multicolumn{3}{c}{\text{Approx} (\(s\)) for various \(\epsilon\)}\cr
             \cmidrule{3-5}
-                                            & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\)\cr
+                                          & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\)\cr
             \midrule
-            Jazz musicians                  & 0.214   & 0.157   & 0.178    & 0.194\cr
-            Euroroads                       & 0.498   & 0.239   & 0.277    & 0.281\cr
-            Hamster friends                 & 1.183   & 0.348   & 0.450    & 0.629\cr
-            Hamster full                    & 1.267   & 0.402   & 0.525    & 1.049\cr
-            Facebook (NIPS)                 & 10.20   & 1.956   & 2.919    & 4.349\cr
-            CA-GrQc                         & 10.74   & 0.686   & 0.896    & 0.968\cr
-            US power grid                   & 17.62   & 0.500   & 0.634    & 0.977\cr
-            Reactome                        & 30.13   & 3.593   & 4.680    & 7.329\cr
-            Route views                     & 37.55   & 0.582   & 0.704    & 1.024\cr
-            CA-HepTh                        & 85.83   & 1.108   & 1.602    & 2.476\cr
-            Sister cities                   & 143.3   & 3.246   & 3.974    & 7.013\cr
-            Pretty Good Privacy             & 157.7   & 3.844   & 5.170    & 7.657\cr
-            CA-HepPh                        & 180.8   & 6.601   & 9.775    & 15.74\cr
-            Astro-ph                        & 715.8   & 13.51   & 18.26    & 31.31\cr
-            CAIDA                           & 2272    & 6.355   & 7.838    & 11.28\cr
-            Brightkite*                     & --      & 23.31   & 32.68    & 54.21\cr
-            Livemocha*                      & --      & 177.0   & 250.6    & 392.1\cr
-            WordNet*                        & --      & 83.89   & 124.5    & 221.4\cr
-            Gowalla*                        & --      & 129.1   & 195.7    & 342.8\cr
-            com-DBLP*                       & --      & 232.7   & 399.1    & 756.8\cr
-            Amazon*                         & --      & 349.5   & 652.3    & 1082\cr
-            roadNet-PA*                     & --      & 2215    & 3349     & 5714\cr
-            YouTube*                        & --      & 1482    & 2197     & 3661\cr
-            roadNet-TX*                     & --      & 3135    & 4464     & 9338\cr
-            roadNet-CA*                     & --      & 5445    & 8214     & 14458\cr
+            Jazz musicians                & 0.214   & 0.157   & 0.178    & 0.194\cr
+            Euroroads                     & 0.498   & 0.239   & 0.277    & 0.281\cr
+            Hamster friends               & 1.183   & 0.348   & 0.450    & 0.629\cr
+            Hamster full                  & 1.267   & 0.402   & 0.525    & 1.049\cr
+            Facebook (NIPS)               & 10.20   & 1.956   & 2.919    & 4.349\cr
+            CA-GrQc                       & 10.74   & 0.686   & 0.896    & 0.968\cr
+            US power grid                 & 17.62   & 0.500   & 0.634    & 0.977\cr
+            Reactome                      & 30.13   & 3.593   & 4.680    & 7.329\cr
+            Route views                   & 37.55   & 0.582   & 0.704    & 1.024\cr
+            CA-HepTh                      & 85.83   & 1.108   & 1.602    & 2.476\cr
+            Sister cities                 & 143.3   & 3.246   & 3.974    & 7.013\cr
+            Pretty Good Privacy           & 157.7   & 3.844   & 5.170    & 7.657\cr
+            CA-HepPh                      & 180.8   & 6.601   & 9.775    & 15.74\cr
+            Astro-ph                      & 715.8   & 13.51   & 18.26    & 31.31\cr
+            CAIDA                         & 2272    & 6.355   & 7.838    & 11.28\cr
+            Brightkite*                   & --      & 23.31   & 32.68    & 54.21\cr
+            Livemocha*                    & --      & 177.0   & 250.6    & 392.1\cr
+            WordNet*                      & --      & 83.89   & 124.5    & 221.4\cr
+            Gowalla*                      & --      & 129.1   & 195.7    & 342.8\cr
+            com-DBLP*                     & --      & 232.7   & 399.1    & 756.8\cr
+            Amazon*                       & --      & 349.5   & 652.3    & 1082\cr
+            roadNet-PA*                   & --      & 2215    & 3349     & 5714\cr
+            YouTube*                      & --      & 1482    & 2197     & 3661\cr
+            roadNet-TX*                   & --      & 3135    & 4464     & 9338\cr
+            roadNet-CA*                   & --      & 5445    & 8214     & 14458\cr
             \bottomrule
         \end{tabularx}
     \end{threeparttable}
