@@ -622,7 +622,7 @@ It is natural to assume that as \(D_{ij}(S)\) increases, it becomes more difficu
 \begin{theorem}\label{thm:connection-multiple}
     For an arbitary vertex group \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) vertices,
     \begin{equation}\label{eq:connection-multiple}
-        \sum_{i=1}^n\pi_iH_{iS}+K=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S).
+        \manc{S}+K=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S).
     \end{equation}
 \end{theorem}
 \begin{IEEEproof}
@@ -634,9 +634,9 @@ It is natural to assume that as \(D_{ij}(S)\) increases, it becomes more difficu
         \begin{split}
             &\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S)\\
             =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\pi_i\pi_j\matpdistr_{[i,k]}H_{kj}  \\
-            =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{j=1}^n\pi_j\vecpi^\top\matpdistr\mypar{\matfstar_{[j,j]}\vecone-\matfstar_{[S,j]}}                        \\
-            % =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\vecone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
-            =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}-1.
+            =&\manc{S}+\sum_{j=1}^n\pi_j\vecpi^\top\matpdistr\mypar{\matfstar_{[j,j]}\vecone-\matfstar_{[S,j]}}                        \\
+            % =&\manc{S}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\vecone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
+            =&\manc{S}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}-1.
         \end{split}
     \end{equation}
     The final equality is due to the fact that \(\matpdistr\vecone=\vecone\) and \(\matfstar\vecpi=\vecone\).
@@ -656,6 +656,56 @@ It is natural to assume that as \(D_{ij}(S)\) increases, it becomes more difficu
 Since \(K\) is only related to the structure of graph \(\gr\) itself, equation~\eqref{eq:connection-multiple} indicates a constant difference between AGC \(\manc{S}\) and the group random detour time \(D_{ij}(S)\).
 This equation suggests that AGC \(\manc{S}\) can also reflect the extent of detour in the network when \(S\) is set as the "passing group".
 This is another way of understanding the physical meaning of AGC.
+
+Additionally, reference~\cite{RaZh13} establishes a link between random detour overhead and the equivalent electrical network.
+By leveraging this connection along with \thmref{thm:connection-multiple}, we can establish another link between AGC and the equivalent electrical network of the augmented graph.
+
+We'll start by defining the augmented graph.
+Given a graph \(\gr=\mypar{V,E,w}\) with a group of absorbing vertices \(S\), we'll replace all vertices in \(S\) with a new vertex \(s\) to create the augmented graph \(\gr'=\mypar{V',E',w'}\) where \(\abs{V'}=n'\).
+For edges \(e=\edge{u}{v}\) in the original graph:
+\begin{enumerate}
+    \item If both \(u\) and \(v\) are in \(V\) but not in \(S\), we'll keep \(e\) in the augmented graph, where \(w'_e=w_e\);
+    \item If \(u\) is in \(V\) but not in \(S\), and \(v\) is in \(S\), we'll add \(e'=\edge{u}{s}\) to the augmented graph. Note that there may be multiple vertices in \(S\) connected to \(u\), so the weight of this new edge should be the sum of the weights of all corresponding old edges. That is, \(w'e=\sum\limits{e=\edge{u}{v},v\in S}w_e\);
+    \item If \(u\) is in \(S\) and \(v\) is in \(V\) but not in \(S\), we'll treat \(e\) as \(e=\edge{v}{u}\), since \(\gr\) is undirected;
+    \item If both \(u\) and \(v\) are in \(S\), \(e\) is redundant as both vertices are absorbing.
+\end{enumerate}
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=0.8\linewidth]{augmented_graph.png}
+    \caption{An example of constructing an augmented graph \(\gr'\) from the original graph \(\gr\). Edges that do not have labels are given a weight of \(1\), while edges that have a label are given a weight equal to the label value.}
+    \label{fig:augmented-graph}
+\end{figure}
+
+\figref{fig:augmented-graph} displays an example of creating the augmented graph \(\gr'\) from the original graph \(\gr\).
+
+Subsequently, we can establish a new link between AGC and the equivalent electrical network of the augmented graph.
+
+\begin{theorem}\label{thm:connection-electrical}
+    For an arbitary vertex group \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) vertices,
+    \begin{equation}\label{eq:connection-electrical}
+        \manc{S}=d'\sum_{i=1}^{n'}\sum_{j=1}^{n'}\pi'_i\pi'_j\mypar{\vcal_i^{is}+\vcal_i^{sj}-\vcal_i^{ij}}.
+    \end{equation}
+    Here, \(d'\) is the sum of all degrees across all vertices in the augmented graph, and \(\vecpi'\) is the stationary distribution vector in the augmented graph.
+    Additionally, \(\vcal_i^{sj}\) represents the voltage of vertex \(i\) in the equivalent electrical network of the augmented graph.
+    This voltage is measured when a unit current is injected at vertex \(s\) and extracted at vertex \(j\).
+\end{theorem}
+\begin{IEEEproof}
+    Based on the definition of the augmented graph, the group hitting time and random detour time of \(S\) are equivalent to those of \(s\) in the corresponding augmented graph.
+    Then we can rewrite~\eqref{eq:connection-multiple} in \thmref{thm:connection-multiple} as
+    \begin{equation}\label{eq:AGC-detour}
+        \begin{split}
+            \manc{S}&=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S)-K\\
+            &=\sum_{i=1}^{n'}\sum_{j=1}^{n'}\pi_i\pi_j\mypar{H_{is}+H_{sj}-H_{ij}}.
+        \end{split}
+    \end{equation}
+    According to~\cite{RaZh13},
+    \begin{equation}\label{eq:detour-voltage}
+        H_{is}+H_{sj}-H_{ij}=d'\mypar{\vcal_i^{is}+\vcal_i^{sj}-\vcal_i^{ij}}.
+    \end{equation}
+    Combining~\eqref{eq:AGC-detour} and~\eqref{eq:detour-voltage} completes our proof.
+\end{IEEEproof}
+
 
 \subsection{Properties of AGC}
 
