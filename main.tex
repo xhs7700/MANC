@@ -1,4 +1,4 @@
-\documentclass[10pt,journal,compsoc,twocolumn,twoside]{IEEEtran}
+\documentclass[10pt,twocolumn,twoside]{IEEEtran}
 % \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
 %     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
@@ -15,7 +15,10 @@
     Zuobai~Zhang,
     Zhuoqing~Song,
     Zhongzhi~Zhang~\IEEEmembership{Member,~IEEE}
-    \thanks{Haisong Xia, Wanyue Xu and Zhongzhi Zhang are with the Shanghai Key Laboratory of Intelligent Information Processing, School of Computer Science, Fudan University, Shanghai 200433, China; Zhongzhi Zhang is also with the Shanghai Engineering Research Institute of Blockchain, Shanghai 200433, China.}
+    \thanks{
+        Haisong Xia, Wanyue Xu and Zhongzhi Zhang are with the Shanghai Key Laboratory of Intelligent Information Processing, School of Computer Science, Fudan University, Shanghai 200433, China;
+        Zhongzhi Zhang is also with the Shanghai Engineering Research Institute of Blockchain, Shanghai 200433, China.
+    }
 }
 
 \markboth{IEEE Transactions on Information Theory}
@@ -367,7 +370,7 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitr
     \end{equation}
     where
     \begin{equation}\label{EE14}
-        \delta \leq  \frac{\epsilon }{3} \frac{s-s_u}{s}
+        \delta \leq  \frac{\epsilon }{3} \frac{d-d_u}{d}
         \sqrt{\frac{(1-\epsilon) w_{\min}}{(1+\epsilon) n^4 w_{\max}}}.
     \end{equation}
     Then for any vertex \(u\) belonging to \(V\),
@@ -547,12 +550,12 @@ Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \(\text{Approx}\mathca
     \Return \(\tilde{H}=\{u,\tilde{H}_u| u \in V\}\) and \(\tilde{K}\)
 \end{algorithm}
 
-\section{Introduction of Absorbing Group Centrality (AGC)}
+\section{Absorbing Group Centrality (AGC)}
 
 After presenting the walk centrality \(H_j\) and the Kemeny constant \(K\), we extend the notion of mean hitting time to the case of multiple vertices.
-In this section, we introduce the definition of Absorbing Group Centrality (AGC).
-By establishing connection between AGC, the Kemeny constant and the random detour time, we try to give a physical explanation of AGC.
-Additionally, we demonstrate monotonicity and supermodularity of AGC \(\manc{\cdot}\).
+In this section, we provide the definition of Absorbing Group Centrality (AGC).
+We also discuss the connections between AGC and other quantities related to random walk, such as the random detour time, the Kemeny constant and the equivalent electrical network of the augmented graph.
+Furthermore, we demonstrate monotonicity and supermodularity of AGC \(\manc{\cdot}\).
 
 \subsection{Definition of AGC}
 
@@ -602,6 +605,8 @@ According to \eqref{eq:AGC} and \lemref{lemma:ST}, we can easily compute AGC of 
 The detail of this approximation algorithm is skipped as it simply utilizes \lemref{lemma:ST}.
 
 \subsection{Physical Explanations of AGC}
+
+\subsubsection{Connections with the random detour time}
 
 After detailing AGC, we try to establish a connection between AGC \(\manc{S}\), the group random detour time \(D_{ij}(S)\) and the Kemeny constant \(K\).
 This allows us to understand the importance of vertex group \(S\) from a different perspective.
@@ -657,6 +662,8 @@ Since \(K\) is only related to the structure of graph \(\gr\) itself, equation~\
 This equation suggests that AGC \(\manc{S}\) can also reflect the extent of detour in the network when \(S\) is set as the "passing group".
 This is another way of understanding the physical meaning of AGC.
 
+\subsubsection{Connection with the equivalent electrical network}
+
 Additionally, Ranjan et al.~\cite{RaZh13} establishes a link between random detour overhead and the equivalent electrical network.
 By leveraging this connection along with \thmref{thm:connection-multiple}, we can establish another link between AGC and the equivalent electrical network of the augmented graph.
 
@@ -672,7 +679,7 @@ For edges \(e=\edge{u}{v}\) in the original graph:
 
 \begin{figure}[!t]
     \centering
-    \includegraphics[width=0.8\linewidth]{augmented_graph.png}
+    \includegraphics[width=0.9\linewidth]{augmented_graph.png}
     \caption{An example of constructing an augmented graph \(\gr'\) from the original graph \(\gr\). Edges that do not have labels are given a weight of \(1\), while edges that have a label are given a weight equal to the label value.}
     \label{fig:augmented-graph}
 \end{figure}
@@ -767,11 +774,13 @@ Specifically, we demonstrate that the set function \(\manc{\cdot}\) is both mono
     holds for any vertex \(v\in V\), which completes our proof.
 \end{IEEEproof}
 
-\section{Introduction of the AGC Minimization Problem (AGCM)}
+\section{AGC Minimization Problem (AGCM)}
 
 When considering AGC, we naturally address the issue of selecting a vertex group (\(S\)) with a capacity of \(k\) from a network that minimizes its AGC (\(\manc{S}\)).
 In this section, we will define the AGC minimization problem (AGCM).
 After demonstrating its NP-hardness, we will provide a greedy algorithm that can solve AGCM with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
+
+\subsection{Definition of AGCM}
 
 \begin{problem}[Absorbing Group Centrality Minimization, AGCM]
 Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, \(m\) edges and an integer \(k\ll n\), the goal is to find a vertex group \(S^*\subseteq V\) such that AGC \(\manc{S^*}\) is minimized:
@@ -779,6 +788,8 @@ Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices,
     S^*=\argmin_{S\subseteq V,\abs{S}=k}\manc{S}.
 \end{equation*}
 \end{problem}
+
+\subsection{Proof of NP-hardness}
 
 To prove the NP-hardness of AGCM, we try to construct a reduction from the Vertex Cover problem to a decision version of AGCM.
 
@@ -796,7 +807,7 @@ Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an inte
     We first prove that if \(S\) is a vertex cover of \(\gr\), then \(\manc{S}=(n-k)/n\). When \(S\) is a vertex cover of \(\gr\), there are no edges between vertices in \(V\setminus S\).
     Thus, we can simplify~\eqref{eq:AGC} as:
     \begin{equation*}
-        \manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\mats_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\vecone.
+        \manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\matd_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\vecone.
     \end{equation*}
     Since \(\gr\) is a \(c\)-regular graph, \(\vecpi=\begin{pmatrix}1/n&\cdots&1/n\end{pmatrix}^\top\).
     Thus, \(\manc{S}=\vecpi_{-S}^\top\vecone=(n-k)/n\).
@@ -821,6 +832,8 @@ Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an inte
     According to the proposition above, we can create a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of AGCM, which proves that AGCM is NP-hard.
 
 \end{IEEEproof}
+
+\subsection{Simple Greedy Algorithm for Solving AGCM}
 
 As AGCM is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve AGCM.
 However, the set function \(\manc{\cdot}\) is both monotonic and supermodular, allowing for a simple greedy algorithm with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor to AGCM~\cite{NeWoFi78}.
@@ -910,7 +923,7 @@ Afterwards, we prove that \algoref{algo:exact-agcm} has a \(1-\frac{k}{k-1}\cdot
     which completes our proof based on the fact that \(S_1=\setof{u^*}\).
 \end{IEEEproof}
 
-\section{Fast Approximation Algorithm for solving AGCM}\label{sec:approx-algo2}
+\section{Fast Greedy Algorithm for Solving AGCM}\label{sec:approx-algo2}
 
 Despite the time complexity optimization proposed in \algoref{algo:exact-agcm}, this simple greedy algorithm for solving AGCM still requires matrix inversion, making it unsuitable for large networks.
 To speed up the computation of \(\Delta(u,S)\), we use efficient approximations established in \lemref{lemma:JL}, \lemref{lemma:ST} and \thmref{TheoAlg1}.
@@ -923,21 +936,21 @@ To this end, we need to utilize the following lemma.
 
 \begin{lemma}\label{lem:norm-ineq}
     Given a connected weighted undirected graph \(\gr=(V,E,w)\), let \(\lap\) denote the Laplacian matrix of the graph.
-    Then for an arbitary vertex group \(S\subseteq V\) and an arbitary vector \(\vecv\in\rea^{n-\abs{S}}\), \(\vecv_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\) holds.
+    Then for an arbitary vertex group \(S\subseteq V\) and an arbitary vector \(\vecv\in\rea^{n-\abs{S}}\), \(v_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\) holds.
 \end{lemma}
 
 \begin{IEEEproof}
     As is mentioned in~\secref{sub:lap}, we can decompose Laplacian matrix as \(\lap=\matb^\top\matw\matb\).
     Similarly, we can decompose SDDM matrix \(\lap_{-S}\) as \(\lap_{-S}=\lap'+\matz=\matb'^\top\matw'\matb'+\matz\), where \(\lap'\) denotes the Laplacian matrix of another graph, \(\matz\) denotes a diagonal matrix.
 
-    If \(\matz_{[i,i]}\neq0\), then we have \(\matz_{[i,i]}\ge w_{\min}\), it is apparent that \(\vecv_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\).
+    If \(\matz_{[i,i]}\neq0\), then we have \(\matz_{[i,i]}\ge w_{\min}\), it is apparent that \(v_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\).
     If \(\matz_{[i,i]}=0\), there must exist a vertex \(j\) that satisfies \(\matz_{[j,j]}\ge w_{\min}\) in graph component that contains vertex \(i\) after removing vertices in \(S\).
     Let \(\pscr_{ij}\) denotes the simple path connecting vertex \(i\) and vertex \(j\), then we have
     \begin{align*}
         \Abs{\vecv}^2_{\lap_{-S}}
-         & \ge w_{\min}\sum_{\edge{a}{b}\in\pscr_{ij}}(\vecv_a-\vecv_b)^2+w_{\min}\vecv_j^2     \\
-         & \ge w_{\min}n^{-1}\mypar{\sum_{\edge{a}{b}\in\pscr_{ij}}(\vecv_a-\vecv_b)+\vecv_j}^2 \\
-         & \ge w_{\min}n^{-1}\vecv_i^2,
+         & \ge w_{\min}\sum_{\edge{a}{b}\in\pscr_{ij}}(v_a-v_b)^2+w_{\min}v_j^2     \\
+         & \ge w_{\min}n^{-1}\mypar{\sum_{\edge{a}{b}\in\pscr_{ij}}(v_a-v_b)+v_j}^2 \\
+         & \ge w_{\min}n^{-1}v_i^2,
     \end{align*}
     which completes our proof.
 \end{IEEEproof}
@@ -953,7 +966,6 @@ Since \(\lap_{-S}\) is a SDDM matrix, we can apply~\lemref{lemma:ST} to avoid co
     \end{equation}
 \end{lemma}
 \begin{IEEEproof}
-
     Combining \lemref{lemma:ST} and \lemref{lem:norm-ineq}, we can bound \((\vecx'_i-\vecx_i)^2\) as
     \begin{align*}
         (\vecx'_i-\vecx_i)^2
@@ -1101,7 +1113,7 @@ Additionally, we can provide an approximation guarantee for this algorithm.
     \(\maty'_{[i,:]}\gets\mathtt{Solve}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\)\;
     }
     \ForEach{\(u\in V\setminus S\)}{
-        \(\Delta'(u,S)\gets\frac{\vecx'^2}{s\mypar{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}}\)\;
+        \(\Delta'(u,S)\gets\frac{\vecx'^2}{d\mypar{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}}\)\;
     }
     \Return{\(\setof{\Delta'(u,S)|u\in V\setminus S}\)}
 
@@ -1130,7 +1142,6 @@ The complexity of \text{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), whi
         an error parameter \(\epsilon\in(0,1)\)
     }
     \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
-    \(s\gets\vecs\vecone\),\(\vecpi\gets s^{-1}\vecs\)\;
     \(\setof{\tilde{H}_u|u\in V }\gets\text{Approx\(\mathcal{HK}\)}(\gr,\epsilon)\)\;
     \(S_1\gets\setof{\argmin_{u\in V}\setof{\tilde{H}_u}}\)\;
     \For{\(i=2,3,\dots,k\)}{
@@ -1175,7 +1186,7 @@ In this section, we present experimental results for various real and model netw
     \item \text{ExactAGCM} and \text{ApproxAGCM} for solving the AGC Minimization problem.
 \end{itemize}
 
-The data of these networks are taken from the Koblenz Network Collection~\cite{Ku13} and SNAP~\cite{LeKr14}. For those networks that are disconnected originally, we perform our experiments on their largest connected components (LCC). Related information about the number of vertices and edges for the studied real networks and their LCC is shown  in \tabref{tab:network_size},  where networks are listed in an increasing order of the number of vertices in the original networks. The smallest network has 198 vertices, while the largest one consists of more than \(1.9 \times 10^{6}\) vertices.
+The data of these networks are taken from the Koblenz Network Collection~\cite{Ku13} and SNAP~\cite{LeKr14}. For those networks that are disconnected originally, we perform our experiments on their largest connected components (LCC). Related information about the number of vertices and edges for the studied real networks and their LCC is shown  in \tabref{tab:runtime_comparison},  where networks are listed in an increasing order of the number of vertices in the networks. The smallest network has 198 vertices, while the largest one consists of more than \(1.9 \times 10^{6}\) vertices.
 
 All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement the approximation algorithms \(\text{Approx}\mathcal{HK}\) and \text{ApproxAGCM} in \textit{Julia v1.8.5}, where the \(\mathtt{Solve}\) is from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
 
@@ -1184,50 +1195,49 @@ All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan C
 We begin by evaluating the effectiveness of algorithm \(\text{Approx}\mathcal{HK}\) in approximating centrality \(H_u\) across a diverse range of realistic networks from various domains. Our investigation focuses on examining the efficiency of \(\text{Approx}\mathcal{HK}\).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
-\begin{table}[!b]
+% \begin{table}[!b]
 
-    \centering
-    \normalsize
-    \tabcolsep=8pt
-    \fontsize{8.5}{9}\selectfont
-    \begin{threeparttable}
-        \caption{Statistics of the collection of datasets used in our experiments. For a network with \(n\) vertices and \(m\) edges, we denote the number of vertices and edges in its largest connected component by \(n'\) and \(m'\), respectively.}
-        \label{tab:network_size}
-        \begin{tabularx}{8.7cm}{p{2.125cm}<{\centering} p{0.85cm}<{\centering} p{0.9cm}<{\centering} p{0.85cm}<{\centering} p{0.9cm}<{\centering}}
-            \Xhline{2\arrayrulewidth}
-            \specialrule{0em}{1.5pt}{1pt}
-            Network                          & \(n\)     & \(m\)     & \(n'\)    & \(m'\) \cr
-            \midrule
-            Jazz musicians                   & 198       & 2,742     & 198       & 2,742\cr
-            Chicago                          & 1,467     & 1,298     & 823       & 822 \cr
-            Euroroads                        & 1,174     & 1,417     & 1,039     & 1,305\cr
-            \scriptsize{Hamster friends}     & 2,952     & 12,534    & 1,788     & 12,476 \cr
-            Hamster full                     & 2,426     & 16,631    & 2,000     & 16,098 \cr
-            Facebook (NIPS)                  & 4,039     & 88,234    & 4,039     & 88,234\cr
-            CA-GrQc                          & 5,242     & 14,496    & 4,158     & 13,422 \cr
-            US power grid                    & 4,941     & 6,594     & 4,941     & 6,594 \cr
-            Reactome                         & 6,327     & 147,547   & 5,973     & 145,778 \cr
-            Route views                      & 6,474     & 13,895    & 6,474     & 12,572 \cr
-            CA-HepTh                         & 9,877     & 25,998    & 8,638     & 24,827 \cr
-            Sister cities                    & 14,274    & 20,573    & 10,320    & 17,988 \cr
-            \scriptsize{Pretty Good Privacy} & 10,680    & 24,316    & 10,680    & 24,316 \cr
-            CA-HepPh                         & 12,008    & 118,521   & 11,204    & 117,619 \cr
-            Astro-ph                         & 18,772    & 198,110   & 17,903    & 196,972 \cr
-            CAIDA                            & 26,475    & 53,381    & 26,475    & 53,381\cr
-            Brightkite*                      & 58,228    & 214,078   & 56,739    & 212,945 \cr
-            Livemocha*                       & 104,103   & 2,193,083 & 104,103   & 2,193,083\cr
-            WordNet*                         & 146,005   & 656,999   & 145,145   & 656,230 \cr
-            Gowalla*                         & 196,591   & 950,327   & 196,591   & 950,327 \cr
-            com-DBLP*                        & 317,080   & 1,049,866 & 317,080   & 1,049,866 \cr
-            Amazon*                          & 334,863   & 925,872   & 334,863   & 925,872 \cr
-            roadNet-PA*                      & 1,088,092 & 1,541,898 & 1,087,562 & 1,541,514 \cr
-            YouTube*                         & 1,134,890 & 2,987,624 & 1,134,890 & 2,987,624 \cr
-            roadNet-TX*                      & 1,379,917 & 1,921,660 & 1,351,137 & 1,879,201 \cr
-            roadNet-CA*                      & 1,965,206 & 2,766,607 & 1,965,027 & 2,760,388 \cr
-            \Xhline{2\arrayrulewidth}
-        \end{tabularx}
-    \end{threeparttable}
-\end{table}
+%     \centering
+%     \normalsize
+%     \tabcolsep=8pt
+%     \fontsize{8.5}{9}\selectfont
+%     \begin{threeparttable}
+%         \caption{Statistics of the collection of datasets used in our experiments. For a network with \(n\) vertices and \(m\) edges, we denote the number of vertices and edges in its largest connected component by \(n'\) and \(m'\), respectively.}
+%         \label{tab:network_size}
+%         \begin{tabularx}{8.7cm}{p{2.125cm}<{\centering} p{0.85cm}<{\centering} p{0.9cm}<{\centering} p{0.85cm}<{\centering} p{0.9cm}<{\centering}}
+%             \Xhline{2\arrayrulewidth}
+%             \specialrule{0em}{1.5pt}{1pt}
+%             Network                          & \(n\)     & \(m\)     & \(n'\)    & \(m'\)    \\
+%             \midrule
+%             Jazz musicians                   & 198       & 2,742     & 198       & 2,742     \\
+%             Euroroads                        & 1,174     & 1,417     & 1,039     & 1,305     \\
+%             \scriptsize{Hamster friends}     & 2,952     & 12,534    & 1,788     & 12,476    \\
+%             Hamster full                     & 2,426     & 16,631    & 2,000     & 16,098    \\
+%             Facebook (NIPS)                  & 4,039     & 88,234    & 4,039     & 88,234    \\
+%             CA-GrQc                          & 5,242     & 14,496    & 4,158     & 13,422    \\
+%             US power grid                    & 4,941     & 6,594     & 4,941     & 6,594     \\
+%             Reactome                         & 6,327     & 147,547   & 5,973     & 145,778   \\
+%             Route views                      & 6,474     & 13,895    & 6,474     & 12,572    \\
+%             CA-HepTh                         & 9,877     & 25,998    & 8,638     & 24,827    \\
+%             Sister cities                    & 14,274    & 20,573    & 10,320    & 17,988    \\
+%             \scriptsize{Pretty Good Privacy} & 10,680    & 24,316    & 10,680    & 24,316    \\
+%             CA-HepPh                         & 12,008    & 118,521   & 11,204    & 117,619   \\
+%             Astro-ph                         & 18,772    & 198,110   & 17,903    & 196,972   \\
+%             CAIDA                            & 26,475    & 53,381    & 26,475    & 53,381    \\
+%             Brightkite*                      & 58,228    & 214,078   & 56,739    & 212,945   \\
+%             Livemocha*                       & 104,103   & 2,193,083 & 104,103   & 2,193,083 \\
+%             WordNet*                         & 146,005   & 656,999   & 145,145   & 656,230   \\
+%             Gowalla*                         & 196,591   & 950,327   & 196,591   & 950,327   \\
+%             com-DBLP*                        & 317,080   & 1,049,866 & 317,080   & 1,049,866 \\
+%             Amazon*                          & 334,863   & 925,872   & 334,863   & 925,872   \\
+%             roadNet-PA*                      & 1,088,092 & 1,541,898 & 1,087,562 & 1,541,514 \\
+%             YouTube*                         & 1,134,890 & 2,987,624 & 1,134,890 & 2,987,624 \\
+%             roadNet-TX*                      & 1,379,917 & 1,921,660 & 1,351,137 & 1,879,201 \\
+%             roadNet-CA*                      & 1,965,206 & 2,766,607 & 1,965,027 & 2,760,388 \\
+%             \Xhline{2\arrayrulewidth}
+%         \end{tabularx}
+%     \end{threeparttable}
+% \end{table}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -1241,42 +1251,43 @@ In \tabref{tab:runtime_comparison}, we report the running time of \(\text{Approx
     %\small
     %\fontsize{6.4}{8.0}\selectfont
     \begin{threeparttable}
-        \caption{The running time (seconds, \(s\)) of \(\text{Exact}\mathcal{HK}\) and \(\text{Approx}\mathcal{HK}\) with various \(\epsilon\) on several realistic  networks.}
+        \caption{The running time (seconds, \(s\)) of \(\text{Exact}\mathcal{HK}\) and \(\text{Approx}\mathcal{HK}\) with various \(\epsilon\) on several realistic networks.}
         \label{tab:runtime_comparison}
-        \begin{tabular}{ccccccc}
+        \begin{tabular}{crrcccccc}
             \toprule
             %\Xhline{2\arrayrulewidth}
             \multirow{2}{*}{Network}                      &
+            \multirow{2}{*}{Vertices}                     &
+            \multirow{2}{*}{Edges}                        &
             \multirow{2}{*}{\(\text{Exact}\mathcal{HK}\)} &
-            \multicolumn{5}{c}{\(\text{Approx}\mathcal{HK}\) (\(s\)) with various \(\epsilon\)}\cr
-            \cmidrule{3-7}
-                                                          & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\) & \(0.15\) & \(0.1\)\cr
+            \multicolumn{5}{c}{\(\text{Approx}\mathcal{HK}\) (\(s\)) with various \(\epsilon\)}                                                 \\
+            \cmidrule{5-9}                                &           &           & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\) & \(0.15\) & \(0.1\) \\
             \midrule
-            Jazz musicians                                & 0.096   & 0.006   & 0.006    & 0.029   & 0.100    & 0.205\cr
-            Euroroads                                     & 0.044   & 0.065   & 0.095    & 0.115   & 0.124    & 0.130\cr
-            Hamster friends                               & 0.264   & 0.094   & 0.120    & 0.124   & 0.133    & 0.193\cr
-            Hamster full                                  & 0.184   & 0.063   & 0.091    & 0.129   & 0.146    & 0.586\cr
-            Facebook (NIPS)                               & 1.386   & 0.157   & 0.232    & 0.341   & 0.546    & 1.130\cr
-            CA-GrQc                                       & 1.260   & 0.086   & 0.150    & 0.160   & 0.378    & 0.456\cr
-            US power grid                                 & 2.012   & 0.040   & 0.074    & 0.109   & 0.123    & 0.221\cr
-            Reactome                                      & 3.447   & 0.273   & 0.377    & 0.568   & 0.854    & 1.968\cr
-            Route views                                   & 4.000   & 0.075   & 0.108    & 0.111   & 0.260    & 0.272\cr
-            CA-HepTh                                      & 9.248   & 0.105   & 0.174    & 0.224   & 0.318    & 0.467\cr
-            Sister cities                                 & 14.75   & 0.109   & 0.248    & 0.320   & 0.992    & 1.357\cr
-            Pretty Good Privacy                           & 16.40   & 0.360   & 0.381    & 0.534   & 0.640    & 1.156\cr
-            CA-HepPh                                      & 18.72   & 0.374   & 0.495    & 0.873   & 1.730    & 3.067\cr
-            Astro-ph                                      & 74.08   & 0.873   & 1.114    & 1.976   & 2.912    & 6.592\cr
-            CAIDA                                         & 233.0   & 0.353   & 0.964    & 1.184   & 1.381    & 2.330\cr
-            Brightkite*                                   & --      & 1.346   & 2.462    & 3.406   & 4.784    & 16.21\cr
-            Livemocha*                                    & --      & 12.64   & 16.32    & 27.40   & 39.98    & 82.02\cr
-            WordNet*                                      & --      & 6.905   & 8.072    & 13.89   & 19.47    & 40.63\cr
-            Gowalla*                                      & --      & 8.150   & 11.05    & 17.03   & 28.93    & 66.72\cr
-            com-DBLP*                                     & --      & 13.97   & 20.55    & 36.30   & 67.26    & 163.0\cr
-            Amazon*                                       & --      & 20.61   & 31.01    & 64.83   & 99.94    & 223.7\cr
-            roadNet-PA*                                   & --      & 98.88   & 158.7    & 270.9   & 416.1    & 1003 \cr
-            YouTube*                                      & --      & 70.82   & 106.7    & 164.2   & 254.5    & 629.2 \cr
-            roadNet-TX*                                   & --      & 159.3   & 223.6    & 371.5   & 689.4    & 1652 \cr
-            roadNet-CA*                                   & --      & 243.7   & 367.5    & 590.9   & 959.3    & 2327 \cr
+            Jazz musicians                                & 198       & 2,742     & 0.096   & 0.006   & 0.006    & 0.029   & 0.100    & 0.205   \\
+            Euroroads                                     & 1,039     & 1,305     & 0.044   & 0.065   & 0.095    & 0.115   & 0.124    & 0.130   \\
+            Hamster friends                               & 1,788     & 12,476    & 0.264   & 0.094   & 0.120    & 0.124   & 0.133    & 0.193   \\
+            Hamster full                                  & 2,000     & 16,098    & 0.184   & 0.063   & 0.091    & 0.129   & 0.146    & 0.586   \\
+            Facebook (NIPS)                               & 4,039     & 88,234    & 1.386   & 0.157   & 0.232    & 0.341   & 0.546    & 1.130   \\
+            CA-GrQc                                       & 4,158     & 13,422    & 1.260   & 0.086   & 0.150    & 0.160   & 0.378    & 0.456   \\
+            US power grid                                 & 4,941     & 6,594     & 2.012   & 0.040   & 0.074    & 0.109   & 0.123    & 0.221   \\
+            Reactome                                      & 5,973     & 145,778   & 3.447   & 0.273   & 0.377    & 0.568   & 0.854    & 1.968   \\
+            Route views                                   & 6,474     & 12,572    & 4.000   & 0.075   & 0.108    & 0.111   & 0.260    & 0.272   \\
+            CA-HepTh                                      & 8,638     & 24,827    & 9.248   & 0.105   & 0.174    & 0.224   & 0.318    & 0.467   \\
+            Sister cities                                 & 10,320    & 17,988    & 14.75   & 0.109   & 0.248    & 0.320   & 0.992    & 1.357   \\
+            Pretty Good Privacy                           & 10,680    & 24,316    & 16.40   & 0.360   & 0.381    & 0.534   & 0.640    & 1.156   \\
+            CA-HepPh                                      & 11,204    & 117,619   & 18.72   & 0.374   & 0.495    & 0.873   & 1.730    & 3.067   \\
+            Astro-ph                                      & 17,903    & 196,972   & 74.08   & 0.873   & 1.114    & 1.976   & 2.912    & 6.592   \\
+            CAIDA                                         & 26,475    & 53,381    & 233.0   & 0.353   & 0.964    & 1.184   & 1.381    & 2.330   \\
+            Brightkite*                                   & 56,739    & 212,945   & --      & 1.346   & 2.462    & 3.406   & 4.784    & 16.21   \\
+            Livemocha*                                    & 104,103   & 2,193,083 & --      & 12.64   & 16.32    & 27.40   & 39.98    & 82.02   \\
+            WordNet*                                      & 145,145   & 656,230   & --      & 6.905   & 8.072    & 13.89   & 19.47    & 40.63   \\
+            Gowalla*                                      & 196,591   & 950,327   & --      & 8.150   & 11.05    & 17.03   & 28.93    & 66.72   \\
+            com-DBLP*                                     & 317,080   & 1,049,866 & --      & 13.97   & 20.55    & 36.30   & 67.26    & 163.0   \\
+            Amazon*                                       & 334,863   & 925,872   & --      & 20.61   & 31.01    & 64.83   & 99.94    & 223.7   \\
+            roadNet-PA*                                   & 1,087,562 & 1,541,514 & --      & 98.88   & 158.7    & 270.9   & 416.1    & 1003    \\
+            YouTube*                                      & 1,134,890 & 2,987,624 & --      & 70.82   & 106.7    & 164.2   & 254.5    & 629.2   \\
+            roadNet-TX*                                   & 1,351,137 & 1,879,201 & --      & 159.3   & 223.6    & 371.5   & 689.4    & 1652    \\
+            roadNet-CA*                                   & 1,965,027 & 2,760,388 & --      & 243.7   & 367.5    & 590.9   & 959.3    & 2327    \\
             %\Xhline{2\arrayrulewidth}
             \bottomrule
         \end{tabular}
@@ -1296,25 +1307,25 @@ In addition to the high efficiency,  our algorithm  \(\text{Approx}\mathcal{HK}\
         \begin{tabularx}{8.5cm}{c p{0.5cm} p{0.5cm} p{0.5cm} p{0.5cm} p{0.5cm}}
             \toprule[1pt]
             \multirow{2}{*}{Network} &
-            \multicolumn{5}{c}{Mean relative error for various \(\epsilon\)}\cr
+            \multicolumn{5}{c}{Mean relative error for various \(\epsilon\)}                     \\
             \cmidrule{2-6}
-                                     & \(0.3\)   & \(0.25\)  & \(0.2\)   & \(0.15\)  & \(0.1\)\cr
+                                     & \(0.3\)   & \(0.25\)  & \(0.2\)   & \(0.15\)  & \(0.1\)   \\
             \midrule
-            Jazz musicians           & \(1.933\) & \(1.434\) & \(0.899\) & \(0.444\) & \(0.013\)\cr
-            Euroroads                & \(5.718\) & \(3.231\) & \(2.042\) & \(1.455\) & \(0.181\)\cr
-            Hamster friends          & \(1.520\) & \(0.385\) & \(0.372\) & \(0.219\) & \(0.068\)\cr
-            Hamster full             & \(0.889\) & \(0.256\) & \(0.100\) & \(0.064\) & \(0.012\)\cr
-            Facebook (NIPS)          & \(3.407\) & \(2.413\) & \(1.750\) & \(0.420\) & \(0.348\)\cr
-            CA-GrQc                  & \(1.656\) & \(1.272\) & \(0.827\) & \(0.221\) & \(0.051\)\cr
-            US power grid            & \(3.385\) & \(1.626\) & \(1.166\) & \(0.406\) & \(0.137\)\cr
-            Reactome                 & \(0.268\) & \(0.502\) & \(0.146\) & \(0.054\) & \(0.048\)\cr
-            Route views              & \(0.123\) & \(0.076\) & \(0.069\) & \(0.060\) & \(0.044\)\cr
-            CA-HepTh                 & \(0.589\) & \(0.269\) & \(0.215\) & \(0.180\) & \(0.056\)\cr
-            Sister cities            & \(0.190\) & \(0.140\) & \(0.124\) & \(0.086\) & \(0.018\)\cr
-            Pretty Good Privacy      & \(0.534\) & \(0.491\) & \(0.376\) & \(0.173\) & \(0.084\)\cr
-            CA-HepPh                 & \(0.916\) & \(0.406\) & \(0.235\) & \(0.135\) & \(0.132\)\cr
-            Astro-ph                 & \(0.341\) & \(0.335\) & \(0.117\) & \(0.016\) & \(0.009\)\cr
-            CAIDA                    & \(0.100\) & \(0.056\) & \(0.049\) & \(0.010\) & \(0.003\)\cr
+            Jazz musicians           & \(1.933\) & \(1.434\) & \(0.899\) & \(0.444\) & \(0.013\) \\
+            Euroroads                & \(5.718\) & \(3.231\) & \(2.042\) & \(1.455\) & \(0.181\) \\
+            Hamster friends          & \(1.520\) & \(0.385\) & \(0.372\) & \(0.219\) & \(0.068\) \\
+            Hamster full             & \(0.889\) & \(0.256\) & \(0.100\) & \(0.064\) & \(0.012\) \\
+            Facebook (NIPS)          & \(3.407\) & \(2.413\) & \(1.750\) & \(0.420\) & \(0.348\) \\
+            CA-GrQc                  & \(1.656\) & \(1.272\) & \(0.827\) & \(0.221\) & \(0.051\) \\
+            US power grid            & \(3.385\) & \(1.626\) & \(1.166\) & \(0.406\) & \(0.137\) \\
+            Reactome                 & \(0.268\) & \(0.502\) & \(0.146\) & \(0.054\) & \(0.048\) \\
+            Route views              & \(0.123\) & \(0.076\) & \(0.069\) & \(0.060\) & \(0.044\) \\
+            CA-HepTh                 & \(0.589\) & \(0.269\) & \(0.215\) & \(0.180\) & \(0.056\) \\
+            Sister cities            & \(0.190\) & \(0.140\) & \(0.124\) & \(0.086\) & \(0.018\) \\
+            Pretty Good Privacy      & \(0.534\) & \(0.491\) & \(0.376\) & \(0.173\) & \(0.084\) \\
+            CA-HepPh                 & \(0.916\) & \(0.406\) & \(0.235\) & \(0.135\) & \(0.132\) \\
+            Astro-ph                 & \(0.341\) & \(0.335\) & \(0.117\) & \(0.016\) & \(0.009\) \\
+            CAIDA                    & \(0.100\) & \(0.056\) & \(0.049\) & \(0.010\) & \(0.003\) \\
             \bottomrule
         \end{tabularx}
     \end{threeparttable}
@@ -1840,30 +1851,34 @@ Finally, we conducted extensive experiments on various real-world and model netw
 \bibliographystyle{IEEEtran}
 \balance
 \bibliography{refs}
-
-\begin{IEEEbiography}[\biophoto{xhs.jpg}]{Haisong Xia}
+% \begin{IEEEbiography}[\biophoto{xhs.jpg}]{Haisong Xia}
+\begin{IEEEbiographynophoto}{Haisong Xia}
     received the B.S. degree in computer science from Fudan University, Shanghai, China, in 2022. He is currently pursuing the master's degree in the School of Computer Science at Fudan University.
     His current research interests include network science, spectral graph theory and social network analysis.
-\end{IEEEbiography}
+\end{IEEEbiographynophoto}
 
-\begin{IEEEbiography}{Wanyue Xu}
+% \begin{IEEEbiography}{Wanyue Xu}
+\begin{IEEEbiographynophoto}{Wanyue Xu}
     (Student Member, IEEE) received the B.Eng. degree in computer science and technology from Shangdong University, Weihai, China, in 2019. She is currently pursuing the master's degree with the School of Computer Science, Fudan University, Shanghai, China.
     Her research interests include network science, graph data mining, social network analysis, and random walks.
-\end{IEEEbiography}
+\end{IEEEbiographynophoto}
 
-\begin{IEEEbiography}{Zuobai Zhang}
+% \begin{IEEEbiography}{Zuobai Zhang}
+\begin{IEEEbiographynophoto}{Zuobai Zhang}
     received the B.S. degree  in computer science from Fudan University, Shanghai, China, in 2021. 	He is currently pursuing the Ph.D. degree at Mila - Qu\'{e}bec AI Institute, Canada. His research interests include graph algorithms, graph representation learning, and drug discovery.
-\end{IEEEbiography}
+\end{IEEEbiographynophoto}
 
-\begin{IEEEbiography}{Zhuoqing Song}
+% \begin{IEEEbiography}{Zhuoqing Song}
+\begin{IEEEbiographynophoto}{Zhuoqing Song}
     received the B.S. degree in mathematics and applied mathematics in 2019 from Fudan University, Shanghai, China, where he is currently working toward the Ph.D. degree in applied mathematics. His research interests include decentralized optimization, graph algorithms, and machine learning.
-\end{IEEEbiography}
+\end{IEEEbiographynophoto}
 
-\begin{IEEEbiography}[\biophoto{zzz.jpg}]{Zhongzhi Zhang}
+% \begin{IEEEbiography}[\biophoto{zzz.jpg}]{Zhongzhi Zhang}
+\begin{IEEEbiographynophoto}{Zhongzhi Zhang}
     (Member, IEEE) received the B.Sc. degree in applied mathematics from Anhui University, Hefei, China, in 1997 and the Ph.D. degree in management science and engineering from Dalian University of Technology, Dalian, China, in 2006. \\
     From 2006 to 2008, he was a Post-Doctoral Research Fellow with Fudan University, Shanghai, China, where he is currently a Full Professor with the School of Computer Science. He has published over 150 papers in international journals or conferences. He has over 3300 ISI Web of Science citations with an H-index of 33 according to the Clarivate. He was selected as one of the most cited Chinese researchers
     (Elsevier) in 2019 and 2020. His current research interests include network science, graph data mining, social network analysis, spectral graph theory, and random walks. \\
     Dr. Zhang was a recipient of the Excellent Doctoral Dissertation Award of Liaoning Province, China, in 2007, the Excellent Post-Doctor Award of Fudan University in 2008, the Shanghai Natural Science Award (third class) in 2013, and the Wilkes Award for the best paper published in The Computer Journal in 2019. He is a member of the IEEE.
-\end{IEEEbiography}
+\end{IEEEbiographynophoto}
 
 \end{document}
