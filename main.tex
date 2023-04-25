@@ -65,7 +65,7 @@ For random walks on a graph with \(n\) vertices, the Kemeny constant \(K\) is de
 The Kemeny constant has also found a wealth of applications in different fields~\cite{Hu14}.
 It can be utilized to gauge the efficiency of user navigation through the World Wide Web (WWW)~\cite{LeLo02}.
 Moreover, the Kemeny constant is related to the mixing rate of an irreducible Markov chain~\cite{LePeWi09}, by regarding it as the expected time to mixing of the Markov chain~\cite{Hu06}.
-Recently, the Kemeny constant has been applied to measure the efficiency of robotic surveillance in network environments~\cite{PaAgBu15} and to characterize the noise robustness of a class of protocols for formation control~\cite{JaOl15}.
+Recently, the Kemeny constant has been applied to measure the efficiency of robotic surveillance in network environments~\cite{PaAgBu15} and to characterize the noise robustness of a class of protocols for formation control~\cite{JaOl19}.
 
 Despite the wide range of applications of the absorbing random-walk centrality and the Kemeny constant, it is a computational challenge to obtain their exact values.
 By definition, both the absorbing random-walk centrality and the Kemeny constant are a partial average of some hitting times.
@@ -74,7 +74,7 @@ Thus, for large realistic networks with millions of vertices, we cannot obtain t
 It is then of theoretical and practical interest to seek for alternative approximate approaches that scale to large networks.
 
 While computing absorbing random-walk centrality for a single vertex can be difficult, it is even more complex to find a group of \(k\) important vertices, which arises in many studies.
-For instance, in the field of wireless networks, sensor placement involves selecting an optimal subset of vertices to place sensors to sample physical signals~\cite{KrSiGu08,RaChVe13}, such as radiation or temperature.
+For instance, in the field of wireless networks, sensor placement involves selecting an optimal subset of vertices to place sensors to sample physical signals~\cite{KrSiGu08,RaChVe14}, such as radiation or temperature.
 Another example is point cloud sampling~\cite{DiChWaBa20,ChTiFeVeKo17}, which requires selecting a representative subset of points to preserve the geometric features of reconstruction.
 Traditional methods of ranking individual vertices may not meet these requirements, making it necessary to propose a vertex group centrality.
 
@@ -126,7 +126,8 @@ For the convenience of representing specific elements in vectors and matrices, w
 We also use \(\mata_{[i,:]}\) and \(\mata_{[:,j]}\) to denote the \(\myord{i}\) row and \(\myord{j}\) column of matrix \(\mata\), respectively.
 
 Moreover, we write sets in subscripts to denote subvectors and submatrices.
-For example, \(\veca_{-S}\) represents the subvector of \(\veca\) obtained by removing elements with indices in set \(S\), \(\mata_{-S}\) represents the submatrix of \(\mata\) obtained by removing elements with row indices or column indices in set \(S\).
+For example, \(\mata_{[S,j]}\) represents the subvector that includes matrix elements with row indices in \(S\) and column index as \(j\).
+Similarly, \(\veca_{-S}\) represents the subvector of \(\veca\) obtained by removing elements with indices in set \(S\), \(\mata_{-S}\) represents the submatrix of \(\mata\) obtained by removing elements with row indices or column indices in set \(S\).
 Note that the subscript takes precedence over the superscript, thus \(\mata_{-S}^{-1}\) denotes the inverse of \(\mata_{-S}\) rather than the submatrix of \(\mata^{-1}\).
 
 Finally, we use \(\vece_i\) to denote the \(\myord{i}\) standard basis vector of particular dimensions, and \(\vecone_n\in \rea^n\) to denote a vector of \(n\) dimensions with all elements set to \(1\).
@@ -1831,7 +1832,7 @@ Besides, Mavroforakis et al.~\cite{MaMaGi15} presented \textit{\(k\) absorbing r
 We give new proofs on the monotonicity and supermodularity of MANC from the perspective of numerical analysis, which is more concise and intuitive.
 Moreover, we design and implement a nearly linear algorithm for MANC minimization problem, which is proved to have an approximation guarantee.
 
-Admittedly, many existing studies have focused on the notion of selecting \(k\) nodes in the network to optimize some quantities related to absorbing random walk, such as absorbing distance~\cite{LiYuHuCh14,MoBaZhPe20,ZhLuWaGu17} and absorbing probability~\cite{ZhLuWaGu17,RoGl16}.
+Admittedly, many existing studies have focused on the notion of selecting \(k\) nodes in the network to optimize some quantities related to absorbing random walk, such as absorbing distance~\cite{LiYuHuCh14,MoBaZhPe20} and absorbing probability~\cite{RoGl16}.
 However, computing these quantities on infinite random walk models requires time-consuming matrix inversions.
 Most of researchers use finite random walk models to approximate the infinite case, except for Rosenfeld et al.~\cite{RoGl16}, who use LU decomposition to reduce the complexity of computing absorbing probability.
 Instead of constructing finite random walk models, our work focus on the infinite random walk model, use a nearly linear algorithm to minimize MANC, which has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any error parameter \(\epsilon\in(0,1)\).
