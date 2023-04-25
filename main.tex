@@ -53,7 +53,7 @@ A fundamental quantity related to random walks is hitting time~\cite{Lo93}, also
 For a random walk on a graph, the hitting time \(H_{ij}\) from a vertex \(i\) to another vertex \(j\) is the expected time for the walker starting from \(i\) to visit \(j\) for the first time.
 Hitting time is related to many problems and has been successfully applied to diverse areas, such as Hanoi problem with random move~\cite{WuZhCh11}, query suggestion~\cite{MeZhCh08}, and clustering algorithm~\cite{ChLiTa08}.
 
-Except for the intrinsic interest of hitting time itself and its direct applications, many other relevant quantities related to random walks are encoded in or expressed in terms of this crucial quantity, for example, absorbing random-walk centrality~\cite{MaMagi15} (or Markov centrality~\cite{WhSm03}), Kemeny constant~\cite{Hu14} and random detour time~\cite{RaZh13}.
+Except for the intrinsic interest of hitting time itself and its direct applications, many other relevant quantities related to random walks are encoded in or expressed in terms of this crucial quantity, for example, absorbing random-walk centrality~\cite{MaMaGi15} (or Markov centrality~\cite{WhSm03}), Kemeny constant~\cite{Hu14} and random detour time~\cite{RaZh13}.
 As the name implies, the absorbing random-walk centrality is a measure for the importance of vertices on a graph.
 For a vertex \(j\), its absorbing random-walk centrality \(H_j\) is defined by \(H_j=\sum_{i} \rho(i) H_{ij}\), where \(\rho(\cdot)\) is the starting probability distribution over all vertices.
 Different from the shortest-path based centrality measures, random-walk based centrality metrics include the contributions from essentially all paths~\cite{Ne05}, and thus have a better discriminating power.
@@ -168,7 +168,7 @@ For an arbitrary graph \(\gr=(V,E,w)\), we can define its corresponding electric
 
 For graph \(\gr\), the resistance distance \(R_{ij}\) between two vertices \(i\) and \(j\) can be expressed in terms of the elements of \(\lap^{\dagger}\) as~\cite{KlRa93}:
 \begin{equation}\label{EE04}
-    R_{ij}={\lap}_{ii}^{\dagger}+{\lap}_{jj}^{\dagger}-2{\lap}_{ij}^{\dagger}.
+    R_{ij}={\lap}_{[i,i]}^{\dagger}+{\lap}_{[j,j]}^{\dagger}-2{\lap}_{[i,j]}^{\dagger}.
 \end{equation}
 Define \(\matr\) as the \(n \times n\) resistance matrix of graph \(\gr\), whose entry at row \(i\) and column \(j\) represents the resistance distance \(R_{ij}\) between vertices \(i\) and \(j\).
 
@@ -204,7 +204,7 @@ There is an intimate relationship between hitting time and resistance distance~\
     \end{equation}
 \end{lemma}
 
-A lot of interesting quantities can be derived from hitting times. Here we only consider three quantities, the absorbing random-walk centrality~\cite{MaMagi15}, the Kemeny constant~\cite{Hu14} and the random detour time.
+A lot of interesting quantities can be derived from hitting times. Here we only consider three quantities, the absorbing random-walk centrality~\cite{MaMaGi15}, the Kemeny constant~\cite{Hu14} and the random detour time.
 
 For a vertex \(j\) in graph \(\gr=(V,E,w)\), its absorbing random-walk centrality \(H_j\) is defined as \(H_j=\sum_{i} \rho(i) H_{ij}\), where \(\rho(\cdot)\) is the starting probability distribution over all vertices in \(V\). By definition, \(H_j\) is a weighted average of hitting times to vertex \(j\). The smaller the value of \(H_j\), the more important the vertex \(j\). The random-walk based centrality has an obvious advantage over those shortest-path based centrality measures~\cite{Ne05}. In this paper, we concentrate on a natural choice of  \(\rho(\cdot)\) by selecting the starting vertex from the stationary distribution \(\vecpi\). In this case, \(H_j=\sum_{i} \pi_i H_{ij}\), which has been much studied~\cite{TeBeVo09,Be09,Be16}. In the following text, we  call \(H_j=\sum_{i} \pi_i H_{ij}\) \textit{walk centrality} for short.
 
@@ -267,20 +267,20 @@ After obtaining the relation governing the Kemeny constant \(K\)  and walk centr
     \begin{equation}\label{EE05}
         \begin{split}
             H_j&=\frac{1}{2} \sum_{i=1}^{n} \pi_i \sum_{z=1}^{n} d_z(R_{ij}+R_{jz}-R_{iz}) \\
-            &=\frac{1}{s} \sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z \left({\lap}_{jj}^{\dagger}-{\lap}_{ij}^{\dagger}-{\lap}_{jz}^{\dagger}+{\lap}_{iz}^{\dagger}\right) \\
+            &=\frac{1}{s} \sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z \left({\lap}_{[j,j]}^{\dagger}-{\lap}_{[i,j]}^{\dagger}-{\lap}_{[j,z]}^{\dagger}+{\lap}_{[i,z]}^{\dagger}\right) \\
         \end{split}
     \end{equation}
 
     The four terms in the brackets of~\eqref{EE05} can be sequentially calculated as follows:
     \begin{equation}\label{EE06}
-        \sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z {\lap}_{jj}^{\dagger}=d^2 \vece_j^{\top} \lap^{\dagger} \vece_j\,,
+        \sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z {\lap}_{[j,j]}^{\dagger}=d^2 \vece_j^{\top} \lap^{\dagger} \vece_j\,,
     \end{equation}
     \begin{equation}\label{EE07}
-        \sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z {\lap}_{ij}^{\dagger}=\sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z {\lap}_{jz}^{\dagger}=d^2 \vece_j^{\top} \lap^{\dagger} \vecpi\,,
+        \sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z {\lap}_{[i,j]}^{\dagger}=\sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z {\lap}_{[j,z]}^{\dagger}=d^2 \vece_j^{\top} \lap^{\dagger} \vecpi\,,
     \end{equation}
     and
     \begin{equation}\label{EE08}
-        \sum_{i=1}^{n} d_i  \sum_{z=1}^{n} d_z {\lap}_{iz}^{\dagger}=d^2 \vecpi^{\top} \lap^{\dagger} \vecpi \,.
+        \sum_{i=1}^{n} d_i  \sum_{z=1}^{n} d_z {\lap}_{[i,z]}^{\dagger}=d^2 \vecpi^{\top} \lap^{\dagger} \vecpi \,.
     \end{equation}
     Plugging~\eqref{EE06},~\eqref{EE07}, and~\eqref{EE08}  into~\eqref{EE05}, we obtain
     \begin{equation}\label{EE09}
@@ -657,7 +657,7 @@ Since \(K\) is only related to the structure of graph \(\gr\) itself, equation~\
 This equation suggests that AGC \(\manc{S}\) can also reflect the extent of detour in the network when \(S\) is set as the "passing group".
 This is another way of understanding the physical meaning of AGC.
 
-Additionally, reference~\cite{RaZh13} establishes a link between random detour overhead and the equivalent electrical network.
+Additionally, Ranjan et al.~\cite{RaZh13} establishes a link between random detour overhead and the equivalent electrical network.
 By leveraging this connection along with \thmref{thm:connection-multiple}, we can establish another link between AGC and the equivalent electrical network of the augmented graph.
 
 We'll start by defining the augmented graph.
@@ -1439,7 +1439,7 @@ We use our algorithm \(\text{Approx}\mathcal{HK}\) to compute the Kemeny constan
     \normalsize
     %\fontsize{6.51}{8.0}\selectfont
     \begin{threeparttable}
-        \caption{Exact Kemeny constant \(K\),   their approximation \(\tilde{K}\),  relative error \(\rho=\abs{K-\tilde{K}}/K\), and running time (seconds, \(s\)) for \(\tilde{K}\) on networks \(\mathcal{F}_{12}\) and \(\mathcal{M}_{10}\).  \(K\) is obtained via~\eqref{Kg01} and~\eqref{Kg02}, while \(\tilde{K}\) is obtained through algorithm \(\text{Approx}\mathcal{HK}\) with \(\epsilon=0.2\).}
+        \caption{Exact Kemeny constant \(K\),   their approximation \(\tilde{K}\),  relative error \(\rho=\abs{K-\tilde{K}}/K\), and running time (seconds, \(s\)) for \(\tilde{K}\) on networks \(\mathcal{F}_{12}\), \(\mathcal{M}_{10}\), \(\mathcal{C}_{3,19}\) and \(\overline{\mathcal{H}}_{13}\).  \(K\) is obtained via~\eqref{Kg01} and~\eqref{Kg02}, while \(\tilde{K}\) is obtained through algorithm \(\text{Approx}\mathcal{HK}\) with \(\epsilon=0.2\).}
         \label{tab:Kemeny}
         \begin{tabular}{ccccccc}
             \toprule
@@ -1806,6 +1806,24 @@ This result demonstrates the scalability of \text{ApproxAGCM} when applied to la
         \end{tabularx}
     \end{threeparttable}
 \end{table}
+
+\section{Related Works}
+
+Many researchers have noticed the connection between random detour time and their proposed centralities.
+Ranjan et al.~\cite{RaZh13} presented \textit{topological centrality} \(\cscr^*(u)\) as the reciprocal of \(\lap^\dagger_{[u,u]}\), and found that \(\cscr^*(u)\) can be represented by random detour time and hitting time, that is, \({\cscr^*(u)}^{-1}\propto \sum_{i=1}^n\sum_{j=1}^n\mypar{D_{i,j}(u)-H_{i,j}}\).
+Gangemi et al.~\cite{GaLePaGoLiZh15} simply took variants of random detour time as components of \textit{pivotality}, which is the measure of node reachability.
+We prove that random detour time is also related to Kemeny constant and absorbing random-walk centrality.
+This connection also holds for the case of multiple nodes.
+
+There also exist various random walk-based centralities, such as the \textit{Random Walk Decay Centrality}~\cite{WaRaSk19} and the \textit{Group-to-group random walk betweenness centrality}~\cite{GiBaRa21}, both of them are variants of existing centralities.
+Besides, Mavroforakis et al.~\cite{MaMaGi15} presented \textit{\(k\) absorbing random-walk centrality}, which is the most directly related to our work.
+We give new proofs on the monotonicity and supermodularity of MANC from the perspective of numerical analysis, which is more concise and intuitive.
+Moreover, we design and implement a nearly linear algorithm for MANC minimization problem, which is proved to have an approximation guarantee.
+
+Admittedly, many existing studies have focused on the notion of selecting \(k\) nodes in the network to optimize some quantities related to absorbing random walk, such as absorbing distance~\cite{LiYuHuCh14,MoBaZhPe20,ZhLuWaGu17} and absorbing probability~\cite{ZhLuWaGu17,RoGl16}.
+However, computing these quantities on infinite random walk models requires time-consuming matrix inversions.
+Most of researchers use finite random walk models to approximate the infinite case, except for Rosenfeld et al.~\cite{RoGl16}, who use LU decomposition to reduce the complexity of computing absorbing probability.
+Instead of constructing finite random walk models, our work focus on the infinite random walk model, use a nearly linear algorithm to minimize MANC, which has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any error parameter \(\epsilon\in(0,1)\).
 
 \section{Conclusions}
 
