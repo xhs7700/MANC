@@ -19,6 +19,10 @@
         Haisong Xia, Wanyue Xu and Zhongzhi Zhang are with the Shanghai Key Laboratory of Intelligent Information Processing, School of Computer Science, Fudan University, Shanghai 200433, China;
         Zhongzhi Zhang is also with the Shanghai Engineering Research Institute of Blockchain, Shanghai 200433, China.
     }
+
+    \thanks{
+        An earlier version of this paper was presented in part at WSDM '20: The Thirteenth ACM International Conference on Web Search and Data Mining~\cite{ZhXuZh20}[DOI: 10.1145/3336191.3371777]. (Corresponding author: Zhongzhi Zhang.)
+    }
 }
 
 \markboth{IEEE Transactions on Information Theory}
@@ -157,14 +161,6 @@ Since the  null space of  null of \({\lap}\) is \( \vecone\),  it turns out that
 Furthermore, the Laplacian matrix possesses several useful properties.
 It is easy to verify that Laplacian matrix is Symmetric Diagonally Dominant(SDD).
 Also, for a connected weighted undirected graph \(\gr=(V,E,w)\) and any nonempty vertex group \(S\), its corresponding Laplacian submatrix \(\lap_{-S}\) is Symmetric Diagonally Dominant M-matrix(SDDM).
-For \(\lap_{-S}\), we also have the following lemma.
-\begin{lemma}\label{lem:trace-lap}
-    For a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, let \(\lap\) denote the Laplacian matrix of \(\gr\).
-    Then for any nonempty set \(S\subseteq V\),
-    \begin{equation*}
-        \trace{\lap_{-S}^{-1}}\le n^2w_{\min}^{-1}.
-    \end{equation*}
-\end{lemma}
 
 \subsection{Electrical Network and Resistance Distance}
 
@@ -183,6 +179,16 @@ Define \(\matr\) as the \(n \times n\) resistance matrix of graph \(\gr\), whose
     \end{equation*}
     %where the summation is taken over all  edges in \(\gr\).
 \end{lemma}
+
+Similarly, We can also define the resistance distance between a vertex and a group of vertices.
+In the electrical network \(\bar{\gr}\) corresponding to graph \(\gr\), we can ground all the vertices in group \(S\) to set their voltage as zero.
+Then the resistance distance \(R_{iS}\) between vertex \(i\) and vertex group \(S\) is defined as the voltage of \(i\) when a unit current enters \(\bar{\gr}\) and leaves it at any vertex in \(S\).
+
+Based on the physical explanation of effective resistance, the resistance distance \(R_{iS}\) is smaller than the effective resistance of any simple path connecting vertex \(i\) with any vertex \(j\in S\).
+To clarify, if we denote the simple path connecting vertex \(i\) and an arbitary vertex in \(S\) as \(\pscr_{iS}\), then we have:
+\begin{equation}\label{eq:phy-resist}
+    R_{iS}\le \sum_{\edge{a}{b}\in\pscr_{iS}}w_{ab}^{-1}
+\end{equation}
 
 \subsection{Random Walk on a Graph}
 
@@ -738,7 +744,7 @@ Specifically, we demonstrate that the set function \(\manc{\cdot}\) is both mono
 \end{theorem}
 
 \begin{IEEEproof}
-    According to \defref{def:manc}, when a random walker arrives at vertices within \(S\), it must have arrived at vertices within \(S+u\). Therefore \(H_{v,S}\ge H_{v,S+u}\) holds for any vertex \(v\in V\), which concludes our proof.
+    According to \defref{def:manc}, when a random walker arrives at vertices within \(S\), it must have arrived at vertices within \(S+u\). Therefore \(H_{vS}\ge H_{v\mypar{S+u}}\) holds for any vertex \(v\in V\), which concludes our proof.
 \end{IEEEproof}
 
 \begin{theorem}[Supermodularity of AGC]\label{thm:supermod}
@@ -749,7 +755,15 @@ Specifically, we demonstrate that the set function \(\manc{\cdot}\) is both mono
 \end{theorem}
 
 \begin{IEEEproof}
-    For a subset \(A\) of the probability space, we denote \(\indfunc{A}\) as the indicator function of the event \(A\). Then we rewrite \(\manc{S}-\manc{S+u}\) by discussing the absorbing vertex of random walker.
+    For a subset \(A\) of the probability space, we denote \(\indfunc{A}\) as the indicator function of the event \(A\). That is,
+    \begin{equation*}
+        \indfunc{A}=
+        \begin{cases}
+            1 & \text{event }A\text{ holds true} \\
+            0 & \text{otherwise}
+        \end{cases}.
+    \end{equation*}
+    Then we rewrite \(\manc{S}-\manc{S+u}\) by discussing the absorbing vertex of random walker.
     \begin{equation}\label{eq:supermod-diff}
         \begin{split}
             &\manc{S}-\manc{S+u}\\
@@ -759,19 +773,19 @@ Specifically, we demonstrate that the set function \(\manc{\cdot}\) is both mono
     \end{equation}
     By introducing the indicator function, \(\min\setof{T_{vS},T_{vu}}\) can be represented as
     \begin{equation*}
-        \min\setof{T_{vS},T_{vu}}=T_{v,S}\indfunc{\setof{T_{v,S}\le T_{v,u}}}+T_{v,u}\indfunc{\setof{T_{v,u}<T_{v,S}}}.
+        \min\setof{T_{vS},T_{vu}}=T_{vS}\indfunc{\setof{T_{vS}\le T_{vu}}}+T_{vu}\indfunc{\setof{T_{vu}<T_{vS}}}.
     \end{equation*}
     Combining this equation with~\eqref{eq:supermod-diff} and the linearity of the mean, we can get
     \begin{equation*}
-        \manc{S}-\manc{S+u}=\sum_{v\in V}\pi_v\mean{(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}}.
+        \manc{S}-\manc{S+u}=\sum_{v\in V}\pi_v\mean{(T_{vS}-T_{vu})\indfunc{\setof{T_{vu}<T_{vS}}}}.
     \end{equation*}
 
     Similarly, we also have
-    \[\manc{T}-\manc{T+u}=\sum_{v\in V}\vecpi_v\mean{(T_{v,T}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,T}}}}.\]
-    As is mentioned in proof of \thmref{thm:mono}, \(T_{v,S}\ge T_{v,T}\) holds for any vertex \(v\in V\).
-    It is also obvious that \(\indfunc{\setof{T_{v,u}<T_{v,S}}}\ge\indfunc{\setof{T_{v,u}<T_{v,T}}}\).
+    \[\manc{T}-\manc{T+u}=\sum_{v\in V}\vecpi_v\mean{(T_{vT}-T_{vu})\indfunc{\setof{T_{vu}<T_{vT}}}}.\]
+    As is mentioned in proof of \thmref{thm:mono}, \(T_{vS}\ge T_{vT}\) holds for any vertex \(v\in V\).
+    It is also obvious that \(\indfunc{\setof{T_{vu}<T_{vS}}}\ge\indfunc{\setof{T_{vu}<T_{vT}}}\).
     Combining the above two inequalities, we can prove that
-    \[(T_{v,S}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,S}}}\ge(T_{v,T}-T_{v,u})\indfunc{\setof{T_{v,u}<T_{v,T}}}\]
+    \[(T_{vS}-T_{vu})\indfunc{\setof{T_{vu}<T_{vS}}}\ge(T_{vT}-T_{vu})\indfunc{\setof{T_{vu}<T_{vT}}}\]
     holds for any vertex \(v\in V\), which completes our proof.
 \end{IEEEproof}
 
@@ -792,7 +806,7 @@ Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices,
 
 \subsection{Proof of NP-hardness}
 
-To prove the NP-hardness of AGCM, we try to construct a reduction from the Vertex Cover problem to a decision version of AGCM.
+To prove the NP-hardness of AGCM, we try to construct a reduction to a decision version of AGCM from the Vertex Cover problem, which is NP-complete~\cite{FrHeJa98}.
 
 \begin{problem}[Vertex Cover on \(c\)-regular graphs]
 Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an integer \(k\). The aim is to determine whether a subset of vertices \(S\subseteq V\) exists, with cardinality \(\abs{S}\le k\), such that every edge in \(E\) is incident with at least one vertex in \(S\).
@@ -814,17 +828,19 @@ Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an inte
     Thus, \(\manc{S}=\vecpi_{-S}^\top\vecone=(n-k)/n\).
 
     We then demonstrate that if \(S\) does not constitute a vertex cover of \(\gr\), then \(\manc{S}>(n-k)/n\).
-    For a vertex \(u\in S\) and a vertex \(v\in V\setminus S\), it is obvious that \(H_{u,S}=0\) and \(H_{v,S}\ge1\).
+    For a vertex \(u\in S\) and a vertex \(v\in V\setminus S\), it is obvious that \(H_{uS}=0\) and \(H_{vS}\ge1\).
     Moreover, since \(S\) is not a vertex cover of \(\gr\), there exists at least one edge \((u',v')\) in edge set \(E\) that is not covered by \(S\).
     When a walker starts from vertex \(u'\) and moves to vertex \(v'\) with a probability of at least \(\frac{1}{d_{\max}}>\frac{1}{n}\), the walker's path length exceeds \(1\).
     That is,
-    \begin{equation*}
-        H_{u',S}=H_{v',S}>\mypar{1-\frac{1}{n}}+\frac{2}{n}=1+\frac{1}{n}.
-    \end{equation*}
-
-    Therefore, if we denote \(S+u'+v'\) as \(S'\), then we are able to get the lower bound of AGC:
     \begin{align*}
-        \manc{S} & =\sum_{v\in V\setminus S'}\pi_vH_{v,S}+\pi_{u'}H_{u',S}+\pi_{v'}H_{v',S}         \\
+        H_{u'S} & >\mypar{1-\frac{1}{d_{\max}}}\times1+\frac{1}{d_{\max}}\times2  \\
+                & >\mypar{1-\frac{1}{n}}\times1+\frac{1}{n}\times2=1+\frac{1}{n}.
+    \end{align*}
+    Similarly, we also have \(H_{v'S}>1+\frac{1}{n}\).
+
+    Therefore, if we denote \(S\cup\setof{u',v'}\) as \(S'\), then we are able to get the lower bound of AGC:
+    \begin{align*}
+        \manc{S} & =\sum_{v\in V\setminus S'}\pi_vH_{vS}+\pi_{u'}H_{u'S}+\pi_{v'}H_{v'S}            \\
                  & >\vecpi_{-S'}\vecone+\pi_{u'}\mypar{1+\frac{1}{n}}+\pi_{v'}\mypar{1+\frac{1}{n}} \\
                  & =\vecpi_{-S}^\top\vecone+\frac{\pi_{u'}+\pi_{v'}}n
         >\vecpi_{-S}^\top\vecone=(n-k)/n.
@@ -933,7 +949,7 @@ Our first objective is to estimate \(\Delta(u,\varnothing)=-H_u\), which is the 
 We can conveniently use \algoref{ALG01}, which has a proven approximation guarantee as shown in \thmref{TheoAlg1}.
 
 Our second objective is to estimate \(\Delta(u,S)\) when \(S\neq\varnothing\).
-To this end, we need to utilize the following lemma.
+To this end, we need to utilize the following two lemmas.
 
 \begin{lemma}\label{lem:norm-ineq}
     Given a connected weighted undirected graph \(\gr=(V,E,w)\), let \(\lap\) denote the Laplacian matrix of the graph.
@@ -954,6 +970,24 @@ To this end, we need to utilize the following lemma.
          & \ge w_{\min}n^{-1}v_i^2,
     \end{align*}
     which completes our proof.
+\end{IEEEproof}
+
+\begin{lemma}\label{lem:trace-lap}
+    For a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, let \(\lap\) denote the Laplacian matrix of \(\gr\).
+    Then for any nonempty set \(S\subseteq V\),
+    \begin{equation*}
+        \trace{\lap_{-S}^{-1}}\le n^2w_{\min}^{-1}.
+    \end{equation*}
+\end{lemma}
+
+\begin{IEEEproof}
+    According to~\cite{ClPo11}, the diagonal entry \(\mypar{\lap_{-S}}_{[u,u]}\) of \(\lap_{-S}\) is exactly the resistance distance \(R_{uS}\) between vertex \(u\) and vertex group \(S\).
+    Since \(\gr\) is connected, the length of a simple path connecting vertex \(u\) with any vertex in \(S\) is no more than \(n\).
+    Combining~\eqref{eq:phy-resist}, we have
+    \begin{align*}
+        \trace{\lap_{-S}^{-1}} & =\sum_{i=1}^n\vece_i^\top\lap_{-S}^{-1}\vece_i=\sum_{i=1}^nR_{iS}                     \\
+                               & \le\sum_{i=1}^n\sum_{\edge{a}{b}\in\pscr_{iS}}w_{ab}^{-1}\le n^2w_{\min}^{-1}.
+    \end{align*}
 \end{IEEEproof}
 
 \subsection{Approximation of the numerator of \(\Delta(u,S)\)}
@@ -1822,7 +1856,7 @@ This result demonstrates the scalability of \text{ApproxAGCM} when applied to la
 \section{Related Works}
 
 Many researchers have noticed the connection between random detour time and their proposed centralities.
-Ranjan et al.~\cite{RaZh13} presented \textit{topological centrality} \(\cscr^*(u)\) as the reciprocal of \(\lap^\dagger_{[u,u]}\), and found that \(\cscr^*(u)\) can be represented by random detour time and hitting time, that is, \({\cscr^*(u)}^{-1}\propto \sum_{i=1}^n\sum_{j=1}^n\mypar{D_{i,j}(u)-H_{i,j}}\).
+Ranjan et al.~\cite{RaZh13} presented \textit{topological centrality} \(\cscr^*(u)\) as the reciprocal of \(\lap^\dagger_{[u,u]}\), and found that \(\cscr^*(u)\) can be represented by random detour time and hitting time, that is, \({\cscr^*(u)}^{-1}\propto \sum_{i=1}^n\sum_{j=1}^n\mypar{D_{ij}(u)-H_{ij}}\).
 Gangemi et al.~\cite{GaLePaGoLiZh15} simply took variants of random detour time as components of \textit{pivotality}, which is the measure of node reachability.
 We prove that random detour time is also related to Kemeny constant and absorbing random-walk centrality.
 This connection also holds for the case of multiple nodes.
