@@ -9,7 +9,8 @@
 
 \begin{document}
 
-\title{Absorbing Time of Random Walks\\ as a Node Group Centrality}
+%\title{Absorbing Time of Random Walks\\ as a Node Group Centrality}
+\title{Means of Hitting Times for Random Walks on Graphs: Connections, Computation, and Optimization}
 \author{Haisong~Xia,
     Wanyue~Xu~\IEEEmembership{Student Member,~IEEE},
     Zuobai~Zhang,
@@ -120,47 +121,40 @@ The following are our primary additional contributions:
 
 \section{Preliminaries}
 
-In this section, we give a brief introduction to some notations as well as some basic concepts about graphs, Laplacian matrix, resistance distance, random walks, hitting times and some quantities derived from hitting times.
+In this section, we give a brief introduction to some notations, as well as some basic concepts about graphs, such as Laplacian matrix, resistance distance, random walks, hitting times, and some quantities derived from hitting times.
 
 \subsection{Notations}
 
-In our notation, we use normal lowercase letters such as \(a,b,c\) to represent scalars in \(\rea\). We denote vectors with bold lowercase letters such as \(\veca,\vecb,\vecc\), and matrices with bold uppercase letters like \(\mata,\matb,\matc\).
+We use  \(\rea\) to deonte the set of real number, and we use normal lowercase letters such as \(a,b,c\) to represent scalars in \(\rea\). We denote vectors with bold lowercase letters such as \(\veca,\vecb,\vecc\), and matrices with bold uppercase letters like \(\mata,\matb,\matc\). For the convenience of representing specific elements in vectors and matrices, we use \(a_{i}\) to represent the \(\myord{i}\) element of vector \(\veca\), and use \(\mata_{[i,j]}\) to represent the entry at position \((i,j)\) in matrix \(\mata\). We use \(\mata_{[i,:]}\) and \(\mata_{[:,j]}\) to denote, respectively, the \(\myord{i}\) row and \(\myord{j}\) column of matrix \(\mata\). We write sets in subscripts to denote subvectors and submatrices.
+For example, \(\mata_{[S,j]}\) represents the submatrix of \(\mata\), which includes those matrix elements with row indices in \(S\) and column index as \(j\). Similarly, \(\veca_{-S}\) represents the subvector of \(\veca\) obtained from  \(\veca\) by removing elements with indices in set \(S\), and \(\mata_{-S}\) represents the submatrix of \(\mata\) obtained  from  \(\veca\) by removing elements with row indices and column indices in set \(S\).
+Note that the subscript takes precedence over the superscript, thus \(\mata_{-S}^{-1}\) denotes the inverse of \(\mata_{-S}\) rather than the submatrix of \(\mata^{-1}\). We use  \(\vecone_n\in \rea^n\) to denote a vector of \(n\) dimensions with all elements being \(1\). Sometimes we skip subscripts if there is no ambiguity. For a matrix \(\mata\in\rea^{m\times n}\), its Frobenius form is \(\Abs{\mata}_F=\sqrt{\trace{\mata^\top\mata}}\).
 
-For the convenience of representing specific elements in vectors and matrices, we use \(a_{i}\) to represent the \(\myord{i}\) element of vector \(\veca\), and \(\mata_{[i,j]}\) to represent the entry at position \((i,j)\) in matrix \(\mata\).
-We also use \(\mata_{[i,:]}\) and \(\mata_{[:,j]}\) to denote the \(\myord{i}\) row and \(\myord{j}\) column of matrix \(\mata\), respectively.
+%We use \(\vece_i\) to denote the \(\myord{i}\) standard basis vector of particular dimensions, and use \(\vecone_n\in \rea^n\) to denote a vector of \(n\) dimensions with all elements being \(1\). Sometimes we skip subscripts if there is no ambiguity. For a matrix \(\mata\in\rea^{m\times n}\), its Frobenius form is \(\Abs{\mata}_F=\sqrt{\trace{\mata^\top\mata}}\).
 
-Moreover, we write sets in subscripts to denote subvectors and submatrices.
-For example, \(\mata_{[S,j]}\) represents the subvector that includes matrix elements with row indices in \(S\) and column index as \(j\).
-Similarly, \(\veca_{-S}\) represents the subvector of \(\veca\) obtained by removing elements with indices in set \(S\), \(\mata_{-S}\) represents the submatrix of \(\mata\) obtained by removing elements with row indices or column indices in set \(S\).
-Note that the subscript takes precedence over the superscript, thus \(\mata_{-S}^{-1}\) denotes the inverse of \(\mata_{-S}\) rather than the submatrix of \(\mata^{-1}\).
+%As we will prove the approximation guarantee of our algorithms in \secref{sec:approx-algo1} and \secref{sec:approx-algo2}, it is necessary to give the definition of approximation factor.
 
-Finally, we use \(\vece_i\) to denote the \(\myord{i}\) standard basis vector of particular dimensions, and \(\vecone_n\in \rea^n\) to denote a vector of \(n\) dimensions with all elements set to \(1\).
-Sometimes we skip subscripts if there is no ambiguity.
-
-For a matrix \(\mata\in\rea^{m\times n}\), its Frobenius form is \(\Abs{\mata}_F=\sqrt{\trace{\mata^\top\mata}}\).
-
-As we will prove the approximation guarantee of our algorithms in \secref{sec:approx-algo1} and \secref{sec:approx-algo2}, it is necessary to give the definition of approximation factor.
 
 \begin{definition}[\(\epsilon\)-approximation]
     Let \(x\) and \(\tilde{x}\) be positive scalars, with \(\epsilon\) as the error parameter such that \(\epsilon\in(0,1)\). We refer to \(\tilde{x}\) as an \(\epsilon\)-approximation of \(x\) if the inequality \((1-\epsilon)\tilde{x}\le x\le(1+\epsilon)\tilde{x}\) holds. For convenience, we write this as \(x\approx_{\epsilon}\tilde{x}\).
 \end{definition}
 
+
+
 \subsection{Graph and Laplacian Matrix}\label{sub:lap}
 
 Let \(\gr=(V,E,w)\) denote a connected undirected weighted graph or network,  where \(V\) is the set of vertices,  \(E\) is the set of edges, and  \(w: E\to \mathbb{R}_{+}\) is the positive edge weight function, with \(w_e\) being the weight for edge \(e\). Then, there are total \(n=|V|\) vertices and \(m=|E|\) edges in graph \(\gr\). We use \(u \sim v\) to indicate that two vertices \(u\) and \(v\) are connected by an edge. Let \(w_{\max}\) and \(w_{\min}\) denote the maximum edge weight and minimum edge weight, respectively. Namely, \(w_{\max}=\max_{e\in E} w_e \) and \(w_{\min}=\min_{e\in E} w_e\).
 
-Mathematically, the topological and weighted properties of a graph \(\gr\) are encoded in its generalized adjacency matrix \(\mata\) with the entry \(a_{ij}\) denoting the adjacency relation between vertices \(i\) and \(j\). If vertices \(i\) and \(j\) are linked to each other by an edge, then we denote this edge as \(e=\edge{u}{v}\), with \(a_{ij}= a_{ji}=w_{e}> 0\). Otherwise, \(a_{ij}=a_{ji}=0\) indicating that vertices \(i\) and \(j\) are not adjacent. In a weighted graph \(\gr\), the degree \(d_i\) of a vertex \(i\) is defined by \(d_i=\sum_{j=1}^n a_{ij}\)~\cite{BaBaPaVe04}, where we denote the maximal vertex degree as \(d_{\max}=\max\setof{d_i|i\in V}\).
-The diagonal degree vector of graph \(\gr\) is defined to be \(\vecd=\mypar{d_1,d_2,\cdots,d_n}^\top\), while the diagonal degree matrix of graph \(\gr\) is defined to be \({\matd} = {\rm diag}(d_1, d_2, \ldots, d_n)\), and the Laplacian matrix of \(\gr\) is \({\lap}={\matd}-{\mata}\).
+Mathematically, the topological and weighted properties of a graph \(\gr\) are encoded in its generalized adjacency matrix \(\mata\) with the entry \(a_{ij}\) denoting the adjacency relation between vertices \(i\) and \(j\). If vertices \(i\) and \(j\) are linked to each other by an edge, then we denote this edge as \(e=\edge{i}{j}\), with \(a_{ij}= a_{ji}=w_{e}> 0\). If vertices \(i\) and \(j\) are not adjacent, \(a_{ij}=a_{ji}=0\). In a weighted graph \(\gr\), the degree \(d_i\) of a vertex \(i\) is defined by \(d_i=\sum_{j=1}^n a_{ij}\)~\cite{BaBaPaVe04}, where we denote the maximal vertex degree as \(d_{\max}=\max\setof{d_i|i\in V}\).
+The diagonal degree vector of graph \(\gr\) is defined to be \(\vecd=\mypar{d_1,d_2,\cdots,d_n}^\top\), while the diagonal degree matrix of graph \(\gr\) is defined to be \({\matd} = {\rm diag}(d_1, d_2, \ldots, d_n)\), and the Laplacian matrix of \(\gr\) is \({\lap}={\matd}-{\mata}\). Thus, \(\lap\)  is a symmetric diagonally dominant (SDD) matrix. Moreover, for
+any  nonempty  proper subset  \(S \) of vertex set $V$, \(\lap_{-S}\) is a symmetric diagonally dominant M-matrix (SDDM).
 
-Let \(\matb \in \mathbb{R}^{|E| \times |V|}\) be the incidence matrix of \(\gr\). For each edge \(e\) with two end vertices \(i\) and \(j\), a direction is assigned arbitrarily. Let \(\vecb_e^\top\) be the row of matrix \(\matb\) associated with edge \(e\). Then the element \(b_{eu}\) at row corresponding to edge \(e\) and column corresponding to vertex \(u\) is defined as follows: \(b_{eu} = 1\) if vertex \(u\) is the tail of edge \(e\), \(b_{eu}=-1\) if vertex \(u\) is the head of  edge \(e\), and \(b_{eu}=0\) otherwise. Let \(\vece_u\) be the \(u\)-th canonical basis of the space \(\mathbb{R}^{|V|}\), then for an edge \(e\) connecting two vertices \(i\) and \(j\), \(\vecb_e\) can also be recast as \(\vecb_e=\vece_{i}-\vece_{j}\).  Let  \(\matw \in \mathbb{R}^{|E| \times |E|}\) be a diagonal matrix with the diagonal entry \((e,e)\) being \(w_e\). Then the Laplacian matrix \(\lap\) of graph \(\gr\) can be written as \(\lap=\matb^T\matw\matb=\sum_{e\in E}w_e\vecb_e\vecb_e^{\top}\).
+Let \(\matb \in \mathbb{R}^{|E| \times |V|}\) be the incidence matrix of graph \(\gr\). For each edge \(e\) with two end vertices \(i\) and \(j\), a direction is assigned arbitrarily. Let \(\vecb_e^\top\) be the row of matrix \(\matb\) associated with edge \(e\). Then the element \(b_{eu}\) at row corresponding to edge \(e\) and column corresponding to vertex \(u\) is defined as follows: \(b_{eu} = 1\) if vertex \(u\) is the tail of edge \(e\), \(b_{eu}=-1\) if vertex \(u\) is the head of  edge \(e\), and \(b_{eu}=0\) otherwise. Let \(\vece_u\) be the \(u\)-th canonical basis of the space \(\mathbb{R}^{|V|}\), then for an edge \(e\) connecting two vertices \(i\) and \(j\), \(\vecb_e\) can also be recast as \(\vecb_e=\vece_{i}-\vece_{j}\).  Let  \(\matw \in \mathbb{R}^{|E| \times |E|}\) be a diagonal matrix with every diagonal entry corresponding to the weight  \(w_e\) of an edge  $e\in E$. Then the Laplacian matrix \(\lap\) of graph \(\gr\) can be written as \(\lap=\matb^T\matw\matb=\sum_{e\in E}w_e\vecb_e\vecb_e^{\top}\).
 
 The Laplacian matrix \(\lap\) is symmetric and positive semidefinite. All  its eigenvalues  are non-negative, with a unique zero eigenvalue. Let \(0=\lambda_1< \lambda_2 \leq \lambda_3\leq \dots\leq \lambda_{n}\) be the \(n\) eigenvalues of  \(\lap\), and let \(u_i\), \( i={1,2,\dots,n}\), be their corresponding mutually orthogonal  unit eigenvectors. Then, \(\lap\) has the following spectral decomposition:  \(\lap=\sum_{i=2}^{n}\lambda_i u_iu_i^\top\).  It is easy to verify that \( \lambda_{n}\leq n w_{\max}\)~\cite{LiSc18}.
 Since \(\lap\) is not invertible, we use \(\lap^{\dagger}\) to denote its pseudoinverse, which can be written as \(\lap^{\dagger}=\sum_{i=2}^{n}\frac{1}{\lambda_i}u_iu_i^{\top}\). Let \(\matj\) denote the matrix with all entries being ones. Then the pseudoinverse \(\lap^{\dagger}\) can also be recast as \(\mypar{\lap +\frac{1}{n}\matj}^{-1} - \frac{1}{n}\matj\)~\cite{GhBoSa08}. Note that for a general symmetric matrix, it shares the same null space as its Moore-Penrose generalized inverse~\cite{BeGrTh74}.
-Since the  null space of  null of \({\lap}\) is \( \vecone\),  it turns out that \({\lap} \vecone ={\lap}^{\dagger} \vecone =\mathbf{0}\).
+Since the  null space of  null of \({\lap}\) is \( \vecone\),  it turns out that \({\lap} \vecone ={\lap}^{\dagger} \vecone =\mathbf{0}\). Note that for an invertible matrix, its pseudoinverse is exactly its inverse.
 
-Furthermore, the Laplacian matrix possesses several useful properties.
-It is easy to verify that Laplacian matrix is Symmetric Diagonally Dominant(SDD).
-Also, for a connected weighted undirected graph \(\gr=(V,E,w)\) and any nonempty vertex group \(S\), its corresponding Laplacian submatrix \(\lap_{-S}\) is Symmetric Diagonally Dominant M-matrix(SDDM).
+%Furthermore, the Laplacian matrix possesses several useful properties. It is easy to verify that Laplacian matrix is Symmetric Diagonally Dominant(SDD). Also, for a connected weighted undirected graph \(\gr=(V,E,w)\) and any nonempty vertex group \(S\), its corresponding Laplacian submatrix \(\lap_{-S}\) is Symmetric Diagonally Dominant M-matrix(SDDM).
 
 \subsection{Electrical Network and Resistance Distance}
 
@@ -180,19 +174,18 @@ Define \(\matr\) as the \(n \times n\) resistance matrix of graph \(\gr\), whose
     %where the summation is taken over all  edges in \(\gr\).
 \end{lemma}
 
-Similarly, We can also define the resistance distance between a vertex and a group of vertices.
-In the electrical network \(\bar{\gr}\) corresponding to graph \(\gr\), we can ground all the vertices in group \(S\) to set their voltage as zero.
-Then the resistance distance \(R_{iS}\) between vertex \(i\) and vertex group \(S\) is defined as the voltage of \(i\) when a unit current enters \(\bar{\gr}\) and leaves it at any vertex in \(S\).
-
-Based on the physical explanation of effective resistance, the resistance distance \(R_{iS}\) is smaller than the effective resistance of any simple path connecting vertex \(i\) with any vertex \(j\in S\).
-To clarify, if we denote the simple path connecting vertex \(i\) and an arbitary vertex in \(S\) as \(\pscr_{iS}\), then we have:
+Similarly, We can also define the resistance distance \(R_{iS}\) between a vertex $i$ and a group  \(S\) of vertices. In the electrical network \(\bar{\gr}\) corresponding to graph \(\gr\), if all  the vertices in group \(S\) are grounded, the voltage of all set their in  \(S\) is always zero.
+Then the resistance distance \(R_{iS}\) between vertex \(i\) and vertex group \(S\) is defined as the voltage of \(i\) when a unit current enters \(\bar{\gr}\) at vertex $i$ and leaves \(\bar{\gr}\) at  vertices in \(S\).  Let \(\pscr_{iS}\) denote a simple path connecting vertex \(i\) and an arbitrary vertex in \(S\). Then, the following relation holds:
 \begin{equation}\label{eq:phy-resist}
-    R_{iS}\le \sum_{\edge{a}{b}\in\pscr_{iS}}w_{ab}^{-1}
+    R_{iS}\le \sum_{\edge{a}{b}\in\pscr_{iS}}w_{ab}^{-1}\,.
 \end{equation}
+
+%Based on the physical explanation of effective resistance, the resistance distance \(R_{iS}\) is smaller than the effective resistance of any simple path connecting vertex \(i\) with any vertex \(j\in S To clarify, if we denote the simple path connecting vertex \(i\) and an arbitrary vertex in \(S\) as \(\pscr_{iS}\), then we have:
+
 
 \subsection{Random Walk on a Graph}
 
-For a connected weighted graph \(\gr\) with \(n\) vertices, the classical random walk model of \(\gr\) can be described by the transition matrix \(\matp\in\rea^{n\times n}\): at any time step, the walker located at vertex \(i\) moves to vertex \(j\) with probability \({\matp_{[i,j]}=d_i^{-1}\mata_{[i,j]}}\).
+For a connected weighted graph \(\gr\) with \(n\) vertices, the classical random walk model on \(\gr\) can be described by the transition matrix \(\matp\in\rea^{n\times n}\). At any time step, the walker located at vertex \(i\) moves to vertex \(j\) with probability \({\matp_{[i,j]}=d_i^{-1}\mata_{[i,j]}}\).
 It is easy to verify that
 \begin{equation}\label{eq:trs}
     \matp=\matd^{-1}\mata.
@@ -214,14 +207,14 @@ There is an intimate relationship between hitting time and resistance distance~\
     \end{equation}
 \end{lemma}
 
-A lot of interesting quantities can be derived from hitting times. Here we only consider three quantities, the absorbing random-walk centrality~\cite{MaMaGi15}, the Kemeny constant~\cite{Hu14} and the random detour time.
+A lot of interesting quantities can be derived from hitting times. Here we only consider three quantities, the absorbing random-walk centrality~\cite{WhSm03,MaMaGi15}, the Kemeny constant~\cite{Hu14}, and the random detour time~\cite{RaZh13}.
 
 For a vertex \(j\) in graph \(\gr=(V,E,w)\), its absorbing random-walk centrality \(H_j\) is defined as \(H_j=\sum_{i} \rho(i) H_{ij}\), where \(\rho(\cdot)\) is the starting probability distribution over all vertices in \(V\). By definition, \(H_j\) is a weighted average of hitting times to vertex \(j\). The smaller the value of \(H_j\), the more important the vertex \(j\). The random-walk based centrality has an obvious advantage over those shortest-path based centrality measures~\cite{Ne05}. In this paper, we concentrate on a natural choice of  \(\rho(\cdot)\) by selecting the starting vertex from the stationary distribution \(\vecpi\). In this case, \(H_j=\sum_{i} \pi_i H_{ij}\), which has been much studied~\cite{TeBeVo09,Be09,Be16}. In the following text, we  call \(H_j=\sum_{i} \pi_i H_{ij}\) \textit{walk centrality} for short.
 
 Another quantity we are concerned with is the Kemeny constant \(K\). For a graph \(\gr\), its Kemeny constant \(K\) is defined as the expected steps for a walker starting from  vertex \(i\) to vertex \(j\) selected randomly from the vertex set \(V\), according to the stationary distribution \(\vecpi\). That is, \(K = \sum_{j = 1}^{n} \pi_j H_{ij}\). The Kemeny constant has been used to measure the user navigation efficiency through the WWW~\cite{LeLo02} and  robotic surveillance efficiency in network environments~\cite{PaAgBu15}. It can also measure the mixing rate of random walks~\cite{LePeWi09}.
 
-Subsequently, for graph \(\gr\), its random detour time \(D_{ij}(u)\) is defined as the expected time of a walker who starts from vertex \(i\), must visit vertex \(u\), then first reaches vertex \(j\), where \(i,u,j\in V\) differs from each other.
-That is, \(D_{ij}(u)= H_{iu}+H_{uj}\).
+\textcolor{red}{Subsequently, for graph \(\gr\), its random detour time \(D_{ij}(u)\) is defined as the expected time of a walker who starts from vertex \(i\), must visit vertex \(u\), then first reaches vertex \(j\), where \(i,u,j\in V\) differs from each other.
+That is, \(D_{ij}(u)= H_{iu}+H_{uj}\).}
 
 Most quantities for random walks on graph \(\gr\) are determined by the eigenvalues and eigenvectors of the normalized Laplacian matrix~\cite{Ch97}, \({\matd}^{-\frac{1}{2}}\lap {\matd}^{-\frac{1}{2}}\), of \(\gr\), including the walk centrality and Kemeny constant. By definition, \({\matd}^{-\frac{1}{2}}\lap {\matd}^{-\frac{1}{2}}\) is a real, symmetric, semi-definitive matrix. Let \(0=\sigma_1 < \sigma_2 \leq \sigma_3 \leq \cdots \leq \sigma_n \) be the \(n\) eigenvalues of the normalized Laplacian matrix \({\matd}^{-\frac{1}{2}}\lap {\matd}^{-\frac{1}{2}}\). And let \(\vecpsi_1\), \(\vecpsi_2\), \(\vecpsi_3\), \(\ldots\), \(\vecpsi_n\) be their corresponding mutually orthogonal eigenvectors of unit length, where \(\vecpsi_i=(\psi_{i1},\psi_{i2},\ldots,\psi_{in})^{\top}\). Then~\cite{Lo93,Be16},
 \begin{equation}\label{ATT01}
@@ -234,16 +227,14 @@ and
 
 Equations \eqref{ATT01} and \eqref{Kemeny01} provide exact computation for the walk centrality and Kemeny constant, respectively. However, both formulas are expressed in terms of the eigenvalues and eigenvectors of the normalized Laplacian, the computation complexity for which scale as \(O(n^3)\). Thus, direct  computation for \(H_j\) and \(K\)  using spectral method appears to be prohibitive for large networks, and is infeasible to those realistic networks with millions of vertices.
 
-\section{Connections between the Walk Centrality and the Kemeny Constant}
+\section{Connections between Walk Centrality and  Kemeny Constant}
 
 Although both the walk centrality \(H_j\) and the Kemeny constant \(K\) have attracted much attention from the scientific community, the relation between  them for a generic  graph  \(\gr\) is still lacking.
 In this section, we establish an explicit relation between the walk centrality \(H_j\) and the Kemeny constant \(K\).
-We express both quantities in terms of quadratic forms of the pseudoinverse \(\lap^{\dagger}\) of graph Laplacian \(\lap\), which helps address their computational challenges.
+We then express both quantities in terms of quadratic forms of the pseudoinverse \(\lap^{\dagger}\) of graph Laplacian \(\lap\), which is helpful to address their computational challenges.
 
 First, we show that the Kemeny constant \(K\) can be expressed in a linear combination of the walk centrality  \(H_j\) for all vertices in \(\gr\), as stated in the following lemma.
-
-Although both the walk centrality \(H_j\) and the Kemeny constant \(K\) have attracted much attention from the scientific community, the relation between  them for a generic  graph  \(\gr\) is still lacking. Below we show that the Kemeny constant \(K\) can be expressed in a linear combination of walk centrality  \(H_j\) for all vertices in \(\gr\), as stated in the following lemma.
-
+%Although both the walk centrality \(H_j\) and the Kemeny constant \(K\) have attracted much attention from the scientific community, the relation between  them for a generic  graph  \(\gr\) is still lacking. Below we show that the Kemeny constant \(K\) can be expressed in a linear combination of walk centrality  \(H_j\) for all vertices in \(\gr\), as stated in the following lemma.
 \begin{lemma}
     Let \(\gr=(V,E,w)\) be a connected weighted graph. Then, its  Kemeny constant \(K\)  and walk centrality \(H_j\) obey the following relation:
     \begin{equation}\label{HjK01}
@@ -302,10 +293,11 @@ After obtaining the relation governing the Kemeny constant \(K\)  and walk centr
     Substituting~\eqref{EE09}  into~\eqref{HjK01} gives~\eqref{Kemeny03}.
 \end{IEEEproof}
 
-According to \lemref{HjK}, we can simplify the task of computing \(H_j\) and \(K\) by evaluating the quadratic forms of matrix \(\lap^{\dagger}\).
-Unfortunately, the direct computation of \(\lap^{\dagger}\) still has a complexity of \(O(n^3)\), which makes it impractical for larger networks.
+%According to \lemref{HjK}, we reduce the task of computing \(H_j\) and \(K\) to evaluating the quadratic forms of matrix \(\lap^{\dagger}\). Unfortunately,  direct computation of \(\lap^{\dagger}\) still has a complexity of \(O(n^3)\), which makes it impractical for larger networks.
 
-\section{Fast Approximation Algorithm for Computing \(H_j\) and \(K\)}\label{sec:approx-algo1}
+%\section{Fast Approximation Algorithm for Computing \(H_j\) and \(K\)}
+
+\section{Fast Approximation Algorithm for Walk Centrality and  Kemeny Constant}\label{sec:approx-algo1}
 
 In the preceding section, we reduce the problem of computing  \(H_j\) and \(K\) to evaluating the quadratic forms \((\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), \(u=1,2,\ldots, n\), of matrix  \(\lap^{\dagger}\).
 However,  this involves computing the pseudoinverse of \(\lap\), the straightforward computation for which still has a complexity of \(O(n^3)\), making it infeasible to huge networks. Here, we present an algorithm to compute an approximation of \(H_u\) for all  \(u \in V\) and \(K\)  in nearly linear time with respect to the number of edges,  which has a strict theoretical guarantee with  high probability.
@@ -322,16 +314,17 @@ Let \(C(u)=(\vece_u - \vecpi)^{\top} \lap^{\dagger} (\vece_u- \vecpi)\), which c
     \end{equation}
 \end{small}
 This  in fact  equals the square of the distance between  vectors  \(\matw^{\frac{1}{2}} \matb \lap^{\dagger} \vece_u\) and \(\matw^{\frac{1}{2}} \matb \lap^{\dagger} \vecpi\), which can be evaluated by the Johnson-Lindenstraus
-Lemma~\cite{Ac01}.
+Lemma (JL Lemma)~\cite{Ac01}.
 
-\begin{lemma}[Johnson-Lindenstraus Lemma, JL Lemma~\cite{Ac01}]
+\begin{lemma}[JL Lemma~\cite{Ac01}]
     \label{lemma:JL}
-    Given fixed vectors \(\vecv_1,\vecv_2,\ldots,\vecv_n\in \mathbb{R}^d\) and
+    Given $n$ fixed vectors \(\vecv_1,\vecv_2,\ldots,\vecv_n\in \mathbb{R}^d\) and
     \(\epsilon>0\), let
     \(\matq_{k\times d}\),  \(k\ge 24\log n/\epsilon^2\), be a matrix with each  entry equal  to \(1/\sqrt{k}\) or \(- 1/\sqrt{k}\)  with the same probability \(1/2\). Then with probability at least \(1-1/n\),
     \[(1-\epsilon)\|\vecv_i-\vecv_j\|^2\le \|\matq \vecv_i-\matq \vecv_j\|^2\le
         (1+\epsilon)\|\vecv_i-\vecv_j\|^2\] for all pairs \(i,j\le n\).
 \end{lemma}
+
 \lemref{lemma:JL} indicates that,  the pairwise distances \(\|\vecv_i-\vecv_j\|^2\) (\(i,j=1,2,\ldots, n\)) are almost preserved if we project the \(n\) vectors \(\vecv_i\) (\(i=1,2,\ldots, n\))  into a lower-dimensional space, spanned
 by \(O(\log n)\) random vectors.
 
@@ -344,15 +337,16 @@ In order to compute  \(C(u)\), we use Lemma~\ref{lemma:JL} to reduce the dimensi
     a column vector \(\vecy\), and an error
     parameter \(\delta > 0\), and returns a column vector \(\vecx\) satisfying  \(\boldsymbol{1}^\top\vecx = 0\) and
     \[
-        \|\vecx - \lap^{-1} \vecy\|_{\lap} \leq \delta \|\lap^{-1} \vecy\|_{\lap},
+        \|\vecx - \lap^{\dagger} \vecy\|_{\lap} \leq \delta \|\lap^{\dagger} \vecy\|_{\lap},
     \]
     where \(\Abs{\vecy}_{\lap} = \sqrt{\vecy^{\top} \lap \vecy}\).
-    The notation \(\lap^{-1}\) is used to represent the inverse matrix for a SDDM matrix or the pseudoinverse matrix for a Laplacian matrix.
+    %The notation \(\lap^{\dagger}\) is used to represent the inverse matrix for a SDDM matrix or the pseudoinverse matrix for a Laplacian matrix.
     The algorithm runs in expected time \(\Otil \left(m \log(1/\delta) \right)\).
 \end{lemma}
 
 By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitrarily well.
 
+\textcolor{red}{proof of lemma 4.3}
 \begin{lemma}\label{lem:error1}
     Given an approximation factor \(\epsilon \le 1/2\) and a \(k\times n\) matrix \(\matz\) that satisfies
     \[
@@ -985,7 +979,7 @@ To this end, we need to utilize the following two lemmas.
     Since \(\gr\) is connected, the length of a simple path connecting vertex \(u\) with any vertex in \(S\) is no more than \(n\).
     Combining~\eqref{eq:phy-resist}, we have
     \begin{align*}
-        \trace{\lap_{-S}^{-1}} & =\sum_{i=1}^n\vece_i^\top\lap_{-S}^{-1}\vece_i=\sum_{i=1}^nR_{iS}                     \\
+        \trace{\lap_{-S}^{-1}} & =\sum_{i=1}^n\vece_i^\top\lap_{-S}^{-1}\vece_i=\sum_{i=1}^nR_{iS}              \\
                                & \le\sum_{i=1}^n\sum_{\edge{a}{b}\in\pscr_{iS}}w_{ab}^{-1}\le n^2w_{\min}^{-1}.
     \end{align*}
 \end{IEEEproof}
