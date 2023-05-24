@@ -27,7 +27,8 @@
 }
 
 \markboth{IEEE Transactions on Information Theory}
-{Xia \MakeLowercase{\textit{et al.}}: Absorbing Time of Random Walks as a Node Group Centrality}
+% {Xia \MakeLowercase{\textit{et al.}}: Absorbing Time of Random Walks as a Node Group Centrality}
+{Xia \MakeLowercase{\textit{et al.}}: Means of Hitting Times for Random Walks on Graphs: Connections, Computation, and Optimization}
 
 \IEEEtitleabstractindextext{
     \begin{abstract}
@@ -135,7 +136,7 @@ Note that the subscript takes precedence over the superscript, thus \(\mata_{-S}
 
 
 \begin{definition}[\(\epsilon\)-approximation]
-    Let \(x\) and \(\tilde{x}\) be positive scalars, with \(\epsilon\) as the error parameter such that \(\epsilon\in(0,1)\). We refer to \(\tilde{x}\) as an \(\epsilon\)-approximation of \(x\) if the inequality \((1-\epsilon)\tilde{x}\le x\le(1+\epsilon)\tilde{x}\) holds. For convenience, we write this as \(x\approx_{\epsilon}\tilde{x}\).
+    Let \(x\) and \(\tilde{x}\) be positive scalars, with \(\epsilon\) as the error parameter such that \(\epsilon\in(0,1)\). We refer to \(\tilde{x}\) as an \(\epsilon\)-approximation of \(x\) if the inequality \((1-\epsilon)x\le \tilde{x}\le(1+\epsilon)x\) holds. For convenience, we write this as \(x\approx_{\epsilon}\tilde{x}\).
 \end{definition}
 
 
@@ -321,8 +322,10 @@ Lemma (JL Lemma)~\cite{Ac01}.
     Given $n$ fixed vectors \(\vecv_1,\vecv_2,\ldots,\vecv_n\in \mathbb{R}^d\) and
     \(\epsilon>0\), let
     \(\matq_{k\times d}\),  \(k\ge 24\log n/\epsilon^2\), be a matrix with each  entry equal  to \(1/\sqrt{k}\) or \(- 1/\sqrt{k}\)  with the same probability \(1/2\). Then with probability at least \(1-1/n\),
-    \[(1-\epsilon)\|\vecv_i-\vecv_j\|^2\le \|\matq \vecv_i-\matq \vecv_j\|^2\le
-        (1+\epsilon)\|\vecv_i-\vecv_j\|^2\] for all pairs \(i,j\le n\).
+    \begin{equation*}
+        \Abs{\vecv_i-\vecv_j}^2\approx_\epsilon\Abs{\matq\vecv_i-\matq\vecv_j}^2
+    \end{equation*}
+    for all pairs \(i,j\le n\).
 \end{lemma}
 
 \lemref{lemma:JL} indicates that,  the pairwise distances \(\|\vecv_i-\vecv_j\|^2\) (\(i,j=1,2,\ldots, n\)) are almost preserved if we project the \(n\) vectors \(\vecv_i\) (\(i=1,2,\ldots, n\))  into a lower-dimensional space, spanned
@@ -349,21 +352,13 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitr
 \textcolor{red}{proof of lemma 4.3}
 \begin{lemma}\label{lem:error1}
     Given an approximation factor \(\epsilon \le 1/2\) and a \(k\times n\) matrix \(\matz\) that satisfies
-    \[
-        (1-\epsilon) C(u)
-        \leq
-        \|\matz (\vece_{u} - \vecpi)\|^{2}
-        \leq
-        (1+\epsilon)  C(u),
-    \]
+    \begin{equation*}
+        C(u)\approx_\epsilon\Abs{\matz\mypar{\vece_u-\vecpi}}^2,
+    \end{equation*}
     for any vertex \(u\in V\) and
-    \begin{align*}
-             & (1-\epsilon) \|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u-\vece_v)\|^2 \\
-        \leq &
-        \|\matz (\vece_u - \vece_v)\|^2                                                      \\
-        \leq &
-        (1+\epsilon) \|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_u-\vece_v)\|^2
-    \end{align*}
+    \begin{equation*}
+        \Abs{\matw^{\frac{1}{2}}\matb\lap^\dagger\mypar{\vece_u-\vecv_v}}^2\approx_\epsilon\Abs{\matz\mypar{\vece_u-\vecv_v}}^2
+    \end{equation*}
     for any pair of vertices \(u,v \in V\).
     Let \(\vecz_i\) be the \(i\)-th row of \(\matz\) and let \(\tilde{\vecz}_i\) be an approximation of \(\vecz_i\) for all \(i \in \{1,2,...,k\}\), satisfying
     \begin{equation}\label{EE13} \|\vecz_i-\tilde{\vecz}_i\|_{\lap}\le\delta
@@ -413,7 +408,7 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitr
         \le & \|{\tilmatz(\vece_u-\vecpi)}\|^2                                                      \\
         \le & \left(1+\frac{2\epsilon}{3}+\frac{\epsilon^2}{9}\right)\Abs{\matz(\vece_u-\vecpi)}^2,
     \end{align*}
-    which, combining with \(\epsilon \le 1/2\) and the assumption that \((1-\epsilon) C(u)\leq\|\matz (\vece_{u} - \vecpi)\|^{2}\leq(1+\epsilon)  C(u)\), leads to Eq.~\eqref{EE15}.
+    which, combining with \(\epsilon \le 1/2\) and the assumption that \(C(u)\approx_\epsilon\Abs{\matz\mypar{\vece_u-\vecpi}}^2\), leads to Eq.~\eqref{EE15}.
     On the other hand, if Eq.~\eqref{EE16} is true, we have \(\|\tilmatz(\vece_u-\vecpi)\| \le (1+\frac{\epsilon}{3})\Abs{\matz(\vece_u-\vecpi)}\). Thus,
     \begin{equation*}
         \abs{\Abs{\matz(\vece_u-\vecpi)}+\|\tilmatz(\vece_u-\vecpi)\|} \le (2+\frac{\epsilon}{3})\Abs{\matz(\vece_u-\vecpi)},
