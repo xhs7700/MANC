@@ -165,7 +165,7 @@ For graph \(\gr\), the resistance distance \(R_{ij}\) between two vertices \(i\)
 \begin{equation}\label{EE04}
     R_{ij}={\lap}_{[i,i]}^{\dagger}+{\lap}_{[j,j]}^{\dagger}-2{\lap}_{[i,j]}^{\dagger}.
 \end{equation}
-Define \(\matr\) as the \(n \times n\) resistance matrix of graph \(\gr\), whose entry at row \(i\) and column \(j\) represents the resistance distance \(R_{ij}\) between vertices \(i\) and \(j\).
+Define \(\matr\) as the \(n \times n\) resistance matrix of graph \(\gr\), whose entry \(R_{[i,j]}\) at row \(i\) and column \(j\) represents the resistance distance \(R_{ij}\) between vertices \(i\) and \(j\).
 
 \begin{lemma}\label{Foster} \cite{Te91}
     Let \(\gr=(V,E,w)\) be a simple connected graph with \(n\) vertices. Then the sum of  weight times resistance distance over all pairs of adjacent vertices in  \(\gr\)  satisfies
@@ -175,7 +175,7 @@ Define \(\matr\) as the \(n \times n\) resistance matrix of graph \(\gr\), whose
     %where the summation is taken over all  edges in \(\gr\).
 \end{lemma}
 
-Similarly, We can also define the resistance distance \(R_{iS}\) between a vertex $i$ and a group  \(S\) of vertices. In the electrical network \(\bar{\gr}\) corresponding to graph \(\gr\), if all  the vertices in group \(S\) are grounded, the voltage of all set their in  \(S\) is always zero.
+Similarly, We can also define the resistance distance \(R_{iS}\) between a vertex $i$ and a group  \(S\) of vertices. In the electrical network \(\bar{\gr}\) corresponding to graph \(\gr\), if all  the vertices in group \(S\) are grounded, the voltage of all vertices in set  \(S\) is always zero.
 Then the resistance distance \(R_{iS}\) between vertex \(i\) and vertex group \(S\) is defined as the voltage of \(i\) when a unit current enters \(\bar{\gr}\) at vertex $i$ and leaves \(\bar{\gr}\) at  vertices in \(S\).  Let \(\pscr_{iS}\) denote a simple path connecting vertex \(i\) and an arbitrary vertex in \(S\). Then, the following relation holds:
 \begin{equation}\label{eq:phy-resist}
     R_{iS}\le \sum_{\edge{a}{b}\in\pscr_{iS}}w_{ab}^{-1}\,.
@@ -186,7 +186,7 @@ Then the resistance distance \(R_{iS}\) between vertex \(i\) and vertex group \(
 
 \subsection{Random Walk on a Graph}
 
-For a connected weighted graph \(\gr\) with \(n\) vertices, the classical random walk model on \(\gr\) can be described by the transition matrix \(\matp\in\rea^{n\times n}\). At any time step, the walker located at vertex \(i\) moves to vertex \(j\) with probability \({\matp_{[i,j]}=d_i^{-1}\mata_{[i,j]}}\).
+For a connected weighted graph \(\gr\) with \(n\) vertices, the classical random walk on \(\gr\) can be described by the transition matrix \(\matp\in\rea^{n\times n}\). At any time step, the walker located at vertex \(i\) moves to vertex \(j\) with probability \({\matp_{[i,j]}=d_i^{-1}\mata_{[i,j]}}\).
 It is easy to verify that
 \begin{equation}\label{eq:trs}
     \matp=\matd^{-1}\mata.
@@ -208,9 +208,9 @@ There is an intimate relationship between hitting time and resistance distance~\
     \end{equation}
 \end{lemma}
 
-A lot of interesting quantities can be derived from hitting times. Here we only consider three quantities, the absorbing random-walk centrality~\cite{WhSm03,MaMaGi15}, the Kemeny constant~\cite{Hu14}, and the random detour time~\cite{RaZh13}.
+A lot of interesting quantities can be derived from hitting times. Here we only consider three quantities, the absorbing random-walk centrality~\cite{WhSm03,MaMaGi15}, the Kemeny constant~\cite{Hu14}, and the random detour time~\cite{BoRaZh11,RaZh13}.
 
-For a vertex \(j\) in graph \(\gr=(V,E,w)\), its absorbing random-walk centrality \(H_j\) is defined as \(H_j=\sum_{i} \rho(i) H_{ij}\), where \(\rho(\cdot)\) is the starting probability distribution over all vertices in \(V\). By definition, \(H_j\) is a weighted average of hitting times to vertex \(j\). The smaller the value of \(H_j\), the more important the vertex \(j\). The random-walk based centrality has an obvious advantage over those shortest-path based centrality measures~\cite{Ne05}. In this paper, we concentrate on a natural choice of  \(\rho(\cdot)\) by selecting the starting vertex from the stationary distribution \(\vecpi\). In this case, \(H_j=\sum_{i} \pi_i H_{ij}\), which has been much studied~\cite{TeBeVo09,Be09,Be16}. In the following text, we  call \(H_j=\sum_{i} \pi_i H_{ij}\) \textit{walk centrality} for short.
+For a vertex \(j\) in graph \(\gr=(V,E,w)\), its absorbing random-walk centrality \(H_j\) is defined as \(H_j=\sum_{i} \rho(i) H_{ij}\), where \(\rho(\cdot)\) is the starting probability distribution over all vertices in \(V\). By definition, \(H_j\) is a weighted average of hitting times to vertex \(j\). The smaller the value of \(H_j\), the more important the vertex \(j\). The random-walk based centrality has an obvious advantage over those shortest-path based centrality measures~\cite{Ne05}. In~\cite{WhSm03,MaMaGi15}, the uniform distribution for \(\rho(\cdot)\) is considered for the starting  vertices. In this paper, we concentrate on a natural choice of  \(\rho(\cdot)\) by selecting the starting vertex from the stationary distribution \(\vecpi\). In this case, \(H_j=\sum_{i} \pi_i H_{ij}\), which has been much studied~\cite{TeBeVo09,Be09,Be16}. In the following text, we  call \(H_j=\sum_{i} \pi_i H_{ij}\) \textit{walk centrality} for short.
 
 Another quantity we are concerned with is the Kemeny constant \(K\). For a graph \(\gr\), its Kemeny constant \(K\) is defined as the expected steps for a walker starting from  vertex \(i\) to vertex \(j\) selected randomly from the vertex set \(V\), according to the stationary distribution \(\vecpi\). That is, \(K = \sum_{j = 1}^{n} \pi_j H_{ij}\). The Kemeny constant has been used to measure the user navigation efficiency through the WWW~\cite{LeLo02} and  robotic surveillance efficiency in network environments~\cite{PaAgBu15}. It can also measure the mixing rate of random walks~\cite{LePeWi09}.
 
@@ -269,7 +269,7 @@ After obtaining the relation governing the Kemeny constant \(K\)  and walk centr
     \begin{equation}\label{EE05}
         \begin{split}
             H_j&=\frac{1}{2} \sum_{i=1}^{n} \pi_i \sum_{z=1}^{n} d_z(R_{ij}+R_{jz}-R_{iz}) \\
-            &=\frac{1}{s} \sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z \left({\lap}_{[j,j]}^{\dagger}-{\lap}_{[i,j]}^{\dagger}-{\lap}_{[j,z]}^{\dagger}+{\lap}_{[i,z]}^{\dagger}\right) \\
+            &=\frac{1}{d} \sum_{i=1}^{n} d_i \sum_{z=1}^{n} d_z \left({\lap}_{[j,j]}^{\dagger}-{\lap}_{[i,j]}^{\dagger}-{\lap}_{[j,z]}^{\dagger}+{\lap}_{[i,z]}^{\dagger}\right) \\
         \end{split}
     \end{equation}
 
@@ -325,7 +325,7 @@ Lemma (JL Lemma)~\cite{Ac01}.
     \begin{equation*}
         \Abs{\vecv_i-\vecv_j}^2\approx_\epsilon\Abs{\matq\vecv_i-\matq\vecv_j}^2
     \end{equation*}
-    for all pairs \(i,j\le n\).
+    for all all pairs  \(i,j\le n\).
 \end{lemma}
 
 \lemref{lemma:JL} indicates that,  the pairwise distances \(\|\vecv_i-\vecv_j\|^2\) (\(i,j=1,2,\ldots, n\)) are almost preserved if we project the \(n\) vectors \(\vecv_i\) (\(i=1,2,\ldots, n\))  into a lower-dimensional space, spanned
@@ -349,7 +349,6 @@ In order to compute  \(C(u)\), we use Lemma~\ref{lemma:JL} to reduce the dimensi
 
 By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitrarily well.
 
-\textcolor{red}{proof of lemma 4.3}
 \begin{lemma}\label{lem:error1}
     Given an approximation factor \(\epsilon \le 1/2\) and a \(k\times n\) matrix \(\matz\) that satisfies
     \begin{equation*}
@@ -438,10 +437,11 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitr
              & = n^2 \Abs{(\matz - \tilmatz ) \matb^{\top}}_{F}^{2}                                                       \\
              & = n^2 \Abs{\matb(\matz - \tilmatz )^{\top}}_{F}^{2}                                                        \\
              & \leq
-            \frac{n^2}{w_{\min}} \Abs{\matw^{1/2} \matb(\matz - \tilmatz )^{\top}}_{F}^{2}\,,
+            \frac{n^2}{w_{\min}} \Abs{\matw^{1/2} \matb(\matz - \tilmatz )^{\top}}_{F}^{2}\,.
         \end{align*}
     \end{small}
-    where \(\| \matm \|_{F}\) denotes the Frobenius norm of  matrix \(\matm\),  defined as the square root of the trace for matrix \(\matm^{\top} \matm\). The last term can be bounded as
+    % where \(\| \matm \|_{F}\) denotes the Frobenius norm of  matrix \(\matm\),  defined as the square root of the trace for matrix \(\matm^{\top} \matm\). 
+    The last term can be bounded as
     \begin{small}
         \begin{align*}
                 & \frac{n^2}{w_{\min}} \Abs{\matw^{1/2} \matb(\matz - \tilmatz )^{\top}}_{F}^{2}                      \\
@@ -474,9 +474,10 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitr
          & =
         \frac{\delta^{2} n^2 (1+\epsilon)}{w_{\min}}
         \sum_{a\sim b \in E} w_{a\sim b} R_{ab}                                                                                       \\
-         & =\frac{\delta^{2} n^2(n-1) (1+\epsilon)}{w_{\min}}.
+         & =\frac{\delta^{2} n^2(n-1) (1+\epsilon)}{w_{\min}},
     \end{align*}
     %\end{small}
+    where $w_{a\sim b}$ represents the weight of the edge with endvertices $a$ and $b$.
     %The last inequality follows by the fact that  \(\sum_{a\sim b \in E} w_{a\sim b} R_{ab} = n-1\).
 
     In addition, \(\Abs{\matz (\vece_u - \vecpi)}^2\) can also be bounded by
@@ -546,49 +547,33 @@ Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \(\text{Approx}\mathca
     \Return \(\tilde{H}=\{u,\tilde{H}_u| u \in V\}\) and \(\tilde{K}\)
 \end{algorithm}
 
-\section{Absorbing Group Centrality (AGC)}
+\section{Absorbing Group Centrality }
 
-After presenting the walk centrality \(H_j\) and the Kemeny constant \(K\), we extend the notion of mean hitting time to the case of multiple vertices.
-In this section, we provide the definition of Absorbing Group Centrality (AGC).
-We also discuss the connections between AGC and other quantities related to random walk, such as the random detour time, the Kemeny constant and the equivalent electrical network of the augmented graph.
-Furthermore, we demonstrate monotonicity and supermodularity of AGC \(\manc{\cdot}\).
+In this section, we extend the walk centrality \(H_j\) to the case of a group  $S$ of  vertices, denoted as \(H(S)\) and called absorbing group centrality (AGC), which measures the relative importance of the vertex group $S$. We first give the definition of AGC. Then, we provide an examination of AGC, by establishing a connection between AGC and random detour time and the Kemeny constant. Finally, we show that as a set function \(\manc{\cdot}\), AGC is monotonic and supermodular.
+
+%After presenting the walk centrality \(H_j\) and the Kemeny constant \(K\), we extend the notion of mean hitting time to the case of multiple vertices. In this section, we provide the definition of Absorbing Group Centrality (AGC). We also discuss the connections between AGC and other quantities related to random walk, such as the random detour time, the Kemeny constant and the equivalent electrical network of the augmented graph. Furthermore, we demonstrate monotonicity and supermodularity of AGC \(\manc{\cdot}\).
 
 \subsection{Definition of AGC}
 
-We utilize the concept of absorbing random walk to define AGC.
-For a group of vertices \(S\) in a connected graph \(\gr=(V,E)\), the group hitting time \(H_{iS}\) from vertex \(i\) to vertex group \(S\) is the expected number of steps for a walker starting from \(i\) to visit any vertex of \(S\) for the first time.
-Also, if we denote the time steps for a walker starting from \(i\) to first reach an arbitary vertex of \(S\) as random variable \(T_{iS}\), then we have \(H_{iS}=\mean{T_{iS}}\).
+We utilize absorbing random walks with multiple traps~\cite{ZhYaLi12} to define AGC. For random walks on a connected graph \(\gr=(V,E)\) with vertices in set  \(S\) being traps (absorbing vertices), the hitting time (absorbing time) \(H_{iS}\) from vertex \(i\) to vertex group \(S\) is the expected number of steps for a walker starting from \(i\) to visit any vertex of \(S\) for the first time. If we denote the time steps for a walker starting from \(i\) to first reach an arbitrary vertex in \(S\) as random variable \(T_{iS}\), then we have \(H_{iS}=\mean{T_{iS}}\). Based on the hitting time \(H_{iS}\) to  vertex group $S$, we define the AGC of a set of vertices.
 
-It is intuitive that if group hitting time \(H_{iS}\) is relatively small for every vertex \(i\) in \(\gr\), then we can consider vertex group \(S\) as a central group.
-Building on this idea, we give the definition of AGC.
 
 \begin{definition}[Absorbing Group Centrality, AGC]\label{def:manc}
-    For a given vertex group \(S\) in a connected undirected graph \(\gr=(V,E)\), we define its AGC \(\manc{S}\) to be the expected time it takes a random walker, starting from any vertex in the graph, to reach any vertex in \(S\). Here, the starting vertex is chosen according to the stationary distribution \(\vecpi\). We can calculate \(\manc{S}\) using the following formula:
+    For a given vertex group \(S\) in a connected undirected graph \(\gr=(V,E)\), its AGC \(\manc{S}\) is defined as the expected time for a random walker starting from a vertex chosen from \(\gr\) according to the stationary distribution \(\vecpi\), to reach any vertex in \(S\).  Mathematically, \(\manc{S}\) is expressed as follows:
     \begin{equation*}
         \manc{S}=\sum_{i\in V}\pi_i H_{iS}.
     \end{equation*}
 \end{definition}
+Note that for the case that set \(S\) contains only one vertex \(j\), AGC \(\manc{S}\) reduces to walk centrality \(H_j\). If  \(\manc{S}\) is larger, then the vertices in  \(S\) are easily accessible, which means that the vertices in  \(S\) are more peripheral, and are thus less important;  if  \(\manc{S}\) is smaller, then the vertices in  \(S\) more important.
 
-It is obvious that when \(S\) contains only one vertex \(j\), AGC \(\manc{S}\) automatically reduces to walk centrality \(H_j\).
-
-As stated in~\cite{KeSn76}, we can convert the AGC definition into the inverse of a SDDM matrix.
-
-\begin{fact}
-    Given the absorbing vertex group \(S\) and transition matrix \(\matp\), then the fundamental matrix \(\matf\) can be denoted as
-    \begin{equation}\label{eq:funda}
-        \matf=\sum_{l=0}^\infty\matp_{-S}^l=(\mati-\matp_{-S})^{-1}=(\mati-\matp)_{-S}^{-1}.
-    \end{equation}
-\end{fact}
-
-Based on~\eqref{eq:funda}, we can express \(\matf_{[i,j]}\) as the expected number of times a random walker passes through vertex \(j\) before being absorbed, starting from vertex \(i\).
-According to the linearity of the mean, the hitting time of a random walker is equivalent to the sum of the expected number of passages through all vertices in the graph. That is, if we let \(l_i\) denote the hitting time of a random walker starting from vertex \(i\), then \(\vecl=\matf\vecone\).
-In particular, if the random walker starts from an absorbing vertex, the hitting time can be considered as zero.
-Considering the aforementioned case, we can express AGC \(\manc{S}\) as
+We now give an expression for \(\manc{S}\). For random walks in graph \(\gr=(V,E)\) with absorbing vertex group \(S\) and transition matrix \(\matp\),  the fundamental matrix \(\matf\) is~\cite{ZhYaLi12}    \begin{equation}\label{eq:funda}
+    \matf=\sum_{l=0}^\infty\matp_{-S}^l=(\mati-\matp_{-S})^{-1}=(\mati-\matp)_{-S}^{-1}.
+\end{equation}
+From~\eqref{eq:funda}, we can see that  the entry \(\matf_{[i,j]}\) of matrix  \(\matf\) is the expected number of times a random walker starting from vertex \(i\) visits vertex \(j\) before being absorbed by vertices in  \(\manc{S}\). The, \(\manc{S}\)  can be expressed as
 \begin{equation*}
-    \manc{S}=\vecpi_{-S}^\top\vecl=\vecpi_{-S}^\top\matf\vecone=\vecpi_{-S}^\top(\mati-\matp)_{-S}^{-1}\vecone.
+    \manc{S}=\vecpi_{-S}^\top\matf\vecone=\vecpi_{-S}^\top(\mati-\matp)_{-S}^{-1}\vecone.
 \end{equation*}
-
-Furthermore, after simplification using~\eqref{eq:trs}, we get the formula of \(\manc{S}\):
+By using~\eqref{eq:trs}, \(\manc{S}\) can be further written as
 \begin{equation}\label{eq:AGC}
     \begin{split}
         \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\vecone                          \\
@@ -596,9 +581,16 @@ Furthermore, after simplification using~\eqref{eq:trs}, we get the formula of \(
         & =\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}.
     \end{split}
 \end{equation}
+Since $\lap_{-S}$ is an SDDM matrix, according to~\eqref{eq:AGC} and \lemref{lemma:ST}, we can approximately compute AGC of any given vertex group \(S\) by calling \(\mathtt{Solve}\mypar{\lap_{-S},\vecd_{-S},\delta}\). We omit the detail of this approximation algorithm, since  it simply utilizes~\lemref{lemma:ST}.
 
-According to \eqref{eq:AGC} and \lemref{lemma:ST}, we can easily compute AGC of any given vertex group \(S\) by calling \(\mathtt{Solve}\mypar{\lap_{-S},\vecd_{-S},\delta}\).
-The detail of this approximation algorithm is skipped as it simply utilizes \lemref{lemma:ST}.
+
+%Based on~\eqref{eq:funda}, we can express \(\matf_{[i,j]}\) as the expected number of times a random walker passes through vertex \(j\) before being absorbed, starting from vertex \(i\). According to the linearity of the mean, the hitting time of a random walker is equivalent to the sum of the expected number of passages through all vertices in the graph. That is, if we let \(l_i\) denote the hitting time of a random walker starting from vertex \(i\), then \(\vecl=\matf\vecone\). In particular, if the random walker starts from an absorbing vertex, the hitting time can be considered as zero. Considering the aforementioned case, we can express AGC \(\manc{S}\) as
+
+
+
+
+
+
 
 \subsection{Physical Explanations of AGC}
 
