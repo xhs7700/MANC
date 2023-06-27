@@ -649,14 +649,10 @@ Additionally, Ranjan et al.~\cite{RaZh13} establishes a link between random deto
 By leveraging this connection along with \thmref{thm:connection-multiple}, we can establish another link between GWC and the equivalent electrical network of the augmented graph.
 
 We'll start by defining the augmented graph.
-Given a graph \(\gr=\mypar{V,E,w}\) with a group of absorbing vertices \(S\), we'll replace all vertices in \(S\) with a new vertex \(s\) to create the augmented graph \(\gr'=\mypar{V',E',w'}\) where \(\abs{V'}=n'\).
-For edges \(e=\edge{u}{v}\) in the original graph:
-\begin{enumerate}
-    \item If both \(u\) and \(v\) are in \(V\) but not in \(S\), we'll keep \(e\) in the augmented graph, where \(w'_e=w_e\);
-    \item If \(u\) is in \(V\) but not in \(S\), and \(v\) is in \(S\), we'll add \(e'=\edge{u}{s}\) to the augmented graph. Note that there may be multiple vertices in \(S\) connected to \(u\), so the weight of this new edge should be the sum of the weights of all corresponding old edges. That is, \(w'_e=\sum\limits_{e=\edge{u}{v},v\in S}w_e\);
-    \item If \(u\) is in \(S\) and \(v\) is in \(V\) but not in \(S\), we'll treat \(e\) as \(e=\edge{v}{u}\), since \(\gr\) is undirected;
-    \item If both \(u\) and \(v\) are in \(S\), \(e\) is redundant as both vertices are absorbing.
-\end{enumerate}
+Given a graph \(\gr=\mypar{V,E,w}\) with a group of absorbing vertices \(S\), we'll replace all vertices in \(S\) with a new vertex \(s\) to create the augmented graph \(\gr'=\mypar{V',E',w'}\) where \(V'=\mypar{V\setminus S}\cup\setof{s}\).
+If we denote the set of neighbours of vertex \(v\) as \(\mathcal{N}_v\), then \(E'\) can be represented as \(E\setminus\setof{\edge{u}{v}|u,v\in S}\cup\setof{\edge{u}{s}|u\in\mathcal{N}_v,v\in S}\), where the original edges keep their weight.
+As there may exist multiple edges like \(\edge{u}{s}\), \(w'_{us}\) should be the sum of the weights of all corresponding old edges.
+\figref{fig:augmented-graph} displays an example of creating the augmented graph \(\gr'\) from the original graph \(\gr\).
 
 \begin{figure}[!t]
     \centering
@@ -664,8 +660,6 @@ For edges \(e=\edge{u}{v}\) in the original graph:
     \caption{An example of constructing an augmented graph \(\gr'\) from the original graph \(\gr\), where  vertices in set $S$ are traps. Each edge with a label is an edge with  weight \(1\).}
     \label{fig:augmented-graph}
 \end{figure}
-
-\figref{fig:augmented-graph} displays an example of creating the augmented graph \(\gr'\) from the original graph \(\gr\).
 
 Subsequently, we can establish a new link between GWC and the equivalent electrical network of the augmented graph.
 
