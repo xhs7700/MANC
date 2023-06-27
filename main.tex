@@ -552,9 +552,9 @@ In this section, we extend the walk centrality \(H_j\) to the case of a group  $
 
 %After presenting the walk centrality \(H_j\) and the Kemeny constant \(K\), we extend the notion of mean hitting time to the case of multiple vertices. In this section, we provide the definition of Group Walk Centrality (GWC). We also discuss the connections between GWC and other quantities related to random walk, such as the random detour time, the Kemeny constant and the equivalent electrical network of the augmented graph. Furthermore, we demonstrate monotonicity and supermodularity of GWC \(\manc{\cdot}\).
 
-\subsection{Definition of GWC}
+\subsection{Definition and Expression}
 
-We utilize absorbing random walks with multiple traps~\cite{ZhYaLi12} to define GWC. For random walks on a connected graph \(\gr=(V,E)\) with vertices in set  \(S\) being traps (absorbing vertices), the hitting time (absorbing time) \(H_{iS}\) from vertex \(i\) to vertex group \(S\) is the expected number of steps for a walker starting from \(i\) to visit any vertex of \(S\) for the first time. If we denote the time steps for a walker starting from \(i\) to first reach an arbitrary vertex in \(S\) as random variable \(T_{iS}\), then we have \(H_{iS}=\mean{T_{iS}}\). Based on the hitting time \(H_{iS}\) to  vertex group $S$, we define the GWC of a set of vertices.
+We utilize absorbing random walks with multiple traps~\cite{ZhYaLi12} to define GWC. For random walks on a connected graph \(\gr=(V,E)\) with vertices in set  \(S\) being traps (absorbing vertices), the hitting time (absorbing time) \(H_{iS}\) from vertex \(i\) to vertex group \(S\) is the expected number of steps for a walker starting from \(i\) to visit any vertex of \(S\) for the first time. If we denote the time steps for a walker starting from \(i\) to first reach an arbitrary vertex in \(S\) as random variable \(T_{iS}\), then we have \(H_{iS}=\mean{T_{iS}}\). Based on the hitting time \(H_{iS}\) to a vertex group $S$, we define the GWC of a set of vertices.
 
 
 \begin{definition}[Group Walk Centrality, GWC]\label{def:manc}
@@ -563,12 +563,12 @@ We utilize absorbing random walks with multiple traps~\cite{ZhYaLi12} to define 
         \manc{S}=\sum_{i\in V}\pi_i H_{iS}.
     \end{equation*}
 \end{definition}
-Note that for the case that set \(S\) contains only one vertex \(j\), GWC \(\manc{S}\) reduces to walk centrality \(H_j\). If  \(\manc{S}\) is larger, then the vertices in  \(S\) are easily accessible, which means that the vertices in  \(S\) are more peripheral, and are thus less important;  if  \(\manc{S}\) is smaller, then the vertices in  \(S\) more important.
+Note that for the case that set \(S\) contains only one vertex \(j\), GWC \(\manc{S}\) reduces to walk centrality \(H_j\). If  \(\manc{S}\) is larger, then the vertices in  \(S\) are not easily accessible, which means that the vertices in  \(S\) are more peripheral, and are thus less important;  if  \(\manc{S}\) is smaller, then the vertices in  \(S\) are more important.
 
 We now give an expression for \(\manc{S}\). For random walks in graph \(\gr=(V,E)\) with absorbing vertex group \(S\) and transition matrix \(\matp\),  the fundamental matrix \(\matf\) is~\cite{ZhYaLi12}    \begin{equation}\label{eq:funda}
     \matf=\sum_{l=0}^\infty\matp_{-S}^l=(\mati-\matp_{-S})^{-1}=(\mati-\matp)_{-S}^{-1}.
 \end{equation}
-From~\eqref{eq:funda}, we can see that  the entry \(\matf_{[i,j]}\) of matrix  \(\matf\) is the expected number of times a random walker starting from vertex \(i\) visits vertex \(j\) before being absorbed by vertices in  \(\manc{S}\). The, \(\manc{S}\)  can be expressed as
+From~\eqref{eq:funda}, we can see that  the entry \(\matf_{[i,j]}\) of matrix  \(\matf\) is the expected number of times a random walker starting from vertex \(i\) visits vertex \(j\) before being absorbed by vertices in  \(\manc{S}\). Then, \(\manc{S}\)  can be expressed as
 \begin{equation*}
     \manc{S}=\vecpi_{-S}^\top\matf\vecone=\vecpi_{-S}^\top(\mati-\matp)_{-S}^{-1}\vecone.
 \end{equation*}
@@ -590,26 +590,22 @@ Since $\lap_{-S}$ is an SDDM matrix, according to~\eqref{eq:GWC} and \lemref{lem
 
 
 
+\subsection{Two Explanations }
 
-\subsection{Physical Explanations of GWC}
+In this subsection, we provide two explanations for GWC \(\manc{S}\) in graph \(\gr=(V,E)\). First, we establish a link between GWC $H(S)$ and some other quantities related to hitting times for  random walks without traps in \(\gr=(V,E)\). Then, we provide interpretation for  \(\manc{S}\)  in terms of voltages of an electrical network corresponding to augmented graph of \(\gr=(V,E)\).
 
-\subsubsection{Connections with the random detour time}
+\subsubsection{Connection with Other Quantities of Random walks}
 
-After detailing GWC, we try to establish a connection between GWC \(\manc{S}\), the group random detour time \(D_{ij}(S)\) and the Kemeny constant \(K\).
-This allows us to understand the importance of vertex group \(S\) from a different perspective.
-A similar idea of random detour time was proposed in~\cite{RaZh13}, where the authors proved an equation related to topological centrality and random detour time of a single vertex.
-In this paper, we explore the random detour time of multiple vertices, providing a physical explanation of GWC.
 
-For vertex group \(S\) in graph \(\gr\), the group random detour time \(D_{ij}(S)\) is defined as the expected time of a walker who starts from vertex \(i\), must visit an arbitary vertex in group \(S\), then first reaches vertex \(j\).
+Here we establish a connection between GWC \(\manc{S}\) and some other quantities about hitting times.  We first introduce a notion of random detour walk $i\rightarrow S \rightarrow j$. It is a random walk starting from a vertex $i$, that must visit at least a vertex in set $S$ before it arrives at the target vertex $j$ and stops. The group random detour time  \(D_{ij}(S)\) for the random detour walk $i\rightarrow S \rightarrow j$ is defined as the expected time for the walker starting from vertex \(i\) to visit at least a vertex in group \(S\), and then reaches vertex \(j\) for the first time. Note that when set $S$ includes only one vertex $k$, $i\rightarrow S \rightarrow j$ and \(D_{ij}(S)\) are reduced to the corresponding notion and quantity previously proposed in~\cite{RaZh13,BoRaZh11} for a single vertex.
 
-\begin{definition}[Group random detour time]\label{def:detour-multiple}
-    If we denote the probability that a walker starting from vertex \(i\) first reaches vertex \(u\) in absorbing group \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpdistr\in\rea^{n\times\abs{S}}\), then we have
-    \begin{equation*}
-        D_{ij}(S)= H_{iS}+\sum_{k=1}^{\abs{S}}\matpdistr_{[i,k]}H_{kj}.
-    \end{equation*}
-\end{definition}
 
-It is natural to assume that as \(D_{ij}(S)\) increases, it becomes more difficult for a walker to reach vertices in \(S\), and \(S\) becomes less significant in the overall network. In fact, we can demonstrate the following theorem, which establishes the link between GWC \(\manc{S}\), the group random detour time \(D_{ij}(S)\), and the Kemeny constant \(K\).
+For an absorbing random walks in graph \(\gr=(V,E)\)  with vertices in set \(S\)  being absorbing ones,  we denote the probability that a walker starting from vertex \(i\) first reaches vertex \(u\) in absorbing group \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpdistr\in\rea^{n\times\abs{S}}\). Then, \(D_{ij}(S)\) can be expressed as
+\begin{equation}
+    D_{ij}(S)= H_{iS}+\sum_{k=1}^{\abs{S}}\matpdistr_{[i,k]}H_{kj}.
+\end{equation}
+This expression shows that  if \(D_{ij}(S)\) is larger, then it is difficult for a walker to reach vertices in \(S\), which indicates that vertices in \(S\) are relatively less significant in the overall network. Thus, \(D_{ij}(S)\) is consistent with the quantity $H_{iS}$. This enlightens us to explore the relation between \(\manc{S}\) and related quantities about hitting times, such as  \(D_{ij}(S)\). Theorem~\ref{thm:connection-multiple} establishes a link governing GWC \(\manc{S}\), group random detour time \(D_{ij}(S)\), and the Kemeny constant \(K\).
+
 
 \begin{theorem}\label{thm:connection-multiple}
     For an arbitary vertex group \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) vertices,
@@ -618,36 +614,34 @@ It is natural to assume that as \(D_{ij}(S)\) increases, it becomes more difficu
     \end{equation}
 \end{theorem}
 \begin{IEEEproof}
-    To prove~\eqref{eq:connection-multiple}, we utilize the fundamental matrix \(\matfstar\) in the non-absorbing random walk model.
-    According to~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\vecone\vecpi^\top)^{-1}\matpi^{-1}\), where \(\matpi\) is defined as \(\rm{diag}\mypar{\vecpi}\).
-    Subsequently, the hitting time \(H_{ij}\) can be represented by \(\matfstar\) as \(H_{ij}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\)~\cite{BoRaZh11}.
-    Then the right side of \eqref{eq:connection-multiple} can be rewritten as
+    To prove~\eqref{eq:connection-multiple}, we first introduce the fundamental matrix \(\matfstar\) for the non-absorbing random walk model on graph  \(\gr=(V,E)\).
+    According to the results in~\cite{BoRaZh11}, \(\matfstar\) can be represented as \(\matfstar=(\mati-\matp+\vecone\vecpi^\top)^{-1}\matpi^{-1}\), where \(\matpi\) is defined as \(\rm{diag}\mypar{\vecpi}\).
+    Then, the hitting time \(H_{ij}\) can be represented in terms of the elements of matrix \(\matfstar\) as \(H_{ij}=\matfstar_{[j,j]}-\matfstar_{[i,j]}\)~\cite{BoRaZh11}. Thus, the right-hand side of~\eqref{eq:connection-multiple} can be rewritten as
     \begin{equation}\label{eq:detour}
         \begin{split}
             &\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S)\\
             =&\sum_{i=1}^n\pi_i H_{iS}+\sum_{i=1}^n\sum_{j=1}^n\sum_{k=1}^{\abs{S}}\pi_i\pi_j\matpdistr_{[i,k]}H_{kj}  \\
             =&\manc{S}+\sum_{j=1}^n\pi_j\vecpi^\top\matpdistr\mypar{\matfstar_{[j,j]}\vecone-\matfstar_{[S,j]}}                        \\
             % =&\manc{S}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}\vecpi^\top\matpdistr\vecone-\vecpi^\top\matpdistr\matfstar_{[S,:]}\vecpi \\
-            =&\manc{S}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}-1.
+            =&\manc{S}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}-1,
         \end{split}
     \end{equation}
-    The final equality is due to the fact that \(\matpdistr\vecone=\vecone\) and \(\matfstar\vecpi=\vecone\)~\cite{BoRaZh11}.
+    where the final equality is due to the fact that \(\matpdistr\vecone=\vecone\) and \(\matfstar\vecpi=\vecone\)~\cite{BoRaZh11}.
 
-    Afterwards, we can rewrite Kemeny constant \(K\) as
-    \begin{equation}\label{eq:kemeny}
+    On the other hand, we can rewrite the Kemeny constant \(K\) as    \begin{equation}\label{eq:kemeny}
         \begin{split}
             K&=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jH_{ij}\\
             &=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_j\mypar{\matfstar_{[j,j]}-\matfstar_{[i,j]}}\\
             &=\sum_{j=1}^n\pi_j\matfstar_{[j,j]}-1.
         \end{split}
     \end{equation}
-    The last equality is due to the fact that \(\matfstar\vecpi=\vecone\)~\cite{BoRaZh11} and \(\vecpi^\top\vecone=1\).
-    Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes our proof.
+    % The last equality is due to the fact that \(\matfstar\vecpi=\vecone\)~\cite{BoRaZh11} and \(\vecpi^\top\vecone=1\).
+    Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes the proof.
 \end{IEEEproof}
+Since \(K\) is only related to the structure of graph \(\gr\),~\eqref{eq:connection-multiple} indicates that there exists only a constant difference between GWC \(\manc{S}\) and  a weighted sum of the group random detour time \(D_{ij}(S)\) over all pairs of vertices. Thus, from the perspective of decimating power of vertex group,
+GWC \(\manc{S}\) is equivalent to weighted sum of the group random detour times. In this sense, Theorem~\ref{thm:connection-multiple} deepens the understanding of the importance of vertex group \(S\) from a different perspective.
 
-Since \(K\) is only related to the structure of graph \(\gr\) itself, equation~\eqref{eq:connection-multiple} indicates a constant difference between GWC \(\manc{S}\) and the group random detour time \(D_{ij}(S)\).
-This equation suggests that GWC \(\manc{S}\) can also reflect the extent of detour in the network when \(S\) is set as the "passing group".
-This is another way of understanding the physical meaning of GWC.
+
 
 \subsubsection{Connection with the equivalent electrical network}
 
@@ -667,7 +661,7 @@ For edges \(e=\edge{u}{v}\) in the original graph:
 \begin{figure}[!t]
     \centering
     \includegraphics[width=0.9\linewidth]{augmented_graph.png}
-    \caption{An example of constructing an augmented graph \(\gr'\) from the original graph \(\gr\). Edges that do not have labels are given a weight of \(1\), while edges that have a label are given a weight equal to the label value.}
+    \caption{An example of constructing an augmented graph \(\gr'\) from the original graph \(\gr\), where  vertices in set $S$ are traps. Each edge with a label is an edge with  weight \(1\).}
     \label{fig:augmented-graph}
 \end{figure}
 
@@ -676,7 +670,7 @@ For edges \(e=\edge{u}{v}\) in the original graph:
 Subsequently, we can establish a new link between GWC and the equivalent electrical network of the augmented graph.
 
 \begin{theorem}\label{thm:connection-electrical}
-    For an arbitary vertex group \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) vertices,
+    For an arbitrary vertex group \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) vertices,
     \begin{equation}\label{eq:connection-electrical}
         \manc{S}=d'\sum_{i=1}^{n'}\sum_{j=1}^{n'}\pi'_i\pi'_j\mypar{\vcal_i^{is}+\vcal_i^{sj}-\vcal_i^{ij}}.
     \end{equation}
@@ -703,71 +697,70 @@ Subsequently, we can establish a new link between GWC and the equivalent electri
 
 \subsection{Properties of GWC}
 
-After proposing physical explanations of GWC, we then attempt to study its properties.
-First, we give the definitions of monotone and supermodular set functions. For simplicity, we denote \(S\cup\setof{u}\) as \(S+u\).
+%After proposing physical explanations of GWC, we then attempt to study its properties.
+In this subsection, we show that the the set function \(\manc{\cdot}\) has some desirable properties. For this purpose, we first introduce the definitions of monotone and supermodular set functions. For simplicity, we use \(S+u\) to represent \(S\cup\setof{u}\).
 
 \begin{definition}[Monotonicity]
-    A set function \(f:2^{V}\to\rea^+\) is considered monotonic if and only if the inequality \(f(X)\ge f(Y)\) holds for any nonempty sets \(X\) and \(Y\) that satisfy \(X\subseteq Y\subseteq V\).
+    A set function \(f:2^{V}\to\rea^+\) is monotonic if and only if the inequality \(f(X)\ge f(Y)\) holds for two arbitrary  nonempty sets \(X\) and \(Y\)  satisfying \(X\subseteq Y\subseteq V\).
 \end{definition}
 
 \begin{definition}[Supermodularity]
-    A set function \(f:2^{V}\to\rea^+\) is considered supermodular if and only if the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds for any nonempty sets \(X\) and \(Y\) that satisfy \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\).
+    A set function \(f:2^{V}\to\rea^+\) is  supermodular if and only if the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds for two arbitrary nonempty sets \(X\) and \(Y\) satisfying \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\).
 \end{definition}
 
-Specifically, we demonstrate that the set function \(\manc{\cdot}\) is both monotone and supermodular, providing us with a theoretical basis for designing greedy algorithms that can provide approximation guarantees for solving the GWC minimization problem.
+Next we demonstrate that the set function \(\manc{\cdot}\) is both monotonically decreasing and supermodular.
 
-\begin{theorem}[Monotonicity of GWC]\label{thm:mono}
-    Let \(S\) be an arbitary nonempty vertex of connected weighted undirected graph \(\gr=(V,E,w)\), then for vertex \(u\in V\setminus S\),
+\begin{theorem}\label{thm:mono}
+    Let \(S\) be a nonempty set of vertiecs of a connected weighted undirected graph \(\gr=(V,E,w)\). Then, for any vertex \(u\in V\setminus S\),
     \begin{equation*}
         \manc{S}\ge \manc{S+u}.
     \end{equation*}
 \end{theorem}
-
 \begin{IEEEproof}
-    According to \defref{def:manc}, when a random walker arrives at vertices within \(S\), it must have arrived at vertices within \(S+u\). Therefore \(H_{vS}\ge H_{v\mypar{S+u}}\) holds for any vertex \(v\in V\), which concludes our proof.
+    By \defref{def:manc}, when a random walker arrives at a vertex in \(S\), it must have arrived at vertices in \(S+u\). Therefore, \(H_{vS}\ge H_{v\mypar{S+u}}\) holds for any vertex \(v\in V\), which concludes our proof.
 \end{IEEEproof}
 
-\begin{theorem}[Supermodularity of GWC]\label{thm:supermod}
-    Let \(S,T\) be arbitary nonempty vertex groups of connected weighted undirected graph \(\gr=(V,E,w)\) such that \(S\subseteq T\subsetneq V\), then for vertex \(u\in V\setminus T\),
+\begin{theorem}\label{thm:supermod}
+    Let \(S\) and \(T\) be two  nonempty sets of vertices of a connected weighted undirected graph \(\gr=(V,E,w)\) obeying  \(S\subseteq T\subsetneq V\). Then, for any vertex \(u\in V\setminus T\),
     \begin{equation*}
         \manc{S}-\manc{S+u}\ge \manc{T}-\manc{T+u}.
     \end{equation*}
 \end{theorem}
-
 \begin{IEEEproof}
-    For a subset \(A\) of the probability space, we denote \(\indfunc{A}\) as the indicator function of the event \(A\). That is,
-    \begin{equation*}
-        \indfunc{A}=
-        \begin{cases}
-            1 & \text{event }A\text{ holds true} \\
-            0 & \text{otherwise}
-        \end{cases}.
-    \end{equation*}
-    Then we rewrite \(\manc{S}-\manc{S+u}\) by discussing the absorbing vertex of random walker.
+    By definition of absorbing time for  random walks with traps,  \(\manc{S}-\manc{S+u}\) can be represented as
     \begin{equation}\label{eq:supermod-diff}
         \begin{split}
             &\manc{S}-\manc{S+u}\\
             =&\sum_{v\in V}\pi_v\mypar{\mean{T_{vS}}-\mean{T_{v\mypar{S+u}}}}\\
-            =&\sum_{v\in V}\pi_v\mypar{\mean{T_{vS}}-\mean{\min\setof{T_{vS},T_{vu}}}}
+            =&\sum_{v\in V}\pi_v\mypar{\mean{T_{vS}}-\mean{\min\setof{T_{vS},T_{vu}}}}.
         \end{split}
     \end{equation}
-    By introducing the indicator function, \(\min\setof{T_{vS},T_{vu}}\) can be represented as
+    We next represent \(\min\setof{T_{vS},T_{vu}}\)  in terms of  the indicator function.  For a subset \(A\) of the probability space, we denote \(\indfunc{A}\) as the indicator function of the event \(A\). Concretely, \(\indfunc{A}\) is defined as
     \begin{equation*}
-        \min\setof{T_{vS},T_{vu}}=T_{vS}\indfunc{\setof{T_{vS}\le T_{vu}}}+T_{vu}\indfunc{\setof{T_{vu}<T_{vS}}}.
+        \indfunc{A}=
+        \begin{cases}
+            1, & \text{event }A\text{ holds true;} \\
+            0, & \text{otherwise.}
+        \end{cases}.
     \end{equation*}
-    Combining this equation with~\eqref{eq:supermod-diff} and the linearity of the mean, we can get
+    Then, \(\min\setof{T_{vS},T_{vu}}\) can
+    be recast as
+    \begin{equation*}
+        \min\setof{T_{vS},T_{vu}}=T_{vS}\indfunc{\setof{T_{vS}\le T_{vu}}}+T_{vu}\indfunc{\setof{T_{vu}<T_{vS}}},
+    \end{equation*}
+    inserting which into~\eqref{eq:supermod-diff}  and considering  the linearity of the mean, one obtains
     \begin{equation*}
         \manc{S}-\manc{S+u}=\sum_{v\in V}\pi_v\mean{(T_{vS}-T_{vu})\indfunc{\setof{T_{vu}<T_{vS}}}}.
     \end{equation*}
-
-    Similarly, we also have
+    Similarly, we have
     \[\manc{T}-\manc{T+u}=\sum_{v\in V}\vecpi_v\mean{(T_{vT}-T_{vu})\indfunc{\setof{T_{vu}<T_{vT}}}}.\]
-    As is mentioned in proof of \thmref{thm:mono}, \(T_{vS}\ge T_{vT}\) holds for any vertex \(v\in V\).
-    So it is obvious that when \(T_{vu}<T_{vT}\) holds true, \(T_{vu}<T_{vS}\) also holds true, thus indicating \(\indfunc{\setof{T_{vu}<T_{vS}}}\ge\indfunc{\setof{T_{vu}<T_{vT}}}\) holds for any vertex \(v\in V\).
-    Combining the above two inequalities, we can prove that
+    As mentioned in proof of \thmref{thm:mono}, \(T_{vS}\ge T_{vT}\) holds for any vertex \(v\in V\).
+    Thus, when \(T_{vu}<T_{vT}\) holds true, the relation \(T_{vu}<T_{vS}\) also holds.  Then, \(\indfunc{\setof{T_{vu}<T_{vS}}}\ge\indfunc{\setof{T_{vu}<T_{vT}}}\) holds for any vertex \(v\in V\).
+    Combining these two inequalities, one obtains
     \[(T_{vS}-T_{vu})\indfunc{\setof{T_{vu}<T_{vS}}}\ge(T_{vT}-T_{vu})\indfunc{\setof{T_{vu}<T_{vT}}}\]
-    holds for any vertex \(v\in V\), which completes our proof.
+    for any vertex \(v\in V\). This completes the proof.
 \end{IEEEproof}
+
 
 \section{GWC Minimization Problem (GWCM)}
 
@@ -831,6 +824,8 @@ Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an inte
 \end{IEEEproof}
 
 \subsection{Simple Greedy Algorithm for Solving GWCM}
+
+providing us with a theoretical basis for designing greedy algorithms that can provide approximation guarantees for solving the GWC minimization problem.
 
 As GWCM is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve GWCM.
 However, the set function \(\manc{\cdot}\) is both monotonic and supermodular, allowing for a simple greedy algorithm with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor to GWCM~\cite{NeWoFi78}.
