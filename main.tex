@@ -5,7 +5,6 @@
 \input{headers.tex}
 \newcommand{\biophoto}[1]{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{#1}}
 \newcommand{\todo}[1]{{\bf \color{red} TODO: #1}}
-\hyphenation{Exact-AGCM}
 
 \begin{document}
 
@@ -36,10 +35,10 @@
         Both quantities have found a large variety of applications in different areas.
         However, their high computational complexity limits their applications, especially for large networks with millions of vertices.
         In this paper, we first establish a connection between the two quantities, representing \(K\) in terms of \(H_j\) for all vertices.
-        Subsequently, we extend the notion of mean hitting time to the case of multiple vertices, proposing a vertex group centrality called Absorbing Group Centrality (AGC).
+        Subsequently, we extend the notion of mean hitting time to the case of multiple vertices, proposing a vertex group centrality called Group Walk Centrality (GWC).
         We then express these quantities in terms of either the pseudoinverse for graph Laplacian or the inverse for a SDDM matrix, based on which we develop an efficient algorithm that provides an approximation of \(H_j\) for all vertices and \(K\) in nearly linear time with respect to the edge number, with high probability.
-        Moreover, we study the problem of finding a subset \(S\) of \(k\) vertices to minimize its AGC \(\manc{S}\), proving its NP-hardness.
-        Based on the aforementioned algorithm, we provide another nearly linear greedy algorithm to solve the AGC minimization problem with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor for any error parameter \(\epsilon\in(0,1)\).
+        Moreover, we study the problem of finding a subset \(S\) of \(k\) vertices to minimize its GWC \(\manc{S}\), proving its NP-hardness.
+        Based on the aforementioned algorithm, we provide another nearly linear greedy algorithm to solve the GWC minimization problem with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor for any error parameter \(\epsilon\in(0,1)\).
         Extensive experiment results on real-life and model networks validate both the efficiency and accuracy of our proposed algorithms.
     \end{abstract}
 
@@ -84,9 +83,9 @@ For instance, in the field of wireless networks, sensor placement involves selec
 Another example is point cloud sampling~\cite{DiChWaBa20,ChTiFeVeKo17}, which requires selecting a representative subset of points to preserve the geometric features of reconstruction.
 Traditional methods of ranking individual vertices may not meet these requirements, making it necessary to propose a vertex group centrality.
 
-We introduce a new vertex group centrality called Absorbing Group Centrality (AGC) by extending absorbing random-walk centrality to the case of multiple vertices.
-For a connected undirected graph and a vertex group \(S\), AGC \(\manc{S}\) is the expected hitting time for a random walker starting from a vertex \(u\) to an arbitary vertex in \(S\). Here, vertex \(u\) is chosen based on the stationary distribution \(\vecpi\).
-We also introduce the AGC minimization problem, which involves identifying the vertex group \(S^*\) with capacity \(k\) that minimizes AGC \(\manc{S^*}\).
+We introduce a new vertex group centrality called Group Walk Centrality (GWC) by extending absorbing random-walk centrality to the case of multiple vertices.
+For a connected undirected graph and a vertex group \(S\), GWC \(\manc{S}\) is the expected hitting time for a random walker starting from a vertex \(u\) to an arbitary vertex in \(S\). Here, vertex \(u\) is chosen based on the stationary distribution \(\vecpi\).
+We also introduce the GWC minimization problem, which involves identifying the vertex group \(S^*\) with capacity \(k\) that minimizes GWC \(\manc{S^*}\).
 
 For the absorbing random-walk centrality \(H_j=\sum_{i} \rho(i) H_{ij}\), we focus on the special case when the starting probability distribution \(\rho(\cdot)\) is the stationary distribution \(\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}\) of the random walk.
 In other words, we study \(H_j=\sum_{i} \pi_i H_{ij}\), which has received considerable attention~\cite{TeBeVo09,Be09,Be16}.
@@ -94,9 +93,9 @@ We first express \(K\) in terms of \(H_j\) for all vertices, and further express
 
 We then propose a fast algorithm called \(\text{Approx}\mathcal{HK}\) to compute approximate \(H_j\) for all vertices and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16,GaKySp23}.
 
-For Absorbing Group Centrality (AGC), we reformulate it as the inverse of a SDDM matrix.
-Although the AGC minimization problem is proved to be NP-hard, we can utilize the monotonicity and supermodularity of AGC to develop a fast greedy algorithm called \text{ApproxAGCM}.
-\text{ApproxAGCM} is based on \(\text{Approx}\mathcal{HK}\) and yields an approximation factor of \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) for any error parameter \(\epsilon\in(0,1)\).
+For Group Walk Centrality (GWC), we reformulate it as the inverse of a SDDM matrix.
+Although the GWC minimization problem is proved to be NP-hard, we can utilize the monotonicity and supermodularity of GWC to develop a fast greedy algorithm called \(\text{Approx}\mathcal{GWCM}\).
+\(\text{Approx}\mathcal{GWCM}\) is based on \(\text{Approx}\mathcal{HK}\) and yields an approximation factor of \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) for any error parameter \(\epsilon\in(0,1)\).
 
 Finally, we experimentally demonstrate that our algorithms are accurate and are significantly faster than the direct exact computation of related quantities according to their definitions.
 
@@ -113,10 +112,10 @@ In the extended version, we broaden the concept of mean hitting time to encompas
 The following are our primary additional contributions:
 
 \begin{itemize}
-    \item We propose a vertex group centrality called Absorbing Group Centrality (AGC) based on the group hitting time.
-    \item We introduce the AGC minimization problem, proving its NP-hardness.
-    \item Due to the monotonicity and supermodularity of AGC, we develop an efficient greedy algorithm called \text{ApproxAGCM} based on \(\text{Approx}\mathcal{HK}\) to approximately solve the AGC minimization problem.
-    \item Extensive experiment results demonstrate that both of \(\text{Approx}\mathcal{HK}\) and \text{ApproxAGCM} are accurate and scalable, which can be applied to networks with millions of vertices.
+    \item We propose a vertex group centrality called Group Walk Centrality (GWC) based on the group hitting time.
+    \item We introduce the GWC minimization problem, proving its NP-hardness.
+    \item Due to the monotonicity and supermodularity of GWC, we develop an efficient greedy algorithm called \(\text{Approx}\mathcal{GWCM}\) based on \(\text{Approx}\mathcal{HK}\) to approximately solve the GWC minimization problem.
+    \item Extensive experiment results demonstrate that both of \(\text{Approx}\mathcal{HK}\) and \(\text{Approx}\mathcal{GWCM}\) are accurate and scalable, which can be applied to networks with millions of vertices.
 \end{itemize}
 
 
@@ -335,7 +334,7 @@ In order to compute  \(C(u)\), we use Lemma~\ref{lemma:JL} to reduce the dimensi
 
 \begin{lemma}[SDD Solver~\cite{CoKyMiPaPeRaSu14,KySa16,GaKySp23}]
     \label{lemma:ST}
-    There is an algorithm \(\vecx = \mathtt{Solve}(\lap,\vecy,\delta)\) which
+    There is an algorithm \(\vecx = \mathtt{Solver}(\lap,\vecy,\delta)\) which
     takes a SDDM matrix or a Laplacian \(\lap\),
     a column vector \(\vecy\), and an error
     parameter \(\delta > 0\), and returns a column vector \(\vecx\) satisfying  \(\boldsymbol{1}^\top\vecx = 0\) and
@@ -537,7 +536,7 @@ Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \(\text{Approx}\mathca
     \(\lap=\) Laplacian of \(\gr\),\, \(d_u=\) the degree of \(u\) for all \(u\in V\), \(d=\sum_{u \in V} d_u\)\;  Construct a matrix \(\matq_{k \times m}\),  where \(k=\lceil 24\log n/\epsilon^2 \rceil\) and each entry is \(\pm 1/\sqrt{k}\) with identical probability\;
     \For{\(i=1\) to \(k\)}{
         \(\vecq_i^\top \)=the \(i\)-th row of  \(\matq_{k \times m} \matw^{1/2} \matb\)  \\
-        \(\tilde{\vecz}_i=\mathtt{Solve}(\lap, \vecq_i, \delta)\) where parameter   \(\delta\) is  given by~(\ref{EE14}) \\
+        \(\tilde{\vecz}_i=\mathtt{Solver}(\lap, \vecq_i, \delta)\) where parameter   \(\delta\) is  given by~(\ref{EE14}) \\
     }
     Calculate the constant vector \({\bf p}=\tilmatz \vecpi\)\;
     \For{each \(u\in V\)}{
@@ -547,24 +546,24 @@ Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \(\text{Approx}\mathca
     \Return \(\tilde{H}=\{u,\tilde{H}_u| u \in V\}\) and \(\tilde{K}\)
 \end{algorithm}
 
-\section{Absorbing Group Centrality }
+\section{Group Walk Centrality}
 
-In this section, we extend the walk centrality \(H_j\) to the case of a group  $S$ of  vertices, denoted as \(H(S)\) and called absorbing group centrality (AGC), which measures the relative importance of the vertex group $S$. We first give the definition of AGC. Then, we provide an examination of AGC, by establishing a connection between AGC and random detour time and the Kemeny constant. Finally, we show that as a set function \(\manc{\cdot}\), AGC is monotonic and supermodular.
+In this section, we extend the walk centrality \(H_j\) to the case of a group  $S$ of  vertices, denoted as \(H(S)\) and called Group Walk Centrality (GWC), which measures the relative importance of the vertex group $S$. We first give the definition of GWC. Then, we provide an examination of GWC, by establishing a connection between GWC and random detour time and the Kemeny constant. Finally, we show that as a set function \(\manc{\cdot}\), GWC is monotonic and supermodular.
 
-%After presenting the walk centrality \(H_j\) and the Kemeny constant \(K\), we extend the notion of mean hitting time to the case of multiple vertices. In this section, we provide the definition of Absorbing Group Centrality (AGC). We also discuss the connections between AGC and other quantities related to random walk, such as the random detour time, the Kemeny constant and the equivalent electrical network of the augmented graph. Furthermore, we demonstrate monotonicity and supermodularity of AGC \(\manc{\cdot}\).
+%After presenting the walk centrality \(H_j\) and the Kemeny constant \(K\), we extend the notion of mean hitting time to the case of multiple vertices. In this section, we provide the definition of Group Walk Centrality (GWC). We also discuss the connections between GWC and other quantities related to random walk, such as the random detour time, the Kemeny constant and the equivalent electrical network of the augmented graph. Furthermore, we demonstrate monotonicity and supermodularity of GWC \(\manc{\cdot}\).
 
-\subsection{Definition of AGC}
+\subsection{Definition of GWC}
 
-We utilize absorbing random walks with multiple traps~\cite{ZhYaLi12} to define AGC. For random walks on a connected graph \(\gr=(V,E)\) with vertices in set  \(S\) being traps (absorbing vertices), the hitting time (absorbing time) \(H_{iS}\) from vertex \(i\) to vertex group \(S\) is the expected number of steps for a walker starting from \(i\) to visit any vertex of \(S\) for the first time. If we denote the time steps for a walker starting from \(i\) to first reach an arbitrary vertex in \(S\) as random variable \(T_{iS}\), then we have \(H_{iS}=\mean{T_{iS}}\). Based on the hitting time \(H_{iS}\) to  vertex group $S$, we define the AGC of a set of vertices.
+We utilize absorbing random walks with multiple traps~\cite{ZhYaLi12} to define GWC. For random walks on a connected graph \(\gr=(V,E)\) with vertices in set  \(S\) being traps (absorbing vertices), the hitting time (absorbing time) \(H_{iS}\) from vertex \(i\) to vertex group \(S\) is the expected number of steps for a walker starting from \(i\) to visit any vertex of \(S\) for the first time. If we denote the time steps for a walker starting from \(i\) to first reach an arbitrary vertex in \(S\) as random variable \(T_{iS}\), then we have \(H_{iS}=\mean{T_{iS}}\). Based on the hitting time \(H_{iS}\) to  vertex group $S$, we define the GWC of a set of vertices.
 
 
-\begin{definition}[Absorbing Group Centrality, AGC]\label{def:manc}
-    For a given vertex group \(S\) in a connected undirected graph \(\gr=(V,E)\), its AGC \(\manc{S}\) is defined as the expected time for a random walker starting from a vertex chosen from \(\gr\) according to the stationary distribution \(\vecpi\), to reach any vertex in \(S\).  Mathematically, \(\manc{S}\) is expressed as follows:
+\begin{definition}[Group Walk Centrality, GWC]\label{def:manc}
+    For a given vertex group \(S\) in a connected undirected graph \(\gr=(V,E)\), its GWC \(\manc{S}\) is defined as the expected time for a random walker starting from a vertex chosen from \(\gr\) according to the stationary distribution \(\vecpi\), to reach any vertex in \(S\).  Mathematically, \(\manc{S}\) is expressed as follows:
     \begin{equation*}
         \manc{S}=\sum_{i\in V}\pi_i H_{iS}.
     \end{equation*}
 \end{definition}
-Note that for the case that set \(S\) contains only one vertex \(j\), AGC \(\manc{S}\) reduces to walk centrality \(H_j\). If  \(\manc{S}\) is larger, then the vertices in  \(S\) are easily accessible, which means that the vertices in  \(S\) are more peripheral, and are thus less important;  if  \(\manc{S}\) is smaller, then the vertices in  \(S\) more important.
+Note that for the case that set \(S\) contains only one vertex \(j\), GWC \(\manc{S}\) reduces to walk centrality \(H_j\). If  \(\manc{S}\) is larger, then the vertices in  \(S\) are easily accessible, which means that the vertices in  \(S\) are more peripheral, and are thus less important;  if  \(\manc{S}\) is smaller, then the vertices in  \(S\) more important.
 
 We now give an expression for \(\manc{S}\). For random walks in graph \(\gr=(V,E)\) with absorbing vertex group \(S\) and transition matrix \(\matp\),  the fundamental matrix \(\matf\) is~\cite{ZhYaLi12}    \begin{equation}\label{eq:funda}
     \matf=\sum_{l=0}^\infty\matp_{-S}^l=(\mati-\matp_{-S})^{-1}=(\mati-\matp)_{-S}^{-1}.
@@ -574,32 +573,32 @@ From~\eqref{eq:funda}, we can see that  the entry \(\matf_{[i,j]}\) of matrix  \
     \manc{S}=\vecpi_{-S}^\top\matf\vecone=\vecpi_{-S}^\top(\mati-\matp)_{-S}^{-1}\vecone.
 \end{equation*}
 By using~\eqref{eq:trs}, \(\manc{S}\) can be further written as
-\begin{equation}\label{eq:AGC}
+\begin{equation}\label{eq:GWC}
     \begin{split}
         \manc{S} & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\vecone                          \\
         & =\vecpi_{-S}^\top\mypar{\mati-\matd^{-1}\mata}_{-S}^{-1}\matd_{-S}^{-1}\matd_{-S}\vecone \\
         & =\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}.
     \end{split}
 \end{equation}
-Since $\lap_{-S}$ is an SDDM matrix, according to~\eqref{eq:AGC} and \lemref{lemma:ST}, we can approximately compute AGC of any given vertex group \(S\) by calling \(\mathtt{Solve}\mypar{\lap_{-S},\vecd_{-S},\delta}\). We omit the detail of this approximation algorithm, since  it simply utilizes~\lemref{lemma:ST}.
+Since $\lap_{-S}$ is an SDDM matrix, according to~\eqref{eq:GWC} and \lemref{lemma:ST}, we can approximately compute GWC of any given vertex group \(S\) by calling \(\mathtt{Solver}\mypar{\lap_{-S},\vecd_{-S},\delta}\). We omit the detail of this approximation algorithm, since  it simply utilizes~\lemref{lemma:ST}.
 
 
-%Based on~\eqref{eq:funda}, we can express \(\matf_{[i,j]}\) as the expected number of times a random walker passes through vertex \(j\) before being absorbed, starting from vertex \(i\). According to the linearity of the mean, the hitting time of a random walker is equivalent to the sum of the expected number of passages through all vertices in the graph. That is, if we let \(l_i\) denote the hitting time of a random walker starting from vertex \(i\), then \(\vecl=\matf\vecone\). In particular, if the random walker starts from an absorbing vertex, the hitting time can be considered as zero. Considering the aforementioned case, we can express AGC \(\manc{S}\) as
-
-
-
+%Based on~\eqref{eq:funda}, we can express \(\matf_{[i,j]}\) as the expected number of times a random walker passes through vertex \(j\) before being absorbed, starting from vertex \(i\). According to the linearity of the mean, the hitting time of a random walker is equivalent to the sum of the expected number of passages through all vertices in the graph. That is, if we let \(l_i\) denote the hitting time of a random walker starting from vertex \(i\), then \(\vecl=\matf\vecone\). In particular, if the random walker starts from an absorbing vertex, the hitting time can be considered as zero. Considering the aforementioned case, we can express GWC \(\manc{S}\) as
 
 
 
 
-\subsection{Physical Explanations of AGC}
+
+
+
+\subsection{Physical Explanations of GWC}
 
 \subsubsection{Connections with the random detour time}
 
-After detailing AGC, we try to establish a connection between AGC \(\manc{S}\), the group random detour time \(D_{ij}(S)\) and the Kemeny constant \(K\).
+After detailing GWC, we try to establish a connection between GWC \(\manc{S}\), the group random detour time \(D_{ij}(S)\) and the Kemeny constant \(K\).
 This allows us to understand the importance of vertex group \(S\) from a different perspective.
 A similar idea of random detour time was proposed in~\cite{RaZh13}, where the authors proved an equation related to topological centrality and random detour time of a single vertex.
-In this paper, we explore the random detour time of multiple vertices, providing a physical explanation of AGC.
+In this paper, we explore the random detour time of multiple vertices, providing a physical explanation of GWC.
 
 For vertex group \(S\) in graph \(\gr\), the group random detour time \(D_{ij}(S)\) is defined as the expected time of a walker who starts from vertex \(i\), must visit an arbitary vertex in group \(S\), then first reaches vertex \(j\).
 
@@ -610,7 +609,7 @@ For vertex group \(S\) in graph \(\gr\), the group random detour time \(D_{ij}(S
     \end{equation*}
 \end{definition}
 
-It is natural to assume that as \(D_{ij}(S)\) increases, it becomes more difficult for a walker to reach vertices in \(S\), and \(S\) becomes less significant in the overall network. In fact, we can demonstrate the following theorem, which establishes the link between AGC \(\manc{S}\), the group random detour time \(D_{ij}(S)\), and the Kemeny constant \(K\).
+It is natural to assume that as \(D_{ij}(S)\) increases, it becomes more difficult for a walker to reach vertices in \(S\), and \(S\) becomes less significant in the overall network. In fact, we can demonstrate the following theorem, which establishes the link between GWC \(\manc{S}\), the group random detour time \(D_{ij}(S)\), and the Kemeny constant \(K\).
 
 \begin{theorem}\label{thm:connection-multiple}
     For an arbitary vertex group \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) vertices,
@@ -632,7 +631,7 @@ It is natural to assume that as \(D_{ij}(S)\) increases, it becomes more difficu
             =&\manc{S}+\sum_{j=1}^n\pi_j\matfstar_{[j,j]}-1.
         \end{split}
     \end{equation}
-    The final equality is due to the fact that \(\matpdistr\vecone=\vecone\) and \(\matfstar\vecpi=\vecone\).
+    The final equality is due to the fact that \(\matpdistr\vecone=\vecone\) and \(\matfstar\vecpi=\vecone\)~\cite{BoRaZh11}.
 
     Afterwards, we can rewrite Kemeny constant \(K\) as
     \begin{equation}\label{eq:kemeny}
@@ -642,18 +641,18 @@ It is natural to assume that as \(D_{ij}(S)\) increases, it becomes more difficu
             &=\sum_{j=1}^n\pi_j\matfstar_{[j,j]}-1.
         \end{split}
     \end{equation}
-    The last equality is due to the fact that \(\matfstar\vecpi=\vecone\) and \(\vecpi^\top\vecone=1\).
+    The last equality is due to the fact that \(\matfstar\vecpi=\vecone\)~\cite{BoRaZh11} and \(\vecpi^\top\vecone=1\).
     Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes our proof.
 \end{IEEEproof}
 
-Since \(K\) is only related to the structure of graph \(\gr\) itself, equation~\eqref{eq:connection-multiple} indicates a constant difference between AGC \(\manc{S}\) and the group random detour time \(D_{ij}(S)\).
-This equation suggests that AGC \(\manc{S}\) can also reflect the extent of detour in the network when \(S\) is set as the "passing group".
-This is another way of understanding the physical meaning of AGC.
+Since \(K\) is only related to the structure of graph \(\gr\) itself, equation~\eqref{eq:connection-multiple} indicates a constant difference between GWC \(\manc{S}\) and the group random detour time \(D_{ij}(S)\).
+This equation suggests that GWC \(\manc{S}\) can also reflect the extent of detour in the network when \(S\) is set as the "passing group".
+This is another way of understanding the physical meaning of GWC.
 
 \subsubsection{Connection with the equivalent electrical network}
 
 Additionally, Ranjan et al.~\cite{RaZh13} establishes a link between random detour overhead and the equivalent electrical network.
-By leveraging this connection along with \thmref{thm:connection-multiple}, we can establish another link between AGC and the equivalent electrical network of the augmented graph.
+By leveraging this connection along with \thmref{thm:connection-multiple}, we can establish another link between GWC and the equivalent electrical network of the augmented graph.
 
 We'll start by defining the augmented graph.
 Given a graph \(\gr=\mypar{V,E,w}\) with a group of absorbing vertices \(S\), we'll replace all vertices in \(S\) with a new vertex \(s\) to create the augmented graph \(\gr'=\mypar{V',E',w'}\) where \(\abs{V'}=n'\).
@@ -674,7 +673,7 @@ For edges \(e=\edge{u}{v}\) in the original graph:
 
 \figref{fig:augmented-graph} displays an example of creating the augmented graph \(\gr'\) from the original graph \(\gr\).
 
-Subsequently, we can establish a new link between AGC and the equivalent electrical network of the augmented graph.
+Subsequently, we can establish a new link between GWC and the equivalent electrical network of the augmented graph.
 
 \begin{theorem}\label{thm:connection-electrical}
     For an arbitary vertex group \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) vertices,
@@ -688,7 +687,7 @@ Subsequently, we can establish a new link between AGC and the equivalent electri
 \begin{IEEEproof}
     Based on the definition of the augmented graph, the group hitting time and random detour time of \(S\) are equivalent to those of \(s\) in the corresponding augmented graph.
     Then we can rewrite~\eqref{eq:connection-multiple} in \thmref{thm:connection-multiple} as
-    \begin{equation}\label{eq:AGC-detour}
+    \begin{equation}\label{eq:GWC-detour}
         \begin{split}
             \manc{S}&=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S)-K\\
             &=\sum_{i=1}^{n'}\sum_{j=1}^{n'}\pi_i\pi_j\mypar{H_{is}+H_{sj}-H_{ij}}.
@@ -698,13 +697,13 @@ Subsequently, we can establish a new link between AGC and the equivalent electri
     \begin{equation}\label{eq:detour-voltage}
         H_{is}+H_{sj}-H_{ij}=d'\mypar{\vcal_i^{is}+\vcal_i^{sj}-\vcal_i^{ij}}.
     \end{equation}
-    Combining~\eqref{eq:AGC-detour} and~\eqref{eq:detour-voltage} completes our proof.
+    Combining~\eqref{eq:GWC-detour} and~\eqref{eq:detour-voltage} completes our proof.
 \end{IEEEproof}
 
 
-\subsection{Properties of AGC}
+\subsection{Properties of GWC}
 
-After proposing physical explanations of AGC, we then attempt to study its properties.
+After proposing physical explanations of GWC, we then attempt to study its properties.
 First, we give the definitions of monotone and supermodular set functions. For simplicity, we denote \(S\cup\setof{u}\) as \(S+u\).
 
 \begin{definition}[Monotonicity]
@@ -715,9 +714,9 @@ First, we give the definitions of monotone and supermodular set functions. For s
     A set function \(f:2^{V}\to\rea^+\) is considered supermodular if and only if the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds for any nonempty sets \(X\) and \(Y\) that satisfy \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\).
 \end{definition}
 
-Specifically, we demonstrate that the set function \(\manc{\cdot}\) is both monotone and supermodular, providing us with a theoretical basis for designing greedy algorithms that can provide approximation guarantees for solving the AGC minimization problem.
+Specifically, we demonstrate that the set function \(\manc{\cdot}\) is both monotone and supermodular, providing us with a theoretical basis for designing greedy algorithms that can provide approximation guarantees for solving the GWC minimization problem.
 
-\begin{theorem}[Monotonicity of AGC]\label{thm:mono}
+\begin{theorem}[Monotonicity of GWC]\label{thm:mono}
     Let \(S\) be an arbitary nonempty vertex of connected weighted undirected graph \(\gr=(V,E,w)\), then for vertex \(u\in V\setminus S\),
     \begin{equation*}
         \manc{S}\ge \manc{S+u}.
@@ -728,7 +727,7 @@ Specifically, we demonstrate that the set function \(\manc{\cdot}\) is both mono
     According to \defref{def:manc}, when a random walker arrives at vertices within \(S\), it must have arrived at vertices within \(S+u\). Therefore \(H_{vS}\ge H_{v\mypar{S+u}}\) holds for any vertex \(v\in V\), which concludes our proof.
 \end{IEEEproof}
 
-\begin{theorem}[Supermodularity of AGC]\label{thm:supermod}
+\begin{theorem}[Supermodularity of GWC]\label{thm:supermod}
     Let \(S,T\) be arbitary nonempty vertex groups of connected weighted undirected graph \(\gr=(V,E,w)\) such that \(S\subseteq T\subsetneq V\), then for vertex \(u\in V\setminus T\),
     \begin{equation*}
         \manc{S}-\manc{S+u}\ge \manc{T}-\manc{T+u}.
@@ -764,22 +763,22 @@ Specifically, we demonstrate that the set function \(\manc{\cdot}\) is both mono
     Similarly, we also have
     \[\manc{T}-\manc{T+u}=\sum_{v\in V}\vecpi_v\mean{(T_{vT}-T_{vu})\indfunc{\setof{T_{vu}<T_{vT}}}}.\]
     As is mentioned in proof of \thmref{thm:mono}, \(T_{vS}\ge T_{vT}\) holds for any vertex \(v\in V\).
-    It is also obvious that \(\indfunc{\setof{T_{vu}<T_{vS}}}\ge\indfunc{\setof{T_{vu}<T_{vT}}}\).
+    So it is obvious that when \(T_{vu}<T_{vT}\) holds true, \(T_{vu}<T_{vS}\) also holds true, thus indicating \(\indfunc{\setof{T_{vu}<T_{vS}}}\ge\indfunc{\setof{T_{vu}<T_{vT}}}\) holds for any vertex \(v\in V\).
     Combining the above two inequalities, we can prove that
     \[(T_{vS}-T_{vu})\indfunc{\setof{T_{vu}<T_{vS}}}\ge(T_{vT}-T_{vu})\indfunc{\setof{T_{vu}<T_{vT}}}\]
     holds for any vertex \(v\in V\), which completes our proof.
 \end{IEEEproof}
 
-\section{AGC Minimization Problem (AGCM)}
+\section{GWC Minimization Problem (GWCM)}
 
-When considering AGC, we naturally address the issue of selecting a vertex group (\(S\)) with a capacity of \(k\) from a network that minimizes its AGC (\(\manc{S}\)).
-In this section, we will define the AGC minimization problem (AGCM).
-After demonstrating its NP-hardness, we will provide a greedy algorithm that can solve AGCM with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
+When considering GWC, we naturally address the issue of selecting a vertex group (\(S\)) with a capacity of \(k\) from a network that minimizes its GWC (\(\manc{S}\)).
+In this section, we will define the GWC minimization problem (GWCM).
+After demonstrating its NP-hardness, we will provide a greedy algorithm that can solve GWCM with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
 
-\subsection{Definition of AGCM}
+\subsection{Definition of GWCM}
 
-\begin{problem}[Absorbing Group Centrality Minimization, AGCM]
-Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, \(m\) edges and an integer \(k\ll n\), the goal is to find a vertex group \(S^*\subseteq V\) such that AGC \(\manc{S^*}\) is minimized:
+\begin{problem}[Group Walk Centrality Minimization, GWCM]
+Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, \(m\) edges and an integer \(k\ll n\), the goal is to find a vertex group \(S^*\subseteq V\) such that GWC \(\manc{S^*}\) is minimized:
 \begin{equation*}
     S^*=\argmin_{S\subseteq V,\abs{S}=k}\manc{S}.
 \end{equation*}
@@ -787,21 +786,21 @@ Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices,
 
 \subsection{Proof of NP-hardness}
 
-To prove the NP-hardness of AGCM, we try to construct a reduction to a decision version of AGCM from the Vertex Cover problem, which is NP-complete~\cite{FrHeJa98}.
+To prove the NP-hardness of GWCM, we try to construct a reduction to a decision version of GWCM from the Vertex Cover problem, which is NP-complete~\cite{FrHeJa98}.
 
 \begin{problem}[Vertex Cover on \(c\)-regular graphs]
 Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an integer \(k\). The aim is to determine whether a subset of vertices \(S\subseteq V\) exists, with cardinality \(\abs{S}\le k\), such that every edge in \(E\) is incident with at least one vertex in \(S\).
 \end{problem}
 
 \begin{theorem}\label{thm:np-hard}
-    AGCM is NP-hard.
+    GWCM is NP-hard.
 \end{theorem}
 \begin{IEEEproof}
     For a connected graph \(\gr=(V,E,w)\) that is \(c\)-regular, where the weights of all edges are equal to \(1\), we attempt to prove that \(\manc{S}\ge (n-k)/n\) for any nonempty vertex group \(S\subseteq V\) with capacity \(k\).
     The equality holds if and only if \(S\) is a vertex cover of \(\gr\).
 
     We first prove that if \(S\) is a vertex cover of \(\gr\), then \(\manc{S}=(n-k)/n\). When \(S\) is a vertex cover of \(\gr\), there are no edges between vertices in \(V\setminus S\).
-    Thus, we can simplify~\eqref{eq:AGC} as:
+    Thus, we can simplify~\eqref{eq:GWC} as:
     \begin{equation*}
         \manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\matd_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\vecone.
     \end{equation*}
@@ -819,7 +818,7 @@ Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an inte
     \end{align*}
     Similarly, we also have \(H_{v'S}>1+\frac{1}{n}\).
 
-    Therefore, if we denote \(S\cup\setof{u',v'}\) as \(S'\), then we are able to get the lower bound of AGC:
+    Therefore, if we denote \(S\cup\setof{u',v'}\) as \(S'\), then we are able to get the lower bound of GWC:
     \begin{align*}
         \manc{S} & =\sum_{v\in V\setminus S'}\pi_vH_{vS}+\pi_{u'}H_{u'S}+\pi_{v'}H_{v'S}            \\
                  & >\vecpi_{-S'}\vecone+\pi_{u'}\mypar{1+\frac{1}{n}}+\pi_{v'}\mypar{1+\frac{1}{n}} \\
@@ -827,14 +826,14 @@ Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an inte
         >\vecpi_{-S}^\top\vecone=(n-k)/n.
     \end{align*}
 
-    According to the proposition above, we can create a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of AGCM, which proves that AGCM is NP-hard.
+    According to the proposition above, we can create a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of GWCM, which proves that GWCM is NP-hard.
 
 \end{IEEEproof}
 
-\subsection{Simple Greedy Algorithm for Solving AGCM}
+\subsection{Simple Greedy Algorithm for Solving GWCM}
 
-As AGCM is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve AGCM.
-However, the set function \(\manc{\cdot}\) is both monotonic and supermodular, allowing for a simple greedy algorithm with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor to AGCM~\cite{NeWoFi78}.
+As GWCM is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve GWCM.
+However, the set function \(\manc{\cdot}\) is both monotonic and supermodular, allowing for a simple greedy algorithm with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor to GWCM~\cite{NeWoFi78}.
 At each iteration, a new absorbing vertex \(u^*\) is chosen from the set of non-absorbing vertices \(V\setminus S\), satisfying
 
 \begin{gather*}
@@ -846,9 +845,10 @@ It is evident that the straightforward algorithm presented above requires comput
 If the naive matrix inverse algorithm with complexity \(O(n^3)\) is used, the total complexity of the simple greedy algorithm becomes \(O(kn^4)\).
 By simplifying \(\Delta(u,S)\), our aim is to decrease the time complexity of the greedy algorithm.
 
-For vertex \(u\in V\setminus S\), after adjusting the order of submatrix \(\lap_{-S}\), we rewrite \(\lap_{-S}\) as
+For vertex \(u\in V\setminus S\), we denote the \(\myord{u}\) column of submatrix \(\lap_{-S}\) as \(\begin{pmatrix}d_u\\-\veca\end{pmatrix}\).
+After adjusting the order of \(\lap_{-S}\), we can rewrite it in block form as
 \begin{equation*}
-    \lap_{-S}=\begin{pmatrix}l_u & -\veca^\top \\-\veca&\mata\end{pmatrix},
+    \lap_{-S}=\begin{pmatrix}d_u & -\veca^\top \\-\veca&\mata\end{pmatrix},
 \end{equation*}
 where \(\mata\) denotes \(\lap_{-(S+u)}\).
 According to the properties of block matrices, we can get
@@ -858,7 +858,7 @@ According to the properties of block matrices, we can get
         t & t\veca^\top\mata^{-1} \\t\mata^{-1}\veca&\mata^{-1}+t\mata^{-1}\veca\veca^\top\mata^{-1}
     \end{pmatrix},
 \end{equation*}
-where \(t=\pinv{l_u-\veca^\top\inv{\mata}}\).
+where \(t=\pinv{d_u-\veca^\top\inv{\mata}}\).
 Therefore, when \(S\neq\varnothing\), \(\Delta(u,S)\) can be rewritten as
 
 \begin{equation}\label{eq:margin-deriv}
@@ -873,15 +873,15 @@ Therefore, when \(S\neq\varnothing\), \(\Delta(u,S)\) can be rewritten as
 Here we skip some steps for brevity.
 
 However, during the first iteration of the greedy algorithm, when \(S=\varnothing\), \eqref{eq:margin-deriv} becomes invalid due to the singularity of \(\lap\).
-Since \(\manc{\varnothing}=\infty\), we can define \(\Delta(u,\varnothing)\) as \(-\manc{S+u}=-H_u\), which is the negative of absorbing random-walk centrality for vertex \(u\).
+Since the Group Walk Centrality \(\manc{S}\) reduces to the walk centrality \(H_u\) when \(S\) contains only one vertex \(u\), we can find the vertex \(u^*\) with minimal walk centrality at the first iteration of our greedy algorithm.
 In \lemref{HjK}, we have shown that \(H_u=d\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\).
 
 Equation~\eqref{ATT02} and~\eqref{eq:margin-deriv} demonstrate that we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) by inverting the same matrix \(\lap_{-S}\) or by using the pseudoinverse of the same matrix \(\lap\).
-As a result, we can optimize the simple greedy algorithm outlined in~\algoref{algo:exact-agcm}, and reduce the time complexity from \(O(kn^4)\) to \(O(kn^3)\).
+As a result, we can optimize the simple greedy algorithm outlined in~\algoref{algo:exact-gwcm}, and reduce the time complexity from \(O(kn^4)\) to \(O(kn^3)\).
 
 \begin{algorithm}
-    \caption{\text{ExactAGCM}\((\gr,k)\)}
-    \label{algo:exact-agcm}
+    \caption{\(\text{Exact}\mathcal{GWCM}\)\((\gr,k)\)}
+    \label{algo:exact-gwcm}
     \Input{
         A connected weighted undirected graph \(\gr=(V,E,w)\);
         an integer \(k\in[1,\abs{V}]\)
@@ -900,9 +900,9 @@ As a result, we can optimize the simple greedy algorithm outlined in~\algoref{al
     \Return{\(S_k\)}
 \end{algorithm}
 
-Afterwards, we prove that \algoref{algo:exact-agcm} has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
+Afterwards, we prove that \algoref{algo:exact-gwcm} has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
 \begin{theorem}
-    The algorithm \(S_k=\text{ExactAGCM}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a vertex group \(S_k\) with capacity \(k\).
+    The algorithm \(S_k=\text{Exact}\mathcal{GWCM}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a vertex group \(S_k\) with capacity \(k\).
     When \(k>1\), the vertex group \(S\) satisfies
     \[\manc{\setof{u^*}}-\manc{S_k}\ge\mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}}\mypar{\manc{\setof{u^*}}-\manc{S^*}},\]
     where
@@ -921,15 +921,21 @@ Afterwards, we prove that \algoref{algo:exact-agcm} has a \(1-\frac{k}{k-1}\cdot
     which completes our proof based on the fact that \(S_1=\setof{u^*}\).
 \end{IEEEproof}
 
-\section{Fast Greedy Algorithm for Solving AGCM}\label{sec:approx-algo2}
+\section{Fast Greedy Algorithm for Solving GWCM}\label{sec:approx-algo2}
 
-Despite the time complexity optimization proposed in \algoref{algo:exact-agcm}, this simple greedy algorithm for solving AGCM still requires matrix inversion, making it unsuitable for large networks.
+Despite the time complexity optimization proposed in \algoref{algo:exact-gwcm}, this simple greedy algorithm for solving GWCM still requires matrix inversion, making it unsuitable for large networks.
 To speed up the computation of \(\Delta(u,S)\), we use efficient approximations established in \lemref{lemma:JL}, \lemref{lemma:ST} and \thmref{TheoAlg1}.
 
 Our first objective is to estimate \(\Delta(u,\varnothing)=-H_u\), which is the negative of the walk centrality for vertex \(u\).
 We can conveniently use \algoref{ALG01}, which has a proven approximation guarantee as shown in \thmref{TheoAlg1}.
 
 Our second objective is to estimate \(\Delta(u,S)\) when \(S\neq\varnothing\).
+As is shown in~\eqref{eq:margin-deriv}, \(\Delta(u,S)\) is represented in the form of a fraction.
+We try to estimate the numerator and denominator of it separately.
+
+\subsection{Approximation of the numerator of \(\Delta(u,S)\)}
+
+We first approximate the numerator of \(\Delta(u,S)\), which involves the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}\).
 To this end, we need to utilize the following two lemmas.
 
 \begin{lemma}\label{lem:norm-ineq}
@@ -971,12 +977,9 @@ To this end, we need to utilize the following two lemmas.
     \end{align*}
 \end{IEEEproof}
 
-\subsection{Approximation of the numerator of \(\Delta(u,S)\)}
-
-We first approximate the numerator of \(\Delta(u,S)\), which involves the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}\).
 Since \(\lap_{-S}\) is a SDDM matrix, we can apply~\lemref{lemma:ST} to avoid computing the matrix inverse \(\lap_{-S}^{-1}\).
 \begin{lemma}\label{lem:approx-numer}
-    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty vertex group \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\), let \(\vecx'=\mathtt{Solve}(\lap_{-S},\vecd_{-S},\delta_1)\) where \(\delta_1=\frac{w_{\min}\epsilon}{7n^3w_{\max}}\). Then for any vertex \(i\in V\setminus S\), we have
+    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty vertex group \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\), let \(\vecx'=\mathtt{Solver}(\lap_{-S},\vecd_{-S},\delta_1)\) where \(\delta_1=\frac{w_{\min}\epsilon}{7n^3w_{\max}}\). Then for any vertex \(i\in V\setminus S\), we have
     \begin{equation}\label{eq:approx-numer}
         \vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\approx_{\epsilon/7}\vecx'_i.
     \end{equation}
@@ -1010,7 +1013,7 @@ Next, we aim to estimate the denominator of \(\Delta(u,S)\). This can be represe
     \end{split}
 \end{equation}
 
-Although~\eqref{eq:denom-solver} suggests that we can avoid matrix inversion by utilizing \lemref{lemma:ST}, the size of the matrices \(\matw'\) and \(\matz\) being \(\abs{E}=m\) and \(\abs{V}=n\) respectively, results in an unacceptable number of calls to the \(\mathtt{Solve}\) function.
+Although~\eqref{eq:denom-solver} suggests that we can avoid matrix inversion by utilizing \lemref{lemma:ST}, the size of the matrices \(\matw'\) and \(\matz\) being \(\abs{E}=m\) and \(\abs{V}=n\) respectively, results in an unacceptable number of calls to the \(\mathtt{Solver}\) function.
 As a solution, it is necessary to use \lemref{lemma:JL} to reduce the size of the corresponding matrices.
 
 According to \lemref{lemma:JL}, let us denote the projection matrices as \(\matq\in\rea^{q\times m}\) and \(\matr\in\rea^{r\times n}\), where \(q=r=\ceil{24\epsilon^{-2}\log n}\).
@@ -1036,7 +1039,7 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
 \begin{lemma}\label{lem:approx-denom}
     Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty vertex group \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\).
     We define \(\overline{\matx}\) and \(\overline{\maty}\) as \(\matq\matw^{1/2}\matb\) and \(\matr\matz^{1/2}\) respectively.
-    Let \(\matx'\in\rea^{q\times n}\) and \(\maty'\in\rea^{r\times n}\) be matrices such that \(\matx'_{[i,:]}=\mathtt{Solve}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\), \(\maty'_{[i,:]}=\mathtt{Solve}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\), where \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\), \(\delta_2=\frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\). Then for any vertex \(i\in V\setminus S\), we have
+    Let \(\matx'\in\rea^{q\times n}\) and \(\maty'\in\rea^{r\times n}\) be matrices such that \(\matx'_{[i,:]}=\mathtt{Solver}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\), \(\maty'_{[i,:]}=\mathtt{Solver}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\), where \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\), \(\delta_2=\frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\). Then for any vertex \(i\in V\setminus S\), we have
     \begin{equation}\label{eq:approx-denom}
         \Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2=\vece_i^\top\lap_{-S}^{-1}\vece_i\approx_{\epsilon/3}\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2.
     \end{equation}
@@ -1096,10 +1099,10 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
     which completes our proof in conjunction with \lemref{lemma:JL}.
 \end{IEEEproof}
 
-\subsection{Details of Algorithms \text{ApproxDelta} and \text{ApproxAGCM}}
+\subsection{Details of Algorithms \text{ApproxDelta} and \(\text{Approx}\mathcal{GWCM}\)}
 
 By combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose the \text{ApproxDelta} algorithm for approximating \(\Delta(u,S)\) when \(S\neq\varnothing\).
-The \text{ApproxDelta} algorithm calls algorithm \(\mathtt{Solve}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\).
+The \text{ApproxDelta} algorithm calls algorithm \(\mathtt{Solver}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\).
 Here, \(\tilde{O}(\cdot)\) hides the poly(\(\log n\)) factors.
 Additionally, we can provide an approximation guarantee for this algorithm.
 
@@ -1112,21 +1115,21 @@ Additionally, we can provide an approximation guarantee for this algorithm.
         an error parameter \(\epsilon\in(0,1)\)
     }
     \Output{
-        The margin \(\Delta(u,S)\) of AGC created by adding vertex \(u\) to \(S\) for any vertex \(u\in V\setminus S\)
+        The margin \(\Delta(u,S)\) of GWC created by adding vertex \(u\) to \(S\) for any vertex \(u\in V\setminus S\)
     }
     Compute \(\lap\) and \(\vecd\)\;
     \(n\gets\abs{V},m\gets\abs{E}\)\;
     \(w_{\min}\gets\min\setof{w_e|e\in E},w_{\max}\gets\max\setof{w_e|e\in E}\)\;
     \(d\gets\vecd\vecone\),\(q,r\gets\ceil{24(\epsilon/7)^{-2}\log n}\)\;
     \(\delta_1\gets \frac{w_{\min}\epsilon}{7n^2w_{\max}}\),\(\delta_2\gets \frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\)\;
-    \(\vecx'\gets\mathtt{Solve}(\lap_{-S},\vecd_{-S},\delta_1)\)\;
+    \(\vecx'\gets\mathtt{Solver}(\lap_{-S},\vecd_{-S},\delta_1)\)\;
     \(\matq\gets\text{GenerateRandomMatrix}(q,m)\)\;
     \(\matr\gets\text{GenerateRandomMatrix}(r,n)\)\;
     Decompose \(\lap_{-S}\) into \(\matb'\in\rea^{m\times n}\), \(\matw'\in\rea^{m\times m}\) and \(\matz\in\rea^{n\times n}\), where \(\lap_{-S}=\matb'^\top\matw'\matb'+\matz\)\;
     \(\overline{\matx}\gets\matq\matw^{1/2}\matb\),\(\overline{\maty}\gets\matr\matz^{1/2}\)\;
     \For{\(i=1,2,\dots,q\)}{
-    \(\matx'_{[i,:]}\gets\mathtt{Solve}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\)\;
-    \(\maty'_{[i,:]}\gets\mathtt{Solve}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\)\;
+    \(\matx'_{[i,:]}\gets\mathtt{Solver}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\)\;
+    \(\maty'_{[i,:]}\gets\mathtt{Solver}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\)\;
     }
     \ForEach{\(u\in V\setminus S\)}{
         \(\Delta'(u,S)\gets\frac{\vecx'^2}{d\mypar{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}}\)\;
@@ -1146,11 +1149,11 @@ Additionally, we can provide an approximation guarantee for this algorithm.
 
 % \end{IEEEproof}
 
-By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we are able to create a faster greedy algorithm called \text{ApproxAGCM} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor.
-The complexity of \text{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear, as it calls \(\text{Approx\(\mathcal{HK}\)}\) once and \text{ApproxDelta} \(k-1\) times.
+By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we are able to create a faster greedy algorithm called \(\text{Approx}\mathcal{GWCM}\) with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor.
+The complexity of \(\text{Approx}\mathcal{GWCM}\) is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear, as it calls \(\text{Approx\(\mathcal{HK}\)}\) once and \text{ApproxDelta} \(k-1\) times.
 
 \begin{algorithm}
-    \caption{\text{ApproxAGCM}\((\gr,k,\epsilon)\)}
+    \caption{\(\text{Approx}\mathcal{GWCM}\)\((\gr,k,\epsilon)\)}
     \label{algo:approx}
     \Input{
         A connected weighted undirected graph \(\gr=(V,E,w)\);
@@ -1169,7 +1172,7 @@ The complexity of \text{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), whi
 \end{algorithm}
 
 \begin{theorem}
-    The algorithm \(S_k=\text{ApproxAGCM}(\gr,k,\epsilon)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) ,a positive integer \(k\) and an error parameter \(\epsilon\in(0,1)\), then returns a vertex group \(S_k\) with capacity \(k\). When \(k>1\), the vertex group \(S\) satisfies
+    The algorithm \(S_k=\text{Approx}\mathcal{GWCM}(\gr,k,\epsilon)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) ,a positive integer \(k\) and an error parameter \(\epsilon\in(0,1)\), then returns a vertex group \(S_k\) with capacity \(k\). When \(k>1\), the vertex group \(S\) satisfies
     \begin{align*}
         \mypar{1+\epsilon} & \manc{\setof{u^*}}-\manc{S_k}\ge                                                                         \\
                            & \mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon}\mypar{\mypar{1+\epsilon}\manc{\setof{u^*}}-\manc{S^*}},
@@ -1199,12 +1202,12 @@ The complexity of \text{ApproxAGCM} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), whi
 In this section, we present experimental results for various real and model networks to demonstrate the  efficiency and accuracy of our approximation algorithms:
 \begin{itemize}
     \item \(\text{Approx}\mathcal{HK}\) for computing the walk centrality \(H_u\) of  every vertex and the Kemeny constant \(K\);
-    \item \text{ExactAGCM} and \text{ApproxAGCM} for solving the AGC Minimization problem.
+    \item \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\) for solving the GWC Minimization problem.
 \end{itemize}
 
 The data of these networks are taken from the Koblenz Network Collection~\cite{Ku13} and SNAP~\cite{LeKr14}. For those networks that are disconnected originally, we perform our experiments on their largest connected components (LCC). Related information about the number of vertices and edges for the studied real networks and their LCC is shown  in \tabref{tab:runtime_comparison},  where networks are listed in an increasing order of the number of vertices in the networks. The smallest network has 198 vertices, while the largest one consists of more than \(1.9 \times 10^{6}\) vertices.
 
-All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement the approximation algorithms \(\text{Approx}\mathcal{HK}\) and \text{ApproxAGCM} in \textit{Julia v1.8.5}, where the \(\mathtt{Solve}\) is from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
+All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement the approximation algorithms \(\text{Approx}\mathcal{HK}\) and \(\text{Approx}\mathcal{GWCM}\) in \textit{Julia v1.8.5}, where the \(\mathtt{Solver}\) is from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
 
 \subsection{Results for \(\text{Approx}\mathcal{HK}\)}
 
@@ -1265,7 +1268,7 @@ In \tabref{tab:runtime_comparison}, we report the running time of \(\text{Approx
     \normalsize
     %\tabcolsep=4.8pt
     %\small
-    %\fontsize{6.4}{8.0}\selectfont
+    \fontsize{8.0}{8.8}\selectfont
     \begin{threeparttable}
         \caption{The running time (seconds, \(s\)) of \(\text{Exact}\mathcal{HK}\) and \(\text{Approx}\mathcal{HK}\) with various \(\epsilon\) on several realistic networks.}
         \label{tab:runtime_comparison}
@@ -1486,13 +1489,13 @@ We use our algorithm \(\text{Approx}\mathcal{HK}\) to compute the Kemeny constan
     \end{threeparttable}
 \end{table*}
 
-\subsection{Results for \text{ExactAGCM} and \text{ApproxAGCM}}
+\subsection{Results for \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\)}
 
-We first compare the performance of \text{ExactAGCM} and \text{ApproxAGCM} with the optimum solution on four toy networks~\cite{Ku13}: \(\mathit{Zebra}\) with 23 vertices, \(\mathit{Zachary\ karate\ club}\) with 34 vertices, \(\mathit{Contiguous\ USA}\) with 49 vertices and \(\mathit{Les\ Miserables}\) with 77 vertices.
+We first compare the performance of \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\) with the optimum solution on four toy networks~\cite{Ku13}: \(\mathit{Zebra}\) with 23 vertices, \(\mathit{Zachary\ karate\ club}\) with 34 vertices, \(\mathit{Contiguous\ USA}\) with 49 vertices and \(\mathit{Les\ Miserables}\) with 77 vertices.
 
-To find the set of \(k\) elements with the lowest AGC value for each network \(\gr=(V,E)\), the optimum solution iterates through all the \(k\)-element subsets of \(V\), where \(k\) ranges from \(1\) to \(5\).
-We then compare the smallest AGC value with the solution provided by \text{ExactAGCM} and \text{ApproxAGCM}, whose results are shown in \figref{pic:compare-effect-optimum}.
-During the execution of \text{ApproxAGCM}, we set the error parameter \(\epsilon\) to \(0.2\).
+To find the set of \(k\) elements with the lowest GWC value for each network \(\gr=(V,E)\), the optimum solution iterates through all the \(k\)-element subsets of \(V\), where \(k\) ranges from \(1\) to \(5\).
+We then compare the smallest GWC value with the solution provided by \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\), whose results are shown in \figref{pic:compare-effect-optimum}.
+During the execution of \(\text{Approx}\mathcal{GWCM}\), we set the error parameter \(\epsilon\) to \(0.2\).
 The results in \figref{pic:compare-effect-optimum} demonstrate that the solutions provided by our algorithms are almost identical to each other, and both are very close to the optimum solution.
 This indicates that our proposed algorithms have a much better approximation ratio than the theoretical guarantees.
 
@@ -1503,7 +1506,7 @@ This indicates that our proposed algorithms have a much better approximation rat
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
                 legend style={font=\Large},
-                legend entries={ApproxAGCM,ExactAGCM,OptimumAGCM},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),\(\text{Optimum}\mathcal{GWCM}\)},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1519,7 +1522,7 @@ This indicates that our proposed algorithms have a much better approximation rat
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
                 legend style={font=\Large},
-                legend entries={ApproxAGCM,ExactAGCM,OptimumAGCM},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),\(\text{Optimum}\mathcal{GWCM}\)},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1536,7 +1539,7 @@ This indicates that our proposed algorithms have a much better approximation rat
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
                 legend style={font=\Large},
-                legend entries={ApproxAGCM,ExactAGCM,OptimumAGCM},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),\(\text{Optimum}\mathcal{GWCM}\)},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1552,7 +1555,7 @@ This indicates that our proposed algorithms have a much better approximation rat
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
                 legend style={font=\Large},
-                legend entries={ApproxAGCM,ExactAGCM,OptimumAGCM},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),\(\text{Optimum}\mathcal{GWCM}\)},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1563,13 +1566,13 @@ This indicates that our proposed algorithms have a much better approximation rat
             \node [font=\huge] at (3.5,9) {(d)};
         \end{axis}
     \end{tikzpicture}
-    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by three different algorithms(\text{ExactAGCM},\text{ApproxAGCM} and \text{OptimumAGCM}) on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c) and Les Miserables (d).\label{pic:compare-effect-optimum}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by three different algorithms(\(\text{Exact}\mathcal{GWCM}\),\(\text{Approx}\mathcal{GWCM}\) and \(\text{Optimum}\mathcal{GWCM}\)) on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c) and Les Miserables (d).\label{pic:compare-effect-optimum}}
 \end{figure}
 
-We then compare the performance of \text{ExactAGCM} and \text{ApproxAGCM} with three other algorithms: \text{Top-Absorb}, \text{Top-Degree}, and \text{Top-PageRank}.
+We then compare the performance of \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\) with three other algorithms: \text{Top-Absorb}, \text{Top-Degree}, and \text{Top-PageRank}.
 \text{Top-Absorb} simply selects \(k\) absorbing vertices with the lowest absorbing random-walk centrality, while \text{Top-Degree} and \text{Top-PageRank} select the vertices with the largest degrees and PageRank values, respectively.
 We execute these four algorithms on eight medium-sized networks.
-During the execution of \text{ApproxAGCM}, we set the error parameter \(\epsilon\) to \(0.2\).
+During the execution of \(\text{Approx}\mathcal{GWCM}\), we set the error parameter \(\epsilon\) to \(0.2\).
 The results are shown in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}.
 As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, both of our algorithms produce similar approximate solutions in larger networks, which outperform the solutions of other algorithms.
 
@@ -1585,7 +1588,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
                 ymax=800,
             ]
             \addplot+[
@@ -1609,7 +1612,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
                 ymax=4500,
             ]
             \addplot+[
@@ -1635,7 +1638,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
                 ymax=1600,
             ]
             \addplot+[
@@ -1659,7 +1662,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
                 ymax=12000,
             ]
             \addplot+[
@@ -1673,7 +1676,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
             \node [font=\huge] at (10,90) {(d)};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\text{ExactAGCM},\text{ApproxAGCM},\text{Top-Absorb} and \text{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d).\label{pic:compare-effect1}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\(\text{Exact}\mathcal{GWCM}\),\(\text{Approx}\mathcal{GWCM}\),\text{Top-Absorb} and \text{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d).\label{pic:compare-effect1}}
 \end{figure}
 
 \begin{figure}[!t]
@@ -1688,7 +1691,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=800,
             ]
             \addplot+[
@@ -1712,7 +1715,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=4500,
             ]
             \addplot+[
@@ -1738,7 +1741,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=1600,
             ]
             \addplot+[
@@ -1762,7 +1765,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={ApproxAGCM,ExactAGCM,Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=12000,
             ]
             \addplot+[
@@ -1776,25 +1779,25 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
             \node [font=\huge] at (15,4) {(d)};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{AGC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\text{ExactAGCM},\text{ApproxAGCM},\text{Top-Absorb} and \text{Top-Degree}) on four networks: Hamster friends (a), Hamster full (b), Reactome (c) and Route views (d).\label{pic:compare-effect2}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\(\text{Exact}\mathcal{GWCM}\),\(\text{Approx}\mathcal{GWCM}\),\text{Top-Absorb} and \text{Top-Degree}) on four networks: Hamster friends (a), Hamster full (b), Reactome (c) and Route views (d).\label{pic:compare-effect2}}
 \end{figure}
 
-Finally, we demonstrate that the \text{ApproxAGCM} algorithm is significantly more efficient than the \text{ExactAGCM} algorithm, particularly when applied to large networks.
+Finally, we demonstrate that the \(\text{Approx}\mathcal{GWCM}\) algorithm is significantly more efficient than the \(\text{Exact}\mathcal{GWCM}\) algorithm, particularly when applied to large networks.
 We test both algorithms on a wider range of real networks.
-For each network, we use \text{ExactAGCM} and \text{ApproxAGCM} separately to solve the AGC minimization problem, with \(k=10\) and \(\epsilon=0.2\).
+For each network, we use \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\) separately to solve the GWC minimization problem, with \(k=10\) and \(\epsilon=0.2\).
 The running times of both algorithms are shown in \tabref{tab:running-time}.
 
-From \tabref{tab:running-time}, we can observe that the running time of \text{ApproxAGCM} is proportional to the number of edges in the network, leading to an increase in the speedup ratio of \text{ApproxAGCM} as the network size grows.
+From \tabref{tab:running-time}, we can observe that the running time of \(\text{Approx}\mathcal{GWCM}\) is proportional to the number of edges in the network, leading to an increase in the speedup ratio of \(\text{Approx}\mathcal{GWCM}\) as the network size grows.
 Furthermore, \tabref{tab:running-time} indicates that when processing networks marked with \(\ast\),
-\text{ApproxAGCM} remains usable while \text{ExactAGCM} fails due to its high time complexity.
-This result demonstrates the scalability of \text{ApproxAGCM} when applied to large networks.
+\(\text{Approx}\mathcal{GWCM}\) remains usable while \(\text{Exact}\mathcal{GWCM}\) fails due to its high time complexity.
+This result demonstrates the scalability of \(\text{Approx}\mathcal{GWCM}\) when applied to large networks.
 
 \begin{table}[htbp]
     \tabcolsep=8pt
     \centering
     \fontsize{8.0}{8.8}\selectfont
     \begin{threeparttable}
-        \caption{The running time (seconds, \(s\)) of \text{ExactAGCM} and \text{ApproxAGCM} (denoted as \text{Exact} and \text{Approx} in the table to save space) with various \(\epsilon\) on several realistic networks}
+        \caption{The running time (seconds, \(s\)) of \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\) (denoted as \text{Exact} and \text{Approx} in the table to save space) with various \(\epsilon\) on several realistic networks}
         \label{tab:running-time}
         \begin{tabularx}{8.25cm}{c p{1cm} p{0.5cm} p{0.5cm} p{0.5cm}}
             \toprule[1pt]
@@ -1858,10 +1861,10 @@ The hitting time of random walks arises in many practical scenarios.
 However, exactly computing the hitting time is prohibitively expensive, making it difficult to solve corresponding optimization problems.
 In this paper, we studied absorbing random-walk centrality and Kemeny constant of a graph, both of which are actually weighted average of hitting times and have found wide applications.
 We established a link between the two quantities and reformulated them in terms of quadratic forms of the pseudoinverse of graph Laplacian.
-Subsequently, we extended the notion of mean hitting time to multiple vertices, proposing Absorbing Group Centrality (AGC) and its minimization problem.
+Subsequently, we extended the notion of mean hitting time to multiple vertices, proposing Group Walk Centrality (GWC) and its minimization problem.
 We demonstrated the monotonicity and supermodularity of this newly proposed centrality, expressing it in terms of the inverse of a SDDM matrix.
 Moreover, we provided a randomized approximation algorithm with probabilistic guarantee, which computes the walk centrality for all vertices and Kemeny constant in nearly linear time with respect to the number of edges.
-Based on this algorithm, we provided another nearly linear greedy approximate algorithm to solve the minimization problem of AGC, which is proved to be NP-hard.
+Based on this algorithm, we provided another nearly linear greedy approximate algorithm to solve the minimization problem of GWC, which is proved to be NP-hard.
 Finally, we conducted extensive experiments on various real-world and model networks, which show that the proposed algorithms are both efficient and accurate, especially for large-scale networks.
 
 \bibliographystyle{IEEEtran}
