@@ -643,10 +643,10 @@ GWC \(\manc{S}\) is equivalent to weighted sum of the group random detour times.
 
 
 
-\subsubsection{Connection with the equivalent electrical network}
+\subsubsection{Connection with Voltage and Electrical Network Associated with Augment Graph}
 
 Additionally, Ranjan et al.~\cite{RaZh13} establishes a link between random detour overhead and the equivalent electrical network.
-By leveraging this connection along with \thmref{thm:connection-multiple}, we can establish another link between GWC and the equivalent electrical network of the augmented graph.
+
 
 We'll start by defining the augmented graph.
 Given a graph \(\gr=\mypar{V,E,w}\) with a group of absorbing vertices \(S\), we'll replace all vertices in \(S\) with a new vertex \(s\) to create the augmented graph \(\gr'=\mypar{V',E',w'}\) where \(V'=\mypar{V\setminus S}\cup\setof{s}\).
@@ -756,22 +756,29 @@ Next we demonstrate that the set function \(\manc{\cdot}\) is both monotonically
 \end{IEEEproof}
 
 
-\section{GWC Minimization Problem (GWCM)}
+\section{Minimizing  Group Walk Centrality Subject to Cardinality Constraint }
 
-When considering GWC, we naturally address the issue of selecting a vertex group (\(S\)) with a capacity of \(k\) from a network that minimizes its GWC (\(\manc{S}\)).
-In this section, we will define the GWC minimization problem (GWCM).
-After demonstrating its NP-hardness, we will provide a greedy algorithm that can solve GWCM with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
+In this section, we define and study the problem of minimizing the GWC (\(\manc{S}\)) by optimally  selecting a fixed number $k=|S|$ vertices constituting set.
 
-\subsection{Definition of GWCM}
+\subsection{Problme Formulation}
 
-\begin{problem}[Group Walk Centrality Minimization, GWCM]
-Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, \(m\) edges and an integer \(k\ll n\), the goal is to find a vertex group \(S^*\subseteq V\) such that GWC \(\manc{S^*}\) is minimized:
+As shown above, \(\manc{S}\) is a monotonically deceasing set function, since the addition of any vertex to set $S$ will lead to an decrease of the quantity \(\manc{S}\).   Then we naturally raise the following problem called MinGWC: How to optimally choose a set $S$ of $k=|S|$ vertices in graph \(\gr=(V,E)\), so that the quantity \(\manc{S}\) is minimized. Mathematically, the optimization problem subject to a cardinality constraint can be formally stated as follows.
+
+%When considering GWC, we naturally address the issue of selecting a vertex group (\(S\)) with a capacity of \(k\) from a network that minimizes its GWC (\(\manc{S}\)).
+
+
+\begin{problem}[Minimization of Group Walk Centrality, MinGWC]
+Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, \(m\) edges and an integer \(k\ll n\), the goal is to find a vertex group \(S^*\subseteq V\) such that the GWC \(\manc{S^*}\) is minimized. In other words,
 \begin{equation*}
     S^*=\argmin_{S\subseteq V,\abs{S}=k}\manc{S}.
 \end{equation*}
 \end{problem}
 
-\subsection{Proof of NP-hardness}
+
+Since the problem MinGWC is inherently combinatorial, we can naturally resort to a the na\"{\i}ve solution by exhausting all $\tbinom{n}{k}$ cases of vertex selection. For each of the possible cases that $k$ vertices are selected to form set $S$, we calculate the quantity \(\manc{S}\) corresponding to the $k$ vertices in set $S$ and output the optimal solution $S^*$ with the minimum group walk centrality. Evidently, this method fails when $n$ or $k$ is slightly large since it has an exponential time complexity $O(\tbinom{n}{k}n^3)$, assuming that inverting an $n \times n$ matrix needs $O(n^3)$  time. Below we will show that the  MinGWC problem is in fact NP-hard.
+
+
+\subsection{Hardness of the Problem}
 
 To prove the NP-hardness of GWCM, we try to construct a reduction to a decision version of GWCM from the Vertex Cover problem, which is NP-complete~\cite{FrHeJa98}.
 
