@@ -252,8 +252,8 @@ First, we show that the Kemeny constant \(K\) can be expressed in a linear combi
 
 After obtaining the relation governing the Kemeny constant \(K\)  and walk centrality \(H_j\), we continue to express them in terms of quadratic forms of matrix  \(\lap^{\dagger}\).
 
-\begin{lemma}
-    \label{HjK} Let \(\gr=(V,E,w)\) be a connected weighted graph  with  Laplacian matrix \(\lap\). Then, the walk centrality \(H_j\) and Kemeny constant \(K\) can be represented  in terms of quadratic forms of the pseudoinverse \(\lap^{\dagger}\)  of   matrix  \(\lap\) as:
+\begin{lemma}\label{HjK}
+    Let \(\gr=(V,E,w)\) be a connected weighted graph  with  Laplacian matrix \(\lap\). Then, the walk centrality \(H_j\) and Kemeny constant \(K\) can be represented  in terms of quadratic forms of the pseudoinverse \(\lap^{\dagger}\)  of   matrix  \(\lap\) as:
     \begin{equation}\label{ATT02}
         H_j=d(\vece_j - \vecpi)^{\top} \lap^{\dagger} (\vece_j - \vecpi)
     \end{equation}
@@ -756,7 +756,7 @@ Next we demonstrate that the set function \(\manc{\cdot}\) is both monotonically
 
 In this section, we define and study the problem of minimizing the GWC \(\manc{S}\) by optimally  selecting a fixed number $k=|S|$ vertices constituting set.
 
-\subsection{Problme Formulation}
+\subsection{Problem Formulation}
 
 As shown above, \(\manc{S}\) is a monotonically deceasing set function, since the addition of any vertex to set $S$ will lead to an decrease of the quantity \(\manc{S}\). Then, we naturally raise the following problem called MinGWC: How to optimally choose a set $S$ of $k=|S|$ vertices in graph \(\gr=(V,E)\), so that the quantity \(\manc{S}\) is minimized. Mathematically, the optimization problem subject to a cardinality constraint can be formally stated as follows.
 
@@ -836,42 +836,51 @@ At each iteration, a new absorbing vertex \(u^*\) is chosen from the set of non-
     u^*=\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}.
 \end{gather*}
 
-It is evident that the straightforward algorithm presented above requires computing \(\Delta(u,S)\) for every vertex \(u\) in the graph during each iteration, resulting in \(O(n)\) matrix inverse operations.
+It is evident that the straightforward algorithm presented above requires computing \(\Delta(u,S)\) for every vertex \(u\) in the graph during each iteration, resulting in \(O(n)\) matrix inverse operations due to~\eqref{eq:GWC}.
 If the naive matrix inverse algorithm with complexity \(O(n^3)\) is used, the total complexity of the simple greedy algorithm becomes \(O(kn^4)\).
 By simplifying \(\Delta(u,S)\), our aim is to decrease the time complexity of the greedy algorithm.
 
-For vertex \(u\in V\setminus S\), we denote the \(\myord{u}\) column of submatrix \(\lap_{-S}\) as \(\begin{pmatrix}d_u\\-\veca\end{pmatrix}\).
-After adjusting the order of \(\lap_{-S}\), we can rewrite it in block form as
-\begin{equation*}
-    \lap_{-S}=\begin{pmatrix}d_u & -\veca^\top \\-\veca&\mata\end{pmatrix},
-\end{equation*}
-where \(\mata\) denotes \(\lap_{-(S+u)}\).
-According to the properties of block matrices, we can get
-\begin{equation*}
-    \lap_{-S}^{-1}=
-    \begin{pmatrix}
-        t & t\veca^\top\mata^{-1} \\t\mata^{-1}\veca&\mata^{-1}+t\mata^{-1}\veca\veca^\top\mata^{-1}
-    \end{pmatrix},
-\end{equation*}
-where \(t=\pinv{d_u-\veca^\top\inv{\mata}}\).
-Therefore, when \(S\neq\varnothing\), \(\Delta(u,S)\) can be rewritten as
+\begin{lemma}\label{lem:delta}
+    Given a connected weighted undirected graph \(\gr=(V,E,w)\), the nonempty vertex group \(S\) and the Laplacian matrix \(\lap\), then for any vertex \(u\in V\setminus S\), we have
+    \begin{equation}\label{eq:delta}
+        \manc{S}-\manc{S+u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}^2}{d\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}}.
+    \end{equation}
+\end{lemma}
 
-\begin{equation}\label{eq:margin-deriv}
-    \begin{split}
-        &\manc{S}-\manc{S+u}\\
-        =&\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecd_{-(S+u)}\\
-        =&\frac1t\mypar{t\vecpi_u+t\vecpi_{-(S+u)}^\top\mata^{-1}\veca}\mypar{td_u+t\veca^\top\mata^{-1}\vecd_{-(S+u)}}\\
-        =&\frac{\mypar{\vecpi_{-S}^\top\lap_{-S}^{-1}\vece_u}\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}}{\vece_u^\top\lap_{-S}^{-1}\vece_u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}^2}{d\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}}.
-    \end{split}
-\end{equation}
+\begin{IEEEproof}
+    For vertex \(u\in V\setminus S\), we denote the \(\myord{u}\) column of submatrix \(\lap_{-S}\) as \(\begin{pmatrix}d_u\\-\veca\end{pmatrix}\).
+    After adjusting the order of \(\lap_{-S}\), we can rewrite it in block form as
+    \begin{equation*}
+        \lap_{-S}=\begin{pmatrix}d_u & -\veca^\top \\-\veca&\mata\end{pmatrix},
+    \end{equation*}
+    where \(\mata\) denotes \(\lap_{-(S+u)}\).
+    According to the properties of block matrices, we can get
+    \begin{equation*}
+        \lap_{-S}^{-1}=
+        \begin{pmatrix}
+            t & t\veca^\top\mata^{-1} \\t\mata^{-1}\veca&\mata^{-1}+t\mata^{-1}\veca\veca^\top\mata^{-1}
+        \end{pmatrix},
+    \end{equation*}
+    where \(t=\pinv{d_u-\veca^\top\inv{\mata}}\).
+    Therefore, when \(S\neq\varnothing\), \(\Delta(u,S)\) can be rewritten as
 
-Here we skip some steps for brevity.
+    \begin{equation*}
+        \begin{split}
+            &\manc{S}-\manc{S+u}\\
+            =&\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecd_{-(S+u)}\\
+            =&\frac1t\mypar{t\vecpi_u+t\vecpi_{-(S+u)}^\top\mata^{-1}\veca}\mypar{td_u+t\veca^\top\mata^{-1}\vecd_{-(S+u)}}\\
+            =&\frac{\mypar{\vecpi_{-S}^\top\lap_{-S}^{-1}\vece_u}\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}}{\vece_u^\top\lap_{-S}^{-1}\vece_u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}^2}{d\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}}.
+        \end{split}
+    \end{equation*}
 
-However, during the first iteration of the greedy algorithm, when \(S=\varnothing\), \eqref{eq:margin-deriv} becomes invalid due to the singularity of \(\lap\).
+    Here we skip some steps for brevity.
+\end{IEEEproof}
+
+However, during the first iteration of the greedy algorithm, when \(S=\varnothing\),~\eqref{eq:delta} becomes invalid due to the singularity of \(\lap\).
 Since the Group Walk Centrality \(\manc{S}\) reduces to the walk centrality \(H_u\) when \(S\) contains only one vertex \(u\), we can find the vertex \(u^*\) with minimal walk centrality at the first iteration of our greedy algorithm.
 In \lemref{HjK}, we have shown that \(H_u=d\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\).
 
-Equation~\eqref{ATT02} and~\eqref{eq:margin-deriv} demonstrate that we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) by inverting the same matrix \(\lap_{-S}\) or by using the pseudoinverse of the same matrix \(\lap\).
+\lemref{HjK} and \lemref{lem:delta} demonstrate that we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) by inverting the same matrix \(\lap_{-S}\) or by using the pseudoinverse of the same matrix \(\lap\).
 As a result, we can optimize the simple greedy algorithm outlined in~\algoref{algo:exact-gwcm}, and reduce the time complexity from \(O(kn^4)\) to \(O(kn^3)\).
 
 \begin{algorithm}
@@ -925,7 +934,7 @@ Our first objective is to estimate \(\Delta(u,\varnothing)=-H_u\), which is the 
 We can conveniently use \algoref{ALG01}, which has a proven approximation guarantee as shown in \thmref{TheoAlg1}.
 
 Our second objective is to estimate \(\Delta(u,S)\) when \(S\neq\varnothing\).
-As is shown in~\eqref{eq:margin-deriv}, \(\Delta(u,S)\) is represented in the form of a fraction.
+As is shown in \lemref{lem:delta}, \(\Delta(u,S)\) is represented in the form of a fraction.
 We try to estimate the numerator and denominator of it separately.
 
 \subsection{Approximation of the numerator of \(\Delta(u,S)\)}
@@ -1032,7 +1041,7 @@ Then~\eqref{eq:denom-solver} and~\eqref{eq:denom-jl} can be rephrased as follows
 
 Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can efficiently approximate the denominator of \(\Delta(u,S)\).
 \begin{lemma}\label{lem:approx-denom}
-    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty vertex group \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\).
+    Given a connected weighted undirected graph \(\gr=(V,E,w)\), the nonempty vertex group \(S\), the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\).
     We define \(\overline{\matx}\) and \(\overline{\maty}\) as \(\matq\matw^{1/2}\matb\) and \(\matr\matz^{1/2}\) respectively.
     Let \(\matx'\in\rea^{q\times n}\) and \(\maty'\in\rea^{r\times n}\) be matrices such that \(\matx'_{[i,:]}=\mathtt{Solver}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\), \(\maty'_{[i,:]}=\mathtt{Solver}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\), where \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\), \(\delta_2=\frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\). Then for any vertex \(i\in V\setminus S\), we have
     \begin{equation}\label{eq:approx-denom}
