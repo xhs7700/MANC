@@ -213,8 +213,7 @@ For a vertex \(j\) in graph \(\gr=(V,E,w)\), its absorbing random-walk centralit
 
 Another quantity we are concerned with is the Kemeny constant \(K\). For a graph \(\gr\), its Kemeny constant \(K\) is defined as the expected steps for a walker starting from  vertex \(i\) to vertex \(j\) selected randomly from the vertex set \(V\), according to the stationary distribution \(\vecpi\). That is, \(K = \sum_{j = 1}^{n} \pi_j H_{ij}\). The Kemeny constant has been used to measure the user navigation efficiency through the WWW~\cite{LeLo02} and  robotic surveillance efficiency in network environments~\cite{PaAgBu15}. It can also measure the mixing rate of random walks~\cite{LePeWi09}.
 
-\textcolor{red}{Subsequently, for graph \(\gr\), its random detour time \(D_{ij}(u)\) is defined as the expected time of a walker who starts from vertex \(i\), must visit vertex \(u\), then first reaches vertex \(j\), where \(i,u,j\in V\) differs from each other.
-That is, \(D_{ij}(u)= H_{iu}+H_{uj}\).}
+%\textcolor{red}{Subsequently, for graph \(\gr\), its random detour time \(D_{ij}(u)\) is defined as the expected time of a walker who starts from vertex \(i\), must visit vertex \(u\), then first reaches vertex \(j\), where \(i,u,j\in V\) differs from each other. That is, \(D_{ij}(u)= H_{iu}+H_{uj}\).}
 
 Most quantities for random walks on graph \(\gr\) are determined by the eigenvalues and eigenvectors of the normalized Laplacian matrix~\cite{Ch97}, \({\matd}^{-\frac{1}{2}}\lap {\matd}^{-\frac{1}{2}}\), of \(\gr\), including the walk centrality and Kemeny constant. By definition, \({\matd}^{-\frac{1}{2}}\lap {\matd}^{-\frac{1}{2}}\) is a real, symmetric, semi-definitive matrix. Let \(0=\sigma_1 < \sigma_2 \leq \sigma_3 \leq \cdots \leq \sigma_n \) be the \(n\) eigenvalues of the normalized Laplacian matrix \({\matd}^{-\frac{1}{2}}\lap {\matd}^{-\frac{1}{2}}\). And let \(\vecpsi_1\), \(\vecpsi_2\), \(\vecpsi_3\), \(\ldots\), \(\vecpsi_n\) be their corresponding mutually orthogonal eigenvectors of unit length, where \(\vecpsi_i=(\psi_{i1},\psi_{i2},\ldots,\psi_{in})^{\top}\). Then~\cite{Lo93,Be16},
 \begin{equation}\label{ATT01}
@@ -590,14 +589,18 @@ Since $\lap_{-S}$ is an SDDM matrix, according to~\eqref{eq:GWC} and \lemref{lem
 
 
 
-\subsection{Two Explanations }
+%\subsection{Two Explanations }
 
-In this subsection, we provide two explanations for GWC \(\manc{S}\) in graph \(\gr=(V,E)\). First, we establish a link between GWC $H(S)$ and some other quantities related to hitting times for  random walks without traps in \(\gr=(V,E)\). Then, we provide interpretation for  \(\manc{S}\)  in terms of voltages of an electrical network corresponding to augmented graph of \(\gr=(V,E)\).
+\subsection{Connection with Other Quantities of Random Walks}
 
-\subsubsection{Connection with Other Quantities of Random walks}
+%In this subsection, we provide two explanations for GWC \(\manc{S}\) in graph \(\gr=(V,E)\). First, we establish a link between GWC $H(S)$ and some other quantities related to hitting times for  random walks without traps in \(\gr=(V,E)\). Then, we provide interpretation for  \(\manc{S}\)  in terms of voltages of an electrical network corresponding to augmented graph of \(\gr=(V,E)\).
+
+%Here we establish a connection between GWC \(\manc{S}\) and some other quantities about hitting times. 
 
 
-Here we establish a connection between GWC \(\manc{S}\) and some other quantities about hitting times.  We first introduce a notion of random detour walk $i\rightarrow S \rightarrow j$. It is a random walk starting from a vertex $i$, that must visit at least a vertex in set $S$ before it arrives at the target vertex $j$ and stops. The group random detour time  \(D_{ij}(S)\) for the random detour walk $i\rightarrow S \rightarrow j$ is defined as the expected time for the walker starting from vertex \(i\) to visit at least a vertex in group \(S\), and then reaches vertex \(j\) for the first time. Note that when set $S$ includes only one vertex $k$, $i\rightarrow S \rightarrow j$ and \(D_{ij}(S)\) are reduced to the corresponding notion and quantity previously proposed in~\cite{RaZh13,BoRaZh11} for a single vertex.
+In this subsection, we establish a link between GWC $H(S)$  in graph \(\gr\) and some other quantities related to hitting times for random walks without traps in \(\gr\).
+
+We first introduce a notion of random detour walk $i\rightarrow S \rightarrow j$. It is a random walk starting from a vertex $i$, that must visit at least a vertex in set $S$ before it arrives at the target vertex $j$ and stops. The group random detour time  \(D_{ij}(S)\) for the random detour walk $i\rightarrow S \rightarrow j$ is defined as the expected time for the walker starting from vertex \(i\) to visit at least a vertex in group \(S\), and then reaches vertex \(j\) for the first time. Note that when set $S$ includes only one vertex $k$, $i\rightarrow S \rightarrow j$ and \(D_{ij}(S)\) are reduced to the corresponding notion and quantity previously proposed in~\cite{RaZh13,BoRaZh11} for a single vertex.
 
 
 For an absorbing random walks in graph \(\gr=(V,E)\)  with vertices in set \(S\)  being absorbing ones,  we denote the probability that a walker starting from vertex \(i\) first reaches vertex \(u\) in absorbing group \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpdistr\in\rea^{n\times\abs{S}}\). Then, \(D_{ij}(S)\) can be expressed as
@@ -638,58 +641,51 @@ This expression shows that  if \(D_{ij}(S)\) is larger, then it is difficult for
     % The last equality is due to the fact that \(\matfstar\vecpi=\vecone\)~\cite{BoRaZh11} and \(\vecpi^\top\vecone=1\).
     Combining~\eqref{eq:detour} and~\eqref{eq:kemeny} completes the proof.
 \end{IEEEproof}
-Since \(K\) is only related to the structure of graph \(\gr\),~\eqref{eq:connection-multiple} indicates that there exists only a constant difference between GWC \(\manc{S}\) and  a weighted sum of the group random detour time \(D_{ij}(S)\) over all pairs of vertices. Thus, from the perspective of decimating power of vertex group,
+
+Since the Kemeny constant \(K\) is only related to the structure of graph \(\gr\),~\eqref{eq:connection-multiple} indicates that there exists only a constant difference between GWC \(\manc{S}\) and  a weighted sum of the group random detour time \(D_{ij}(S)\) over all pairs of vertices. Thus, from the perspective of decimating power of vertex group,
 GWC \(\manc{S}\) is equivalent to weighted sum of the group random detour times. In this sense, Theorem~\ref{thm:connection-multiple} deepens the understanding of the importance of vertex group \(S\) from a different perspective.
 
+\iffalse
+    \subsubsection{Connection with Voltage and Electrical Network Associated with Augmented Graph}
 
+    In this subsection, by leveraging \thmref{thm:connection-multiple}, we continue to establish another link between GWC \(\manc{S}\) for graph  \(\gr=\mypar{V,E,w}\) and the voltage for an electrical network associated with the augmented graph \(\gr'\) for \(\gr\).
 
-\subsubsection{Connection with Voltage and Electrical Network Associated with Augment Graph}
+    We begin with defining the augmented graph  \(\gr'\).  For a graph \(\gr=\mypar{V,E,w}\) with a group \(S\) of absorbing vertices, we denote the corresponding augmented graph as \(\gr'=\mypar{V',E',w'}\) , which is created as follows. First, identifying all vertices in set  \(S\) as a single new vertex \(s\). Then, the vertex set $V'$, edge set $E'$, and weigh function $w$ for graph  \(\gr'\) are defined as follows: \(V'=\mypar{V\setminus S}\cup\setof{s}\);  \(E'=\mypar{E\setminus\setof{\edge{u}{v}|u,v\in S}}\cup\setof{\edge{u}{s}|u\in\mathcal{N}_v,v\in S}\), where \(\mathcal{N}_v\) denotes the set of neighbors of vertex \(v\) in graph  \(\gr'\); and \(w'_{uv}=w_{uv}\) if \(\edge{u}{v}\in E\), \(w'_{us}=\sum_{v\in\mypar{S\cap\mathcal{N}_u}}w_{uv}\) for those edges incident to vertex $s$. By definition, there are \( n'=\abs{V'}=n-\abs{S}+1\) vertices in graph  \(\gr'\). \figref{fig:augmented-graph} displays an example of creating the augmented graph \(\gr'\) from the original graph \(\gr\).
 
-Additionally, Ranjan et al.~\cite{RaZh13} establishes a link between random detour overhead and the equivalent electrical network.
+    \begin{figure}[!t]
+        \centering
+        \includegraphics[width=0.9\linewidth]{augmented_graph.png}
+        \caption{An example of constructing an augmented graph \(\gr'\) from the original graph \(\gr\), where  vertices in set $S$ are traps. Each edge with a label is an edge with  weight \(1\).}
+        \label{fig:augmented-graph}
+    \end{figure}
 
+    We proceed to introduce some notation for the augmented graph \(\gr'=\mypar{V',E',w'}\). Let \(d'\) be the sum of the degrees of all vertices in $V'$, let $H'_{ij}$ be the hitting time from vertex $i$ to $j$, and let \(\vecpi'\) be the vector of stationary distribution for random walks on  \(\gr'\). In addition, let $\mathcal{\bar{G}}'=(V',E',w')$ be the electrical network associated with graph \(\gr'=\mypar{V',E',w'}\). Let \(\vcal_i^{sj}\) represent the voltage of vertex \(i\) in the equivalent electrical network $\mathcal{\bar{G}}'$, when a unit current is injected at vertex \(s\) and extracted at vertex \(j\).
 
-We'll start by defining the augmented graph.
-Given a graph \(\gr=\mypar{V,E,w}\) with a group of absorbing vertices \(S\), we'll replace all vertices in \(S\) with a new vertex \(s\) to create the augmented graph \(\gr'=\mypar{V',E',w'}\) where \(V'=\mypar{V\setminus S}\cup\setof{s}\).
-If we denote the set of neighbours of vertex \(v\) as \(\mathcal{N}_v\), then \(E'\) can be represented as \(E\setminus\setof{\edge{u}{v}|u,v\in S}\cup\setof{\edge{u}{s}|u\in\mathcal{N}_v,v\in S}\), where the original edges keep their weight.
-As there may exist multiple edges like \(\edge{u}{s}\), \(w'_{us}\) should be the sum of the weights of all corresponding old edges.
-\figref{fig:augmented-graph} displays an example of creating the augmented graph \(\gr'\) from the original graph \(\gr\).
+    We now establish a link between the GWC \(\manc{S}\) for graph  \(\gr=\mypar{V,E,w}\) and the voltage for the electrical network associated with graph \(\gr'\).
 
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=0.9\linewidth]{augmented_graph.png}
-    \caption{An example of constructing an augmented graph \(\gr'\) from the original graph \(\gr\), where  vertices in set $S$ are traps. Each edge with a label is an edge with  weight \(1\).}
-    \label{fig:augmented-graph}
-\end{figure}
+    \begin{theorem}\label{thm:connection-electrical}
+        For a vertex group \(S\subseteq V\) in a connected graph \(\gr=(V,E)\), the GWC \(\manc{S}\) can be expressed as
+        \begin{equation}\label{eq:connection-electrical}        \manc{S}=d'\sum_{i=1}^{n'}\sum_{j=1}^{n'}\pi'_i\pi'_j\mypar{\vcal_i^{is}+\vcal_i^{sj}-\vcal_i^{ij}}.
+        \end{equation}
+    \end{theorem}
+    \begin{IEEEproof}
+        Based on the definition of the augmented graph, the group hitting time and random detour time of \(S\) are equivalent to those of \(s\) in the corresponding augmented graph.
+        Then we can rewrite~\eqref{eq:connection-multiple} in \thmref{thm:connection-multiple} as
+        \begin{equation}\label{eq:GWC-detour}
+            \begin{split}
+                \manc{S}&=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S)-K\\
+                &=\sum_{i=1}^{n'}\sum_{j=1}^{n'}\pi_i\pi_j\mypar{H_{is}+H_{sj}-H_{ij}}.
+            \end{split}
+        \end{equation}
+        According to~\cite{RaZh13},
+        \begin{equation}\label{eq:detour-voltage}
+            H_{is}+H_{sj}-H_{ij}=d'\mypar{\vcal_i^{is}+\vcal_i^{sj}-\vcal_i^{ij}}.
+        \end{equation}
+        Combining~\eqref{eq:GWC-detour} and~\eqref{eq:detour-voltage} completes our proof.
+    \end{IEEEproof}
+\fi
 
-Subsequently, we can establish a new link between GWC and the equivalent electrical network of the augmented graph.
-
-\begin{theorem}\label{thm:connection-electrical}
-    For an arbitrary vertex group \(S\subseteq V\) in a connected graph \(\gr=(V,E)\) with \(n\) vertices,
-    \begin{equation}\label{eq:connection-electrical}
-        \manc{S}=d'\sum_{i=1}^{n'}\sum_{j=1}^{n'}\pi'_i\pi'_j\mypar{\vcal_i^{is}+\vcal_i^{sj}-\vcal_i^{ij}}.
-    \end{equation}
-    Here, \(d'\) is the sum of all degrees across all vertices in the augmented graph, and \(\vecpi'\) is the stationary distribution vector in the augmented graph.
-    Additionally, \(\vcal_i^{sj}\) represents the voltage of vertex \(i\) in the equivalent electrical network of the augmented graph.
-    This voltage is measured when a unit current is injected at vertex \(s\) and extracted at vertex \(j\).
-\end{theorem}
-\begin{IEEEproof}
-    Based on the definition of the augmented graph, the group hitting time and random detour time of \(S\) are equivalent to those of \(s\) in the corresponding augmented graph.
-    Then we can rewrite~\eqref{eq:connection-multiple} in \thmref{thm:connection-multiple} as
-    \begin{equation}\label{eq:GWC-detour}
-        \begin{split}
-            \manc{S}&=\sum_{i=1}^n\sum_{j=1}^n\pi_i\pi_jD_{ij}(S)-K\\
-            &=\sum_{i=1}^{n'}\sum_{j=1}^{n'}\pi_i\pi_j\mypar{H_{is}+H_{sj}-H_{ij}}.
-        \end{split}
-    \end{equation}
-    According to~\cite{RaZh13},
-    \begin{equation}\label{eq:detour-voltage}
-        H_{is}+H_{sj}-H_{ij}=d'\mypar{\vcal_i^{is}+\vcal_i^{sj}-\vcal_i^{ij}}.
-    \end{equation}
-    Combining~\eqref{eq:GWC-detour} and~\eqref{eq:detour-voltage} completes our proof.
-\end{IEEEproof}
-
-
-\subsection{Properties of GWC}
+\subsection{Monotonic and Supermodular Properties}
 
 %After proposing physical explanations of GWC, we then attempt to study its properties.
 In this subsection, we show that the the set function \(\manc{\cdot}\) has some desirable properties. For this purpose, we first introduce the definitions of monotone and supermodular set functions. For simplicity, we use \(S+u\) to represent \(S\cup\setof{u}\).
@@ -705,7 +701,7 @@ In this subsection, we show that the the set function \(\manc{\cdot}\) has some 
 Next we demonstrate that the set function \(\manc{\cdot}\) is both monotonically decreasing and supermodular.
 
 \begin{theorem}\label{thm:mono}
-    Let \(S\) be a nonempty set of vertiecs of a connected weighted undirected graph \(\gr=(V,E,w)\). Then, for any vertex \(u\in V\setminus S\),
+    Let \(S\) be a nonempty set of vertieces of a connected weighted undirected graph \(\gr=(V,E,w)\). Then, for any vertex \(u\in V\setminus S\),
     \begin{equation*}
         \manc{S}\ge \manc{S+u}.
     \end{equation*}
@@ -758,16 +754,16 @@ Next we demonstrate that the set function \(\manc{\cdot}\) is both monotonically
 
 \section{Minimizing  Group Walk Centrality Subject to Cardinality Constraint }
 
-In this section, we define and study the problem of minimizing the GWC (\(\manc{S}\)) by optimally  selecting a fixed number $k=|S|$ vertices constituting set.
+In this section, we define and study the problem of minimizing the GWC \(\manc{S}\) by optimally  selecting a fixed number $k=|S|$ vertices constituting set.
 
 \subsection{Problme Formulation}
 
-As shown above, \(\manc{S}\) is a monotonically deceasing set function, since the addition of any vertex to set $S$ will lead to an decrease of the quantity \(\manc{S}\).   Then we naturally raise the following problem called MinGWC: How to optimally choose a set $S$ of $k=|S|$ vertices in graph \(\gr=(V,E)\), so that the quantity \(\manc{S}\) is minimized. Mathematically, the optimization problem subject to a cardinality constraint can be formally stated as follows.
+As shown above, \(\manc{S}\) is a monotonically deceasing set function, since the addition of any vertex to set $S$ will lead to an decrease of the quantity \(\manc{S}\). Then, we naturally raise the following problem called MinGWC: How to optimally choose a set $S$ of $k=|S|$ vertices in graph \(\gr=(V,E)\), so that the quantity \(\manc{S}\) is minimized. Mathematically, the optimization problem subject to a cardinality constraint can be formally stated as follows.
 
 %When considering GWC, we naturally address the issue of selecting a vertex group (\(S\)) with a capacity of \(k\) from a network that minimizes its GWC (\(\manc{S}\)).
 
 
-\begin{problem}[Minimization of Group Walk Centrality, MinGWC]
+\begin{problem}[\underline{Min}imization of \underline{G}roup \underline{W}alk \underline{C}entrality, MinGWC]
 Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, \(m\) edges and an integer \(k\ll n\), the goal is to find a vertex group \(S^*\subseteq V\) such that the GWC \(\manc{S^*}\) is minimized. In other words,
 \begin{equation*}
     S^*=\argmin_{S\subseteq V,\abs{S}=k}\manc{S}.
@@ -778,50 +774,53 @@ Given a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices,
 Since the problem MinGWC is inherently combinatorial, we can naturally resort to a the na\"{\i}ve solution by exhausting all $\tbinom{n}{k}$ cases of vertex selection. For each of the possible cases that $k$ vertices are selected to form set $S$, we calculate the quantity \(\manc{S}\) corresponding to the $k$ vertices in set $S$ and output the optimal solution $S^*$ with the minimum group walk centrality. Evidently, this method fails when $n$ or $k$ is slightly large since it has an exponential time complexity $O(\tbinom{n}{k}n^3)$, assuming that inverting an $n \times n$ matrix needs $O(n^3)$  time. Below we will show that the  MinGWC problem is in fact NP-hard.
 
 
-\subsection{Hardness of the Problem}
+\subsection{Hardness of the MinGWC Problem}
 
-To prove the NP-hardness of GWCM, we try to construct a reduction to a decision version of GWCM from the Vertex Cover problem, which is NP-complete~\cite{FrHeJa98}.
-
-\begin{problem}[Vertex Cover on \(c\)-regular graphs]
-Suppose we have a connected graph \(G=(V,E)\) that is \(c\)-regular, and an integer \(k\). The aim is to determine whether a subset of vertices \(S\subseteq V\) exists, with cardinality \(\abs{S}\le k\), such that every edge in \(E\) is incident with at least one vertex in \(S\).
+In this section, we prove that  the MinGWC problem is NP-hard, by giving a reduction from the vertex cover problem for 3-regular graphs, the vertices of which have identical degree 3. For a 3-regular graph, the vertex cover problem is NP-complete~\cite{FrHeJa98}, the decision version of which is stated below.
+\begin{problem}\label{Cover3}
+Given a connected 3-regular graph \(G=(V,E)\) and an integer \(k\),  the vertex cover problem is to determine whether exists a subset \(S\subseteq V\) of \(\abs{S}\le k\) vertices, such that every edge in \(E\) is incident with at least one vertex in \(S\), i.e., \(S\) is a vertex cover of \(G=(V,E)\).
 \end{problem}
 
+We continue to give a decision version of  the MinGWC problem for a  3-regular graph.
+\begin{problem}\label{MinGWC3}
+Given a connected 3-regular graph \(G=(V,E)\) with every edge having a unit weight,  an integer \(k\), and a threshold $(n-k)/n$, the MinGWC problem  asks whether exists a subset \(S\subseteq V\) of \(\abs{S}\le k\) vertices, such that \(\manc{S}\ge (n-k)/n\).
+\end{problem}
+
+
+
+
 \begin{theorem}\label{thm:np-hard}
-    GWCM is NP-hard.
+    The MinGWC problem is NP-hard.
 \end{theorem}
 \begin{IEEEproof}
-    For a connected graph \(\gr=(V,E,w)\) that is \(c\)-regular, where the weights of all edges are equal to \(1\), we attempt to prove that \(\manc{S}\ge (n-k)/n\) for any nonempty vertex group \(S\subseteq V\) with capacity \(k\).
-    The equality holds if and only if \(S\) is a vertex cover of \(\gr\).
+    We give a reduction from the above vertex cover problem in a 3-regular graph  \(G=(V,E)\) to the decision version of the problem of group walk centrality. Specifically, we will prove that for any nonempty set \(S\subseteq V\) of  \(\abs{S}=k\)  vertices, \(\manc{S}\ge (n-k)/n\), where the equality holds if and only if \(S\) is a vertex cover of \(\gr\).
 
-    We first prove that if \(S\) is a vertex cover of \(\gr\), then \(\manc{S}=(n-k)/n\). When \(S\) is a vertex cover of \(\gr\), there are no edges between vertices in \(V\setminus S\).
-    Thus, we can simplify~\eqref{eq:GWC} as:
+
+    %For a connected graph \(\gr=(V,E,w)\) that is \(c\)-regular, where the weights of all edges are equal to \(1\), we attempt to prove that \(\manc{S}\ge (n-k)/n\) for any nonempty vertex group \(S\subseteq V\) with capacity \(k\).  The equality holds if and only if \(S\) is a vertex cover of \(\gr\).
+
+    We first prove that if \(S\) is a vertex cover of \(\gr\), then \(\manc{S}=(n-k)/n\). In the case that \(S\) is a vertex cover of \(\gr\), there is no edge between vertices in \(V\setminus S\). Then~\eqref{eq:GWC} is simplified as
     \begin{equation*}
         \manc{S}=\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\matd_{-S}^{-1}\vecd_{-S}=\vecpi_{-S}^\top\vecone.
     \end{equation*}
-    Since \(\gr\) is a \(c\)-regular graph, \(\vecpi=\begin{pmatrix}1/n&\cdots&1/n\end{pmatrix}^\top\).
+    Since \(\gr\) is a 3-regular graph, \(\vecpi=\begin{pmatrix}1/n&\cdots&1/n\end{pmatrix}^\top\).
     Thus, \(\manc{S}=\vecpi_{-S}^\top\vecone=(n-k)/n\).
 
-    We then demonstrate that if \(S\) does not constitute a vertex cover of \(\gr\), then \(\manc{S}>(n-k)/n\).
-    For a vertex \(u\in S\) and a vertex \(v\in V\setminus S\), it is obvious that \(H_{uS}=0\) and \(H_{vS}\ge1\).
-    Moreover, since \(S\) is not a vertex cover of \(\gr\), there exists at least one edge \((u',v')\) in edge set \(E\) that is not covered by \(S\).
-    When a walker starts from vertex \(u'\) and moves to vertex \(v'\) with a probability of at least \(\frac{1}{d_{\max}}>\frac{1}{n}\), the walker's path length exceeds \(1\).
-    That is,
+    We continue to demonstrate that if \(S\) is not a vertex cover of \(\gr\), then \(\manc{S}>(n-k)/n\).  Note that for the case that \(S\) is not a vertex cover,  for a vertex \(u\in S\) and any vertex \(v\in V\setminus S\), \(H_{uS}=0\) and \(H_{vS}\ge1\) always hold. Moreover, there exists at least one edge \((u',v')\) in edge set \(E\) that is not covered by \(S\). Thus, for a walker starting from vertex \(u'\), it moves to vertex \(v'\) with a probability of at least \(\frac{1}{d_{\max}}>\frac{1}{n}\), then it continue walking until being absorbed by vertices in  \(S\).  For this case the absorbing time $H_{u'S}$ is bounded as
     \begin{align*}
         H_{u'S} & >\mypar{1-\frac{1}{d_{\max}}}\times1+\frac{1}{d_{\max}}\times2  \\
                 & >\mypar{1-\frac{1}{n}}\times1+\frac{1}{n}\times2=1+\frac{1}{n}.
     \end{align*}
-    Similarly, we also have \(H_{v'S}>1+\frac{1}{n}\).
+    Similarly, we obtain \(H_{v'S}>1+\frac{1}{n}\).
 
-    Therefore, if we denote \(S\cup\setof{u',v'}\) as \(S'\), then we are able to get the lower bound of GWC:
+    Let \(S'\) denote \(S\cup\setof{u',v'}\). Then we are able to get a lower bound of GWC $\manc{S}$ as
     \begin{align*}
         \manc{S} & =\sum_{v\in V\setminus S'}\pi_vH_{vS}+\pi_{u'}H_{u'S}+\pi_{v'}H_{v'S}            \\
                  & >\vecpi_{-S'}\vecone+\pi_{u'}\mypar{1+\frac{1}{n}}+\pi_{v'}\mypar{1+\frac{1}{n}} \\
                  & =\vecpi_{-S}^\top\vecone+\frac{\pi_{u'}+\pi_{v'}}n
         >\vecpi_{-S}^\top\vecone=(n-k)/n.
     \end{align*}
-
-    According to the proposition above, we can create a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of GWCM, which proves that GWCM is NP-hard.
-
+    This finishes the proof.
+    % According to the proposition above, we can create a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of GWCM, which proves that GWCM is NP-hard.
 \end{IEEEproof}
 
 \subsection{Simple Greedy Algorithm for Solving GWCM}
