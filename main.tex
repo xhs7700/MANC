@@ -698,10 +698,10 @@ In this subsection, we show that the the set function \(\manc{\cdot}\) has some 
     A set function \(f:2^{V}\to\rea^+\) is  supermodular if and only if the inequality \(f(X)-f(X+u)\ge f(Y)-f(Y+u)\) holds for two arbitrary nonempty sets \(X\) and \(Y\) satisfying \(\forall X\subseteq Y\subseteq V, u\in V\setminus Y\).
 \end{definition}
 
-Next we demonstrate that the set function \(\manc{\cdot}\) is both monotonically decreasing and supermodular.
+Next we demonstrate that the set function \(\manc{\cdot}\) is  monotonically decreasing and supermodular.
 
 \begin{theorem}\label{thm:mono}
-    Let \(S\) be a nonempty set of vertieces of a connected weighted undirected graph \(\gr=(V,E,w)\). Then, for any vertex \(u\in V\setminus S\),
+    Let \(S\) be a nonempty set of vertices of a connected weighted undirected graph \(\gr=(V,E,w)\). Then, for any vertex \(u\in V\setminus S\),
     \begin{equation*}
         \manc{S}\ge \manc{S+u}.
     \end{equation*}
@@ -823,38 +823,33 @@ Given a connected 3-regular graph \(G=(V,E)\) with every edge having a unit weig
     % According to the proposition above, we can create a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of GWCM, which proves that GWCM is NP-hard.
 \end{IEEEproof}
 
-\subsection{Simple Greedy Algorithm for Solving GWCM}
+\subsection{A Simple Greedy Algorithm}
 
-providing us with a theoretical basis for designing greedy algorithms that can provide approximation guarantees for solving the GWC minimization problem.
+Since the MinGWC problem is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve it. One often resorts to greedy algorithm. Due to the proved fact that the objective function \(\manc{\cdot}\) of  the MinGWC problem is monotonic and supermodular, a na\"{\i}ve greedy strategy for vertex selection yields an approximated   solution  with a $(1-\frac{k}{k-1}\cdot\frac{1}{e})$ approximation factor~\cite{NeWoFi78}. Initially, we set $S$ to be empty, then $k$ vertices from set $V \setminus S$ are added to $S$ iteratively. During the first iteration, the vertex $u$ with the minimum walk centrality $H_u$ is chosen to be added to $S$. Then, in each iteration step $i>1$, the vertex $u$ in the set $V \setminus S$ of candidate vertices is selected, which has the maximum marginal gain $\Delta(u,S) \triangleq \manc{S}-\manc{S+u}$.  The algorithm terminates when $k$ vertices are chosen to be added to set $S$.
 
-As GWCM is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve GWCM.
-However, the set function \(\manc{\cdot}\) is both monotonic and supermodular, allowing for a simple greedy algorithm with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor to GWCM~\cite{NeWoFi78}.
-At each iteration, a new absorbing vertex \(u^*\) is chosen from the set of non-absorbing vertices \(V\setminus S\), satisfying
+At each iteration of the naive greedy algorithm, one needs computing the maximum marginal gain $\Delta(u,S)$ for every candidate vertex in set $V \setminus S$. As shown in~\eqref{eq:GWC}, a straightforward calculation of  $\Delta(u,S)$ for every vertex \(u\) requires inverting a matrix, which needs $O((n-|S|)^3)$ time.  Thus, for the $(O(n-|S|))$ candidate vertices, the computation time at each iteration is $O((n-|S|)^4)$. Hence, the total computation complexity of the na\"{\i}ve greedy algorithm is \(O(kn^4)\) since $|S| \ll n$.
 
-\begin{gather*}
-    \Delta(u,S)=\manc{S}-\manc{S+u},\\
-    u^*=\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}.
-\end{gather*}
+\iffalse
+    \begin{gather*}
+        \Delta(u,S)=\manc{S}-\manc{S+u},\\
+        u^*=\argmax_{u\in V\setminus S}\setof{\Delta(u,S)}.
+    \end{gather*}
+\fi
 
-It is evident that the straightforward algorithm presented above requires computing \(\Delta(u,S)\) for every vertex \(u\) in the graph during each iteration, resulting in \(O(n)\) matrix inverse operations due to~\eqref{eq:GWC}.
-If the naive matrix inverse algorithm with complexity \(O(n^3)\) is used, the total complexity of the simple greedy algorithm becomes \(O(kn^4)\).
-By simplifying \(\Delta(u,S)\), our aim is to decrease the time complexity of the greedy algorithm.
-
+In order to further decrease the time complexity of the na\"{\i}ve greedy algorithm, we provide an expression for \(\Delta(u,S)\).
 \begin{lemma}\label{lem:delta}
-    Given a connected weighted undirected graph \(\gr=(V,E,w)\), the nonempty vertex group \(S\) and the Laplacian matrix \(\lap\), then for any vertex \(u\in V\setminus S\), we have
+    Given a connected weighted undirected graph \(\gr=(V,E,w)\), the nonempty vertex group \(S\), and the Laplacian matrix \(\lap\), for any vertex \(u\in V\setminus S\),  \(\Delta(u,S)\) can be alternatively expressed as
     \begin{equation}\label{eq:delta}
-        \manc{S}-\manc{S+u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}^2}{d\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}}.
+        \Delta(u,S)=   \manc{S}-\manc{S+u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}^2}{d\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}}.
     \end{equation}
 \end{lemma}
-
 \begin{IEEEproof}
-    For vertex \(u\in V\setminus S\), we denote the \(\myord{u}\) column of submatrix \(\lap_{-S}\) as \(\begin{pmatrix}d_u\\-\veca\end{pmatrix}\).
-    After adjusting the order of \(\lap_{-S}\), we can rewrite it in block form as
+    For vertex \(u\in V\setminus S\), we denote the \(\myord{u}\) column of submatrix \(\lap_{-S}\) as \(\begin{pmatrix}d_u\\-\veca\end{pmatrix}\). After properly adjusting the vertex labels, matrix \(\lap_{-S}\) can be rewritten  in block form as
     \begin{equation*}
         \lap_{-S}=\begin{pmatrix}d_u & -\veca^\top \\-\veca&\mata\end{pmatrix},
     \end{equation*}
     where \(\mata\) denotes \(\lap_{-(S+u)}\).
-    According to the properties of block matrices, we can get
+    According to the properties of block matrices, we  get
     \begin{equation*}
         \lap_{-S}^{-1}=
         \begin{pmatrix}
@@ -863,32 +858,26 @@ By simplifying \(\Delta(u,S)\), our aim is to decrease the time complexity of th
     \end{equation*}
     where \(t=\pinv{d_u-\veca^\top\inv{\mata}}\).
     Therefore, when \(S\neq\varnothing\), \(\Delta(u,S)\) can be rewritten as
-
     \begin{equation*}
         \begin{split}
-            &\manc{S}-\manc{S+u}\\
+            &\Delta(u,S)=\manc{S}-\manc{S+u}\\
             =&\vecpi_{-S}^\top\lap_{-S}^{-1}\vecd_{-S}-\vecpi_{-(S+u)}^\top\lap_{-(S+u)}^{-1}\vecd_{-(S+u)}\\
-            =&\frac1t\mypar{t\vecpi_u+t\vecpi_{-(S+u)}^\top\mata^{-1}\veca}\mypar{td_u+t\veca^\top\mata^{-1}\vecd_{-(S+u)}}\\
-            =&\frac{\mypar{\vecpi_{-S}^\top\lap_{-S}^{-1}\vece_u}\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}}{\vece_u^\top\lap_{-S}^{-1}\vece_u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}^2}{d\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}}.
+            =&\frac1t\mypar{t\vecpi_u+t\vecpi_{-(S+u)}^\top\mata^{-1}\veca}\mypar{td_u+t\veca^\top\mata^{-1}\vecd_{-(S+u)}}\\       =&\frac{\mypar{\vecpi_{-S}^\top\lap_{-S}^{-1}\vece_u}\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}}{\vece_u^\top\lap_{-S}^{-1}\vece_u}=\frac{\mypar{\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}}^2}{d\mypar{\vece_u^\top\lap_{-S}^{-1}\vece_u}},
         \end{split}
     \end{equation*}
-
-    Here we skip some steps for brevity.
+    finishing the proof.
 \end{IEEEproof}
 
-However, during the first iteration of the greedy algorithm, when \(S=\varnothing\),~\eqref{eq:delta} becomes invalid due to the singularity of \(\lap\).
-Since the Group Walk Centrality \(\manc{S}\) reduces to the walk centrality \(H_u\) when \(S\) contains only one vertex \(u\), we can find the vertex \(u^*\) with minimal walk centrality at the first iteration of our greedy algorithm.
-In \lemref{HjK}, we have shown that \(H_u=d\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\).
 
-\lemref{HjK} and \lemref{lem:delta} demonstrate that we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) by inverting the same matrix \(\lap_{-S}\) or by using the pseudoinverse of the same matrix \(\lap\).
-As a result, we can optimize the simple greedy algorithm outlined in~\algoref{algo:exact-gwcm}, and reduce the time complexity from \(O(kn^4)\) to \(O(kn^3)\).
+\lemref{lem:delta} demonstrate that for any empty set $S$ if \(\lap_{-S}\)  is already computed, by using~\eqref{eq:delta}  we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) in $O((n-|S|)^2)$ time. This avoids directly inverting the matrix \(\lap_{-(S+u)}\), which needs time $O((n-|S|+1)^3)$. When \(S=\varnothing\),~\eqref{eq:delta} becomes invalid.  For this case, we use the result \(H_u=d\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\) in~\lemref{HjK} to compute the walk centrality $H_u$ for every vertex $u \in V$, and add the vertex $u$ with the smallest $H_u$ to $S$.  Based on~\lemref{HjK} and~\lemref{lem:delta}, we propose a simple greedy algorithm \textsc {ExactMinGWC}$ (\gr,k)$ to solve the MinGWC problem, which is  outlined in~\algoref{algo:exact-gwcm}. The algorithm first computes $H_u$ for every vertex $u \in V$ in time $O(n^3)$. Then, it works in $k-1$ rounds. In each round, it evaluates  \(\Delta(u,S)\) for all the $ (n-|S|)$ vertices in set $V \setminus S$ (Line 6)  in $O((n-|S|)^3)$ time. Therefore, the whole running time of~\algoref{algo:exact-gwcm} is \(O(kn^3)\),  much lower than the time complexity   \(O(kn^4)\) of the  na\"{\i}ve greedy  algorithm.
+
 
 \begin{algorithm}
-    \caption{\(\text{Exact}\mathcal{GWCM}\)\((\gr,k)\)}
+    \caption{\(\text{ExactMinGWC}\)\((\gr,k)\)}
     \label{algo:exact-gwcm}
     \Input{
         A connected weighted undirected graph \(\gr=(V,E,w)\);
-        an integer \(k\in[1,\abs{V}]\)
+        an integer \(k \ll |V|\)
     }
     \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
     Compute \(\lap\) and \(\vecd\)\;
@@ -904,56 +893,44 @@ As a result, we can optimize the simple greedy algorithm outlined in~\algoref{al
     \Return{\(S_k\)}
 \end{algorithm}
 
-Afterwards, we prove that \algoref{algo:exact-gwcm} has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}\) approximation factor.
+In addition to good efficiency, \algoref{algo:exact-gwcm} is very effective since it has a $(1-\frac{k}{k-1}\cdot\frac{1}{e})$ approximation factor, as shown in the following theorem.
 \begin{theorem}
-    The algorithm \(S_k=\text{Exact}\mathcal{GWCM}(\gr,k)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(k\), then returns a vertex group \(S_k\) with capacity \(k\).
-    When \(k>1\), the vertex group \(S\) satisfies
+    The algorithm $S_k$= \textsc {ExactMinGWC}$ (\gr,k)$ takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(1 \geq k \ll n\), and returns a  group \(S_k\) of \(k\) vertices.
+    The return vertex group \(S\) satisfies
     \[\manc{\setof{u^*}}-\manc{S_k}\ge\mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}}\mypar{\manc{\setof{u^*}}-\manc{S^*}},\]
     where
-    \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}},S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
+    \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}}\] and \[S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
 \end{theorem}
 \begin{IEEEproof}
     According to the supermodularity of \(\manc{\cdot}\),
     \[\manc{S_i}-\manc{S_{i+1}}\ge\frac{1}{k}\mypar{\manc{S_i}-\manc{S^*}}\]
-    holds for any positive integer \(i\), which indicates that
+    holds for any positive integer \(i\), which indicates
     \[\manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1}{k}}\mypar{\manc{S_i}-\manc{S^*}}.\]
-    Subsequently, we can further obtain that
+    Then, we  further obtain
     \begin{align*}
         \manc{S_k}-\manc{S^*}\le & \mypar{1-\frac{1}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}    \\
         \le                      & \frac{k}{k-1}\cdot\frac{1}{e}\mypar{\manc{S_1}-\manc{S^*}},
     \end{align*}
-    which completes our proof based on the fact that \(S_1=\setof{u^*}\).
+    which, together with the fact that \(S_1=\setof{u^*}\), completes the proof.
 \end{IEEEproof}
 
-\section{Fast Greedy Algorithm for Solving GWCM}\label{sec:approx-algo2}
+\section{Fast Greedy Algorithm for the MinGWC Problem}\label{sec:approx-algo2}
 
-Despite the time complexity optimization proposed in \algoref{algo:exact-gwcm}, this simple greedy algorithm for solving GWCM still requires matrix inversion, making it unsuitable for large networks.
-To speed up the computation of \(\Delta(u,S)\), we use efficient approximations established in \lemref{lemma:JL}, \lemref{lemma:ST} and \thmref{TheoAlg1}.
+Although \algoref{algo:exact-gwcm} is much faster than the  na\"{\i}ve greedy  algorithm, it  still cannot handle  large networks since its time complexity is  \(O(kn^3)\). As shown above, the key steps for \algoref{algo:exact-gwcm} are  to compute the walk centrality $H_u$ for every vertex $u \in V$ and the marginal gain  \(\Delta(u,S)\) for every vertex $u \in (V \setminus S)$. In this section, we provide efficient approximations for  $H_u$ and \(\Delta(u,S)\). For $H_u$, it can be efficiently evaluated by using \algoref{ALG01}. For \(\Delta(u,S)\), we can alternatively approximate the two quantities  $\vece_u^\top \lap_{-S}^{-1} \vecd_{-S}$ and $\vece_u^\top \lap_{-S}^{-1}\vece_u$ in the numerator and denominator of~\eqref{eq:delta}, respectively.
 
-Our first objective is to estimate \(\Delta(u,\varnothing)=-H_u\), which is the negative of the walk centrality for vertex \(u\).
-We can conveniently use \algoref{ALG01}, which has a proven approximation guarantee as shown in \thmref{TheoAlg1}.
+In the rest of this section, we first approximate $\vece_u^\top \lap_{-S}^{-1} \vecd_{-S}$ and $\vece_u^\top \lap_{-S}^{-1}\vece_u$. Then, we present an  error-guaranteed approximation to  \(\Delta(u,S)\), based on which we further propose  a fast approximation algorithm to the MinGWC problem  with $(1-\frac{k}{k-1} \frac{1}{e}-\epsilon)$ approximation ratio and time complexity $\tilde{O}(km\epsilon^{-2})$ for any error parameter $0< \epsilon < 1$.
 
-Our second objective is to estimate \(\Delta(u,S)\) when \(S\neq\varnothing\).
-As is shown in \lemref{lem:delta}, \(\Delta(u,S)\) is represented in the form of a fraction.
-We try to estimate the numerator and denominator of it separately.
 
-\subsection{Approximation of the numerator of \(\Delta(u,S)\)}
+\subsection{Approximation of the Quantity $\mathbf{e}_u^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_S$}
 
-We first approximate the numerator of \(\Delta(u,S)\), which involves the approximation of computing \(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}\).
-To this end, we need to utilize the following two lemmas.
-
+We first  approximate the quantity \(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}\). To this end, we introduce the following two lemmas.
 \begin{lemma}\label{lem:norm-ineq}
-    Given a connected weighted undirected graph \(\gr=(V,E,w)\), let \(\lap\) denote the Laplacian matrix of the graph.
-    Then for an arbitary vertex group \(S\subseteq V\) and an arbitary vector \(\vecv\in\rea^{n-\abs{S}}\), \(v_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\) holds.
+    Let \(\gr=(V,E,w)\) be a connected weighted undirected graph with Laplacian matrix  \(\lap\). Then, for an arbitrary subset \(S\subseteq V\) of vertices and an arbitrary vector \(\vecv\in\rea^{n-\abs{S}}\), the relation \(v_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\) holds.
 \end{lemma}
-
 \begin{IEEEproof}
-    As is mentioned in~\secref{sub:lap}, we can decompose Laplacian matrix as \(\lap=\matb^\top\matw\matb\).
-    Similarly, we can decompose SDDM matrix \(\lap_{-S}\) as \(\lap_{-S}=\lap'+\matz=\matb'^\top\matw'\matb'+\matz\), where \(\lap'\) denotes the Laplacian matrix of another graph, \(\matz\) denotes a diagonal matrix.
+    As shown in~\secref{sub:lap}, Laplacian matrix $\lap$ can be written as \(\lap=\matb^\top\matw\matb\).   Similarly, as an SDDM matrix, \(\lap_{-S}\) can be decomposed as \(\lap_{-S}=\lap'+\matz=\matb'^\top\matw'\matb'+\matz\), where \(\lap'\) denotes the Laplacian matrix of a  graph, and \(\matz\) is a diagonal matrix with every diagonal entry  larger than 0. In order to prove the lemma, we distinguish two cases:  \(\matz_{[i,i]}\neq0\) and  \(\matz_{[i,i]}=0\).
 
-    If \(\matz_{[i,i]}\neq0\), then we have \(\matz_{[i,i]}\ge w_{\min}\), it is apparent that \(v_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\).
-    If \(\matz_{[i,i]}=0\), there must exist a vertex \(j\) that satisfies \(\matz_{[j,j]}\ge w_{\min}\) in graph component that contains vertex \(i\) after removing vertices in \(S\).
-    Let \(\pscr_{ij}\) denotes the simple path connecting vertex \(i\) and vertex \(j\), then we have
+    For the first case \(\matz_{[i,i]}\neq0\),  we have \(\matz_{[i,i]}\ge w_{\min}\). Then, it is apparent that \(v_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\). For the second case  \(\matz_{[i,i]}=0\), there must exist a vertex \(j\)  satisfying \(\matz_{[j,j]}\ge w_{\min}\) in a component of the resultant graph containing vertex \(i\), which is obtained from \(\gr=(V,E,w)\) after removing vertices in \(S\).    Let \(\pscr_{ij}\) denotes a simple path connecting vertex \(i\) and vertex \(j\). Then, we have
     \begin{align*}
         \Abs{\vecv}^2_{\lap_{-S}}
          & \ge w_{\min}\sum_{\edge{a}{b}\in\pscr_{ij}}(v_a-v_b)^2+w_{\min}v_j^2     \\
@@ -963,33 +940,33 @@ To this end, we need to utilize the following two lemmas.
     which completes our proof.
 \end{IEEEproof}
 
+
 \begin{lemma}\label{lem:trace-lap}
-    For a connected weighted undirected graph \(\gr=(V,E,w)\) with \(n\) vertices, let \(\lap\) denote the Laplacian matrix of \(\gr\).
-    Then for any nonempty set \(S\subseteq V\),
+    Let \(\gr=(V,E,w)\) be a connected weighted undirected graph with \(n\) vertices and the minimum edge weight $ w_{\min}$, and let \(\lap\) be the Laplacian matrix of \(\gr\). Then, for any nonempty set \(S\subseteq V\),
     \begin{equation*}
         \trace{\lap_{-S}^{-1}}\le n^2w_{\min}^{-1}.
     \end{equation*}
 \end{lemma}
-
 \begin{IEEEproof}
-    According to~\cite{ClPo11}, the diagonal entry \(\mypar{\lap_{-S}}_{[u,u]}\) of \(\lap_{-S}\) is exactly the resistance distance \(R_{uS}\) between vertex \(u\) and vertex group \(S\).
-    Since \(\gr\) is connected, the length of a simple path connecting vertex \(u\) with any vertex in \(S\) is no more than \(n\).
-    Combining~\eqref{eq:phy-resist}, we have
+    According to the result in~\cite{ClPo11}, the diagonal entry \(\mypar{\lap_{-S}}_{[u,u]}\) of \(\lap_{-S}\) is exactly the resistance distance \(R_{uS}\) between vertex \(u\) and vertex group \(S\).  Since \(\gr\) is connected, the length of an arbitrary simple path connecting vertex \(u\) any vertex in \(S\) is no more than \(n\).
+    Making use of~\eqref{eq:phy-resist}, we have
     \begin{align*}
         \trace{\lap_{-S}^{-1}} & =\sum_{i=1}^n\vece_i^\top\lap_{-S}^{-1}\vece_i=\sum_{i=1}^nR_{iS}              \\
-                               & \le\sum_{i=1}^n\sum_{\edge{a}{b}\in\pscr_{iS}}w_{ab}^{-1}\le n^2w_{\min}^{-1}.
+                               & \le\sum_{i=1}^n\sum_{\edge{a}{b}\in\pscr_{iS}}w_{ab}^{-1}\le n^2w_{\min}^{-1},
     \end{align*}
+    which finishes the proof.
 \end{IEEEproof}
 
-Since \(\lap_{-S}\) is a SDDM matrix, we can apply~\lemref{lemma:ST} to avoid computing the matrix inverse \(\lap_{-S}^{-1}\).
+With the above two lemmas, we can approximate \(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}\). For simplicity of the following proofs, define $\vecx_i $ as \(\vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\) for any vertex \(i\in V\setminus S\). By definition, $\vecx_i $ represents the trapping time of a random walker starting at vertex \(i\) and being absorbed by  vertices in $S$. Then, it follows that \(\vecx_i\ge1\). Since \(\lap_{-S}\) is an SDDM matrix, we can estimate $\vecx_i $ by applying~\lemref{lemma:ST}, which avoids computing the inverse of matrix \(\lap_{-S}^{-1}\).
+
 \begin{lemma}\label{lem:approx-numer}
-    Given a connected weighted undirected graph \(\gr=(V,E,w)\),the nonempty vertex group \(S\) , the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\), let \(\vecx'=\mathtt{Solver}(\lap_{-S},\vecd_{-S},\delta_1)\) where \(\delta_1=\frac{w_{\min}\epsilon}{7n^3w_{\max}}\). Then for any vertex \(i\in V\setminus S\), we have
+    Let \(\gr=(V,E,w)\) be a connected weighted undirected graph with the Laplacian matrix \(\lap\). Let  \(S\) be a nonempty subset of vertex set $V$, let $\epsilon$ an error parameter in  $(0,1)$, and let \(\vecx'=\mathtt{Solver}(\lap_{-S},\vecd_{-S},\delta_1)\), where \(\delta_1=\frac{w_{\min}\epsilon}{7n^3w_{\max}}\). Then, for any vertex \(i\in V\setminus S\),
     \begin{equation}\label{eq:approx-numer}
         \vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\approx_{\epsilon/7}\vecx'_i.
     \end{equation}
 \end{lemma}
 \begin{IEEEproof}
-    Combining \lemref{lemma:ST} and \lemref{lem:norm-ineq}, we can bound \((\vecx'_i-\vecx_i)^2\) as
+    Combining \lemref{lemma:ST} and \lemref{lem:norm-ineq}, \((\vecx'_i-\vecx_i)^2\) is bounded  as
     \begin{align*}
         (\vecx'_i-\vecx_i)^2
          & \le nw_{\min}^{-1}\Abs{\vecx'-\vecx}^2_{\lap_{-S}}
@@ -998,14 +975,17 @@ Since \(\lap_{-S}\) is a SDDM matrix, we can apply~\lemref{lemma:ST} to avoid co
         \le n^6w_{\min}^{-2}w_{\max}^2\delta_1^2,
     \end{align*}
     where the last inequality is due to \lemref{lem:trace-lap}.
-    On the other hand, as \(\vecx_i=\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\) represents the expected hitting time for a random walker starting at vertex \(i\), it follows that \(\vecx_i\ge1\).
-    Finally, we can estimate \(\vecx_i\) as follows:
+    Considering \(\vecx_i\ge1\), we obtain
     \begin{equation*}
-        \frac{\abs{\vecx'_i-\vecx_i}}{\vecx_i}\le n^3w_{\max}w_{\min}^{-1}\delta_1=\epsilon/7.
+        \frac{\abs{\vecx'_i-\vecx_i}}{\vecx_i}\le n^3w_{\max}w_{\min}^{-1}\delta_1=\epsilon/7,
     \end{equation*}
+    which leads to the desirable  result.
 \end{IEEEproof}
 
-\subsection{Approximation of the denominator of \(\Delta(u,S)\)}
+
+%\subsection{Approximation of the denominator  of \(\Delta(u,S)\)}
+
+\subsection{Approximation of the Quantity $\mathbf{e}_u^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_u$}
 
 Next, we aim to estimate the denominator of \(\Delta(u,S)\). This can be represented as a Euclidian norm through the use of \lemref{lemma:JL}.
 \begin{equation}\label{eq:denom-solver}
