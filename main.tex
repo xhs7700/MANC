@@ -91,11 +91,11 @@ For the absorbing random-walk centrality \(H_j=\sum_{i} \rho(i) H_{ij}\), we foc
 In other words, we study \(H_j=\sum_{i} \pi_i H_{ij}\), which has received considerable attention~\cite{TeBeVo09,Be09,Be16}.
 We first express \(K\) in terms of \(H_j\) for all vertices, and further express \(H_j\) and \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix.
 
-We then propose a fast algorithm called \(\text{Approx}\mathcal{HK}\) to compute approximate \(H_j\) for all vertices and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16,GaKySp23}.
+We then propose a fast algorithm called \textsc{ApproxHK} to compute approximate \(H_j\) for all vertices and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16,GaKySp23}.
 
 For Group Walk Centrality (GWC), we reformulate it as the inverse of a SDDM matrix.
-Although the GWC minimization problem is proved to be NP-hard, we can utilize the monotonicity and supermodularity of GWC to develop a fast greedy algorithm called \(\text{Approx}\mathcal{GWCM}\).
-\(\text{Approx}\mathcal{GWCM}\) is based on \(\text{Approx}\mathcal{HK}\) and yields an approximation factor of \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) for any error parameter \(\epsilon\in(0,1)\).
+Although the GWC minimization problem is proved to be NP-hard, we can utilize the monotonicity and supermodularity of GWC to develop a fast greedy algorithm called \textsc{ApproxMinGWC}.
+\textsc{ApproxMinGWC} is based on \textsc{ApproxHK} and yields an approximation factor of \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) for any error parameter \(\epsilon\in(0,1)\).
 
 Finally, we experimentally demonstrate that our algorithms are accurate and are significantly faster than the direct exact computation of related quantities according to their definitions.
 
@@ -103,8 +103,8 @@ The primary version of our work has been published in WSDM '20: The Thirteenth A
 
 \begin{itemize}
     \item We express the absorbing random-walk centrality \(H_j\) and the Kemeny constant \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix.
-    \item We propose an approximation algorithm called \(\text{Approx}\mathcal{HK}\) to compute \(H_j\) and \(K\) in nearly linear time of the number of graph edges.
-    \item Numerical experiments reveal the accuracy and efficiency of \(\text{Approx}\mathcal{HK}\).
+    \item We propose an approximation algorithm called \textsc{ApproxHK} to compute \(H_j\) and \(K\) in nearly linear time of the number of graph edges.
+    \item Numerical experiments reveal the accuracy and efficiency of \textsc{ApproxHK}.
 \end{itemize}
 
 In the conference version~\cite{ZhXuZh20}, we focus solely on the mean hitting time for a single vertex.
@@ -114,8 +114,8 @@ The following are our primary additional contributions:
 \begin{itemize}
     \item We propose a vertex group centrality called Group Walk Centrality (GWC) based on the group hitting time.
     \item We introduce the GWC minimization problem, proving its NP-hardness.
-    \item Due to the monotonicity and supermodularity of GWC, we develop an efficient greedy algorithm called \(\text{Approx}\mathcal{GWCM}\) based on \(\text{Approx}\mathcal{HK}\) to approximately solve the GWC minimization problem.
-    \item Extensive experiment results demonstrate that both of \(\text{Approx}\mathcal{HK}\) and \(\text{Approx}\mathcal{GWCM}\) are accurate and scalable, which can be applied to networks with millions of vertices.
+    \item Due to the monotonicity and supermodularity of GWC, we develop an efficient greedy algorithm called \textsc{ApproxMinGWC} based on \textsc{ApproxHK} to approximately solve the GWC minimization problem.
+    \item Extensive experiment results demonstrate that both of \textsc{ApproxHK} and \textsc{ApproxMinGWC} are accurate and scalable, which can be applied to networks with millions of vertices.
 \end{itemize}
 
 
@@ -519,10 +519,10 @@ Lemma~\ref{lem:error1} leads to the following theorem.
     for any vertex \(u \in V\).
 \end{theorem}
 
-Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \(\text{Approx}\mathcal{HK}\) to approximately compute the walk centrality \(H_u\) for all  vertices  \(u \in V\) and the Kemeny constant \(K\), the pseudocode of which is provided in Algorithm~\ref{ALG01}.
+Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \textsc{ApproxHK} to approximately compute the walk centrality \(H_u\) for all  vertices  \(u \in V\) and the Kemeny constant \(K\), the pseudocode of which is provided in Algorithm~\ref{ALG01}.
 
 \begin{algorithm}
-    \caption{\(\text{Approx\(\mathcal{HK}\)}(\gr, \epsilon)\)}
+    \caption{\textsc{ApproxHK}\((\gr, \epsilon)\)}
     \label{ALG01}
     \Input{
         \(\gr\): a connected undirected graph. \\
@@ -869,7 +869,7 @@ In order to further decrease the time complexity of the na\"{\i}ve greedy algori
 \end{IEEEproof}
 
 
-\lemref{lem:delta} demonstrate that for any empty set $S$ if \(\lap_{-S}\)  is already computed, by using~\eqref{eq:delta}  we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) in $O((n-|S|)^2)$ time. This avoids directly inverting the matrix \(\lap_{-(S+u)}\), which needs time $O((n-|S|+1)^3)$. When \(S=\varnothing\),~\eqref{eq:delta} becomes invalid.  For this case, we use the result \(H_u=d\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\) in~\lemref{HjK} to compute the walk centrality $H_u$ for every vertex $u \in V$, and add the vertex $u$ with the smallest $H_u$ to $S$.  Based on~\lemref{HjK} and~\lemref{lem:delta}, we propose a simple greedy algorithm \textsc{ExactMinGWC}$(\gr,k)$ to solve the MinGWC problem, which is  outlined in~\algoref{algo:exact-gwcm}. The algorithm first computes $H_u$ for every vertex $u \in V$ in time $O(n^3)$. Then, it works in $k-1$ rounds. In each round, it evaluates  \(\Delta(u,S)\) for all the $ (n-|S|)$ vertices in set $V \setminus S$ (Line 6)  in $O((n-|S|)^3)$ time. Therefore, the whole running time of~\algoref{algo:exact-gwcm} is \(O(kn^3)\),  much lower than the time complexity   \(O(kn^4)\) of the  na\"{\i}ve greedy  algorithm.
+\lemref{lem:delta} demonstrate that for any empty set $S$ if \(\lap_{-S}\)  is already computed, by using~\eqref{eq:delta}  we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) in $O((n-|S|)^2)$ time. This avoids directly inverting the matrix \(\lap_{-(S+u)}\), which needs time $O((n-|S|+1)^3)$. When \(S=\varnothing\),~\eqref{eq:delta} becomes invalid.  For this case, we use the result \(H_u=d\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\) in~\lemref{HjK} to compute the walk centrality $H_u$ for every vertex $u \in V$, and add the vertex $u$ with the smallest $H_u$ to $S$.  Based on~\lemref{HjK} and~\lemref{lem:delta}, we propose a simple greedy algorithm \textsc{DeterMinGWC}$(\gr,k)$ to solve the MinGWC problem, which is  outlined in~\algoref{algo:exact-gwcm}. The algorithm first computes $H_u$ for every vertex $u \in V$ in time $O(n^3)$. Then, it works in $k-1$ rounds. In each round, it evaluates  \(\Delta(u,S)\) for all the $ (n-|S|)$ vertices in set $V \setminus S$ (Line 6)  in $O((n-|S|)^3)$ time. Therefore, the whole running time of~\algoref{algo:exact-gwcm} is \(O(kn^3)\),  much lower than the time complexity   \(O(kn^4)\) of the  na\"{\i}ve greedy  algorithm.
 
 
 \begin{algorithm}
@@ -1081,37 +1081,35 @@ Making this expression,  we can efficiently approximate the quantity $\vece_i^\t
 
 \subsection{Efficient Evaluation of Marginal Gain \(\Delta(u,S)\)}
 
-Combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose an efficient algorithm called \text{ApproxDelta} approximating \(\Delta(u,S)\) for  \(S\neq\varnothing\). The outline of  \text{ApproxDelta} is presented in Algorithm~\ref{algo:approxdelta}. The \text{ApproxDelta} algorithm calls the \(\mathtt{Solver}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\). The approximation guarantee for Algorithm~\ref{algo:approxdelta} is provided in
+Combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose an efficient algorithm called \textsc{ApproxDelta} approximating \(\Delta(u,S)\) for  \(S\neq\varnothing\). The outline of  \textsc{ApproxDelta} is presented in Algorithm~\ref{algo:approxdelta}. The \textsc{ApproxDelta} algorithm calls the \(\mathtt{Solver}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\). The approximation guarantee for Algorithm~\ref{algo:approxdelta} is provided in
 Lemma~\ref{lem:approx-marginest}.
 
 
 \begin{algorithm}
-    \caption{\text{ApproxDelta}\((\gr,S,\epsilon)\)}
+    \caption{\textsc{ApproxDelta}\((\gr,S,\epsilon)\)}
     \label{algo:approxdelta}
     \Input{
-        A connected weighted undirected graph \(\gr=(V,E,w)\);
-        The absorbing vertex set \(S\subseteq V\);
-        an error parameter \(\epsilon\in(0,1)\)
+        \(\gr=(V,E,w)\): a connected weighted undirected graph;
+        \(S\subseteq V\): the absorbing vertex set;
+        \(\epsilon\in(0,1)\): an approximation parameter
     }
     \Output{
-        The margin \(\Delta(u,S)\)  for any vertex \(u\in V\setminus S\)
+        \(\Delta(u,S)\): the margin for vertex \(u\in V\setminus S\)
     }
-    Compute \(\lap\) and \(\vecd\)\;
-    \(n\gets\abs{V},m\gets\abs{E}\)\;
-    \(w_{\min}\gets\min\setof{w_e|e\in E},w_{\max}\gets\max\setof{w_e|e\in E}\)\;
-    \(d\gets\vecd\vecone\),\(q,r\gets\ceil{24(\epsilon/7)^{-2}\log n}\)\;
-    \(\delta_1\gets \frac{w_{\min}\epsilon}{7n^2w_{\max}}\),\(\delta_2\gets \frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\)\;
-    \(\vecx'\gets\mathtt{Solver}(\lap_{-S},\vecd_{-S},\delta_1)\)\;
-    \(\matq\gets\text{GenerateRandomMatrix}(q,m)\)\;
-    \(\matr\gets\text{GenerateRandomMatrix}(r,n)\)\;
+    \(\lap=\) Laplacian of \(\gr\), \(d_u=\) the degree of \(u\) for all \(u\in V\), \(d=\sum_{u \in V} d_u\)\;
+    \(n=\abs{V},m=\abs{E}\)\;
+    \(w_{\min}=\min\setof{w_e|e\in E},w_{\max}=\max\setof{w_e|e\in E}\)\;
+    \(\delta_1= \frac{w_{\min}\epsilon}{7n^2w_{\max}}\),\(\delta_2= \frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\)\;
+    \(\vecx'=\mathtt{Solver}(\lap_{-S},\vecd_{-S},\delta_1)\)\;
+    Construct matrix \(\matq_{q\times m}\) and \(\matr_{q\times n}\), where \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) and each entry is \(\pm 1/\sqrt{q}\) with identical probability\;
     Decompose \(\lap_{-S}\) into \(\matb'\in\rea^{m\times n}\), \(\matw'\in\rea^{m\times m}\) and \(\matz\in\rea^{n\times n}\), satisfying \(\lap_{-S}=\matb'^\top\matw'\matb'+\matz\)\;
-    \(\overline{\matx}\gets\matq\matw^{1/2}\matb\),\(\overline{\maty}\gets\matr\matz^{1/2}\)\;
-    \For{\(i=1,2,\dots,q\)}{
-    \(\matx'_{[i,:]}\gets\mathtt{Solver}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\)\;
-    \(\maty'_{[i,:]}\gets\mathtt{Solver}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\)\;
+    \(\overline{\matx}=\matq\matw^{1/2}\matb\),\(\overline{\maty}=\matr\matz^{1/2}\)\;
+    \For{\(i=1\) to \(q\)}{
+    \(\matx'_{[i,:]}=\mathtt{Solver}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\)\;
+    \(\maty'_{[i,:]}=\mathtt{Solver}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\)\;
     }
     \ForEach{\(u\in V\setminus S\)}{
-        \(\Delta'(u,S)\gets\frac{\vecx'^2}{d\mypar{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}}\)\;
+        \(\Delta'(u,S)=\frac{\vecx'^2}{d\mypar{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}}\)\;
     }
     \Return{\(\setof{\Delta'(u,S)|u\in V\setminus S}\)}
 
@@ -1134,30 +1132,30 @@ Lemma~\ref{lem:approx-marginest}.
 
 \subsection{Nearly Linear Algorithm for the MinGWC Problem}
 
-By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we are able to create a faster greedy algorithm called \(\text{Approx}\mathcal{GWCM}\) with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor.
-The complexity of \(\text{Approx}\mathcal{GWCM}\) is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear, as it calls \(\text{Approx\(\mathcal{HK}\)}\) once and \text{ApproxDelta} \(k-1\) times.
+By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we are able to create a faster greedy algorithm called \textsc{ApproxMinGWC} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor.
+The complexity of \textsc{ApproxMinGWC} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear, as it calls \textsc{ApproxHK} once and \textsc{ApproxDelta} \(k-1\) times.
 
 \begin{algorithm}
-    \caption{\(\text{Approx}\mathcal{GWCM}\)\((\gr,k,\epsilon)\)}
+    \caption{\textsc{ApproxMinGWC}\((\gr,k,\epsilon)\)}
     \label{algo:approx}
     \Input{
-        A connected weighted undirected graph \(\gr=(V,E,w)\);
-        an integer \(k\ll\abs{V}\);
-        an error parameter \(\epsilon\in(0,1)\)
+        \(\gr=(V,E,w)\): a connected weighted undirected graph;
+        \(k\ll\abs{V}\): the capacity of vertex set;
+        \(\epsilon\in(0,1)\): an approximation parameter
     }
     \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
-    \(\setof{\tilde{H}_u|u\in V }\gets\text{Approx\(\mathcal{HK}\)}(\gr,\epsilon)\)\;
-    \(S_1\gets\setof{\argmin_{u\in V}\setof{\tilde{H}_u}}\)\;
-    \For{\(i=2,3,\dots,k\)}{
-        \(\setof{\Delta'(u,S)|u\in V\setminus S}\gets\text{ApproxDelta}(\gr,S,\epsilon)\)\;
-        \(u^*\gets\argmax_{u\in V\setminus S}\setof{\Delta'(u,S)}\)\;
-        \(S_i\gets S_{i-1}\cup\setof{u^*}\)\;
+    \(\setof{\tilde{H}_u|u\in V }=\textsc{ApproxHK}(\gr,\epsilon)\)\;
+    \(S_1=\setof{\argmin_{u\in V}\setof{\tilde{H}_u}}\)\;
+    \For{\(i=2\) to \(k\)}{
+        \(\setof{\Delta'(u,S)|u\in V\setminus S}=\textsc{ApproxDelta}(\gr,S,\epsilon)\)\;
+        \(u^*=\argmax_{u\in V\setminus S}\setof{\Delta'(u,S)}\)\;
+        \(S_i= S_{i-1}\cup\setof{u^*}\)\;
     }
     \Return{\(S_k\)}
 \end{algorithm}
 
 \begin{theorem}
-    The algorithm \(S_k=\text{Approx}\mathcal{GWCM}(\gr,k,\epsilon)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) ,a positive integer \(k\) and an error parameter \(\epsilon\in(0,1)\), then returns a vertex group \(S_k\) with capacity \(k\). When \(k>1\), the vertex group \(S\) satisfies
+    The algorithm \(S_k=\textsc{ApproxMinGWC}(\gr,k,\epsilon)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) ,a positive integer \(k\) and an error parameter \(\epsilon\in(0,1)\), then returns a vertex group \(S_k\) with capacity \(k\). When \(k>1\), the vertex group \(S\) satisfies
     \begin{align*}
         \mypar{1+\epsilon} & \manc{\setof{u^*}}-\manc{S_k}\ge                                                                         \\
                            & \mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon}\mypar{\mypar{1+\epsilon}\manc{\setof{u^*}}-\manc{S^*}},
@@ -1186,17 +1184,17 @@ The complexity of \(\text{Approx}\mathcal{GWCM}\) is \(\tilde{O}\mypar{km\epsilo
 
 In this section, we present experimental results for various real and model networks to demonstrate the  efficiency and accuracy of our approximation algorithms:
 \begin{itemize}
-    \item \(\text{Approx}\mathcal{HK}\) for computing the walk centrality \(H_u\) of  every vertex and the Kemeny constant \(K\);
-    \item \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\) for solving the GWC Minimization problem.
+    \item \textsc{ApproxHK} for computing the walk centrality \(H_u\) of  every vertex and the Kemeny constant \(K\);
+    \item \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} for solving the GWC Minimization problem.
 \end{itemize}
 
 The data of these networks are taken from the Koblenz Network Collection~\cite{Ku13} and SNAP~\cite{LeKr14}. For those networks that are disconnected originally, we perform our experiments on their largest connected components (LCC). Related information about the number of vertices and edges for the studied real networks and their LCC is shown  in \tabref{tab:runtime_comparison},  where networks are listed in an increasing order of the number of vertices in the networks. The smallest network has 198 vertices, while the largest one consists of more than \(1.9 \times 10^{6}\) vertices.
 
-All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement the approximation algorithms \(\text{Approx}\mathcal{HK}\) and \(\text{Approx}\mathcal{GWCM}\) in \textit{Julia v1.8.5}, where the \(\mathtt{Solver}\) is from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
+All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement the approximation algorithms \textsc{ApproxHK} and \textsc{ApproxMinGWC} in \textit{Julia v1.8.5}, where the \(\mathtt{Solver}\) is from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
 
-\subsection{Results for \(\text{Approx}\mathcal{HK}\)}
+\subsection{Results for \textsc{ApproxHK}}
 
-We begin by evaluating the effectiveness of algorithm \(\text{Approx}\mathcal{HK}\) in approximating centrality \(H_u\) across a diverse range of realistic networks from various domains. Our investigation focuses on examining the efficiency of \(\text{Approx}\mathcal{HK}\).
+We begin by evaluating the effectiveness of algorithm \textsc{ApproxHK} in approximating centrality \(H_u\) across a diverse range of realistic networks from various domains. Our investigation focuses on examining the efficiency of \textsc{ApproxHK}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 % \begin{table}[!b]
@@ -1245,7 +1243,7 @@ We begin by evaluating the effectiveness of algorithm \(\text{Approx}\mathcal{HK
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-In \tabref{tab:runtime_comparison}, we report the running time of \(\text{Approx}\mathcal{HK}\) and that of the direct accurate algorithm called \(\text{Exact}\mathcal{HK}\) that calculates the centrality \(H_u\) for each \(u \in V\) by calculating the pseudoinverse of \(\lap\) as given  in \lemref{HjK}. To objectively evaluate the running time, for both \(\text{Exact}\mathcal{HK}\) and \(\text{Approx}\mathcal{HK}\) on all considered networks except the last ten ones marked with \(\ast\), we enforce the program to run on 16 threads. From \tabref{tab:runtime_comparison} we can see that for  moderate approximation parameter \(\epsilon\), the computational time for \(\text{Approx}\mathcal{HK}\) is significantly  smaller than  that  for \(\text{Exact}\mathcal{HK}\), especially for large-scale networks tested.  Thus,   \(\text{Approx}\mathcal{HK}\) can significantly improve the performance compared with  \(\text{Exact}\mathcal{HK}\). For the  ten networks marked with \(\ast\), the number of vertices for which ranges from \(10^5\) to \(10^6\), we cannot run the \(\text{Exact}\mathcal{HK}\) algorithm on the machine due to the limits of memory and time. However, for these networks, we can approximately compute their walk centrality for all vertices by using algorithm \(\text{Approx}\mathcal{HK}\), which further show that   \(\text{Approx}\mathcal{HK}\) is  efficient and scalable to large networks.
+In \tabref{tab:runtime_comparison}, we report the running time of \textsc{ApproxHK} and that of the direct accurate algorithm called \textsc{ExactHK} that calculates the centrality \(H_u\) for each \(u \in V\) by calculating the pseudoinverse of \(\lap\) as given  in \lemref{HjK}. To objectively evaluate the running time, for both \textsc{ExactHK} and \textsc{ApproxHK} on all considered networks except the last ten ones marked with \(\ast\), we enforce the program to run on 16 threads. From \tabref{tab:runtime_comparison} we can see that for  moderate approximation parameter \(\epsilon\), the computational time for \textsc{ApproxHK} is significantly  smaller than  that  for \textsc{ExactHK}, especially for large-scale networks tested.  Thus,   \textsc{ApproxHK} can significantly improve the performance compared with  \textsc{ExactHK}. For the  ten networks marked with \(\ast\), the number of vertices for which ranges from \(10^5\) to \(10^6\), we cannot run the \textsc{ExactHK} algorithm on the machine due to the limits of memory and time. However, for these networks, we can approximately compute their walk centrality for all vertices by using algorithm \textsc{ApproxHK}, which further show that   \textsc{ApproxHK} is  efficient and scalable to large networks.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{table*}[htbp]
@@ -1255,50 +1253,50 @@ In \tabref{tab:runtime_comparison}, we report the running time of \(\text{Approx
     %\small
     \fontsize{8.0}{8.8}\selectfont
     \begin{threeparttable}
-        \caption{The running time (seconds, \(s\)) of \(\text{Exact}\mathcal{HK}\) and \(\text{Approx}\mathcal{HK}\) with various \(\epsilon\) on several realistic networks.}
+        \caption{The running time (seconds, \(s\)) of \textsc{ExactHK} and \textsc{ApproxHK} with various \(\epsilon\) on several realistic networks.}
         \label{tab:runtime_comparison}
         \begin{tabular}{crrcccccc}
             \toprule
             %\Xhline{2\arrayrulewidth}
-            \multirow{2}{*}{Network}                      &
-            \multirow{2}{*}{Vertices}                     &
-            \multirow{2}{*}{Edges}                        &
-            \multirow{2}{*}{\(\text{Exact}\mathcal{HK}\)} &
-            \multicolumn{5}{c}{\(\text{Approx}\mathcal{HK}\) (\(s\)) with various \(\epsilon\)}                                                 \\
-            \cmidrule{5-9}                                &           &           & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\) & \(0.15\) & \(0.1\) \\
+            \multirow{2}{*}{Network}          &
+            \multirow{2}{*}{Vertices}         &
+            \multirow{2}{*}{Edges}            &
+            \multirow{2}{*}{\textsc{ExactHK}} &
+            \multicolumn{5}{c}{\textsc{ApproxHK} (\(s\)) with various \(\epsilon\)}                                                 \\
+            \cmidrule{5-9}                    &           &           & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\) & \(0.15\) & \(0.1\) \\
             \midrule
-            Jazz musicians                                & 198       & 2,742     & 0.096   & 0.006   & 0.006    & 0.029   & 0.100    & 0.205   \\
-            Euroroads                                     & 1,039     & 1,305     & 0.044   & 0.065   & 0.095    & 0.115   & 0.124    & 0.130   \\
-            Hamster friends                               & 1,788     & 12,476    & 0.264   & 0.094   & 0.120    & 0.124   & 0.133    & 0.193   \\
-            Hamster full                                  & 2,000     & 16,098    & 0.184   & 0.063   & 0.091    & 0.129   & 0.146    & 0.586   \\
-            Facebook (NIPS)                               & 4,039     & 88,234    & 1.386   & 0.157   & 0.232    & 0.341   & 0.546    & 1.130   \\
-            CA-GrQc                                       & 4,158     & 13,422    & 1.260   & 0.086   & 0.150    & 0.160   & 0.378    & 0.456   \\
-            US power grid                                 & 4,941     & 6,594     & 2.012   & 0.040   & 0.074    & 0.109   & 0.123    & 0.221   \\
-            Reactome                                      & 5,973     & 145,778   & 3.447   & 0.273   & 0.377    & 0.568   & 0.854    & 1.968   \\
-            Route views                                   & 6,474     & 12,572    & 4.000   & 0.075   & 0.108    & 0.111   & 0.260    & 0.272   \\
-            CA-HepTh                                      & 8,638     & 24,827    & 9.248   & 0.105   & 0.174    & 0.224   & 0.318    & 0.467   \\
-            Sister cities                                 & 10,320    & 17,988    & 14.75   & 0.109   & 0.248    & 0.320   & 0.992    & 1.357   \\
-            Pretty Good Privacy                           & 10,680    & 24,316    & 16.40   & 0.360   & 0.381    & 0.534   & 0.640    & 1.156   \\
-            CA-HepPh                                      & 11,204    & 117,619   & 18.72   & 0.374   & 0.495    & 0.873   & 1.730    & 3.067   \\
-            Astro-ph                                      & 17,903    & 196,972   & 74.08   & 0.873   & 1.114    & 1.976   & 2.912    & 6.592   \\
-            CAIDA                                         & 26,475    & 53,381    & 233.0   & 0.353   & 0.964    & 1.184   & 1.381    & 2.330   \\
-            Brightkite*                                   & 56,739    & 212,945   & --      & 1.346   & 2.462    & 3.406   & 4.784    & 16.21   \\
-            Livemocha*                                    & 104,103   & 2,193,083 & --      & 12.64   & 16.32    & 27.40   & 39.98    & 82.02   \\
-            WordNet*                                      & 145,145   & 656,230   & --      & 6.905   & 8.072    & 13.89   & 19.47    & 40.63   \\
-            Gowalla*                                      & 196,591   & 950,327   & --      & 8.150   & 11.05    & 17.03   & 28.93    & 66.72   \\
-            com-DBLP*                                     & 317,080   & 1,049,866 & --      & 13.97   & 20.55    & 36.30   & 67.26    & 163.0   \\
-            Amazon*                                       & 334,863   & 925,872   & --      & 20.61   & 31.01    & 64.83   & 99.94    & 223.7   \\
-            roadNet-PA*                                   & 1,087,562 & 1,541,514 & --      & 98.88   & 158.7    & 270.9   & 416.1    & 1003    \\
-            YouTube*                                      & 1,134,890 & 2,987,624 & --      & 70.82   & 106.7    & 164.2   & 254.5    & 629.2   \\
-            roadNet-TX*                                   & 1,351,137 & 1,879,201 & --      & 159.3   & 223.6    & 371.5   & 689.4    & 1652    \\
-            roadNet-CA*                                   & 1,965,027 & 2,760,388 & --      & 243.7   & 367.5    & 590.9   & 959.3    & 2327    \\
+            Jazz musicians                    & 198       & 2,742     & 0.096   & 0.006   & 0.006    & 0.029   & 0.100    & 0.205   \\
+            Euroroads                         & 1,039     & 1,305     & 0.044   & 0.065   & 0.095    & 0.115   & 0.124    & 0.130   \\
+            Hamster friends                   & 1,788     & 12,476    & 0.264   & 0.094   & 0.120    & 0.124   & 0.133    & 0.193   \\
+            Hamster full                      & 2,000     & 16,098    & 0.184   & 0.063   & 0.091    & 0.129   & 0.146    & 0.586   \\
+            Facebook (NIPS)                   & 4,039     & 88,234    & 1.386   & 0.157   & 0.232    & 0.341   & 0.546    & 1.130   \\
+            CA-GrQc                           & 4,158     & 13,422    & 1.260   & 0.086   & 0.150    & 0.160   & 0.378    & 0.456   \\
+            US power grid                     & 4,941     & 6,594     & 2.012   & 0.040   & 0.074    & 0.109   & 0.123    & 0.221   \\
+            Reactome                          & 5,973     & 145,778   & 3.447   & 0.273   & 0.377    & 0.568   & 0.854    & 1.968   \\
+            Route views                       & 6,474     & 12,572    & 4.000   & 0.075   & 0.108    & 0.111   & 0.260    & 0.272   \\
+            CA-HepTh                          & 8,638     & 24,827    & 9.248   & 0.105   & 0.174    & 0.224   & 0.318    & 0.467   \\
+            Sister cities                     & 10,320    & 17,988    & 14.75   & 0.109   & 0.248    & 0.320   & 0.992    & 1.357   \\
+            Pretty Good Privacy               & 10,680    & 24,316    & 16.40   & 0.360   & 0.381    & 0.534   & 0.640    & 1.156   \\
+            CA-HepPh                          & 11,204    & 117,619   & 18.72   & 0.374   & 0.495    & 0.873   & 1.730    & 3.067   \\
+            Astro-ph                          & 17,903    & 196,972   & 74.08   & 0.873   & 1.114    & 1.976   & 2.912    & 6.592   \\
+            CAIDA                             & 26,475    & 53,381    & 233.0   & 0.353   & 0.964    & 1.184   & 1.381    & 2.330   \\
+            Brightkite*                       & 56,739    & 212,945   & --      & 1.346   & 2.462    & 3.406   & 4.784    & 16.21   \\
+            Livemocha*                        & 104,103   & 2,193,083 & --      & 12.64   & 16.32    & 27.40   & 39.98    & 82.02   \\
+            WordNet*                          & 145,145   & 656,230   & --      & 6.905   & 8.072    & 13.89   & 19.47    & 40.63   \\
+            Gowalla*                          & 196,591   & 950,327   & --      & 8.150   & 11.05    & 17.03   & 28.93    & 66.72   \\
+            com-DBLP*                         & 317,080   & 1,049,866 & --      & 13.97   & 20.55    & 36.30   & 67.26    & 163.0   \\
+            Amazon*                           & 334,863   & 925,872   & --      & 20.61   & 31.01    & 64.83   & 99.94    & 223.7   \\
+            roadNet-PA*                       & 1,087,562 & 1,541,514 & --      & 98.88   & 158.7    & 270.9   & 416.1    & 1003    \\
+            YouTube*                          & 1,134,890 & 2,987,624 & --      & 70.82   & 106.7    & 164.2   & 254.5    & 629.2   \\
+            roadNet-TX*                       & 1,351,137 & 1,879,201 & --      & 159.3   & 223.6    & 371.5   & 689.4    & 1652    \\
+            roadNet-CA*                       & 1,965,027 & 2,760,388 & --      & 243.7   & 367.5    & 590.9   & 959.3    & 2327    \\
             %\Xhline{2\arrayrulewidth}
             \bottomrule
         \end{tabular}
     \end{threeparttable}
 \end{table*}
 
-In addition to the high efficiency,  our algorithm  \(\text{Approx}\mathcal{HK}\) also provides a desirable approximation \(\hat{H}_u\) for the walk centrality \(H_u\).   To show the accuracy of   \(\text{Approx}\mathcal{HK}\), we compare the  approximate  results for \(\text{Approx}\mathcal{HK}\) with the exact results computed by  Lemma~\ref{HjK}. In \tabref{tab:accuracy}, we report the mean relative error \(\sigma\) of algorithm  \(\text{Approx}\mathcal{HK}\), with \(\sigma\) being defined by \(\sigma=\frac{1}{n}\sum_{u\in V}|{H_u}-\tilde{H}_u|/{H_u}\). From  \tabref{tab:accuracy} we can see that  the actual mean relative errors for all \(\epsilon\) and all networks are  very small, and are almost negligible for smaller \(\epsilon\). More interestingly, for all networks tested,   \(\sigma\) are magnitudes smaller than the theoretical guarantee. Therefore, the  approximation algorithm  \(\text{Approx}\mathcal{HK}\) provides very accurate results in practice.
+In addition to the high efficiency,  our algorithm  \textsc{ApproxHK} also provides a desirable approximation \(\hat{H}_u\) for the walk centrality \(H_u\).   To show the accuracy of   \textsc{ApproxHK}, we compare the  approximate  results for \textsc{ApproxHK} with the exact results computed by  Lemma~\ref{HjK}. In \tabref{tab:accuracy}, we report the mean relative error \(\sigma\) of algorithm  \textsc{ApproxHK}, with \(\sigma\) being defined by \(\sigma=\frac{1}{n}\sum_{u\in V}|{H_u}-\tilde{H}_u|/{H_u}\). From  \tabref{tab:accuracy} we can see that  the actual mean relative errors for all \(\epsilon\) and all networks are  very small, and are almost negligible for smaller \(\epsilon\). More interestingly, for all networks tested,   \(\sigma\) are magnitudes smaller than the theoretical guarantee. Therefore, the  approximation algorithm  \textsc{ApproxHK} provides very accurate results in practice.
 
 
 \begin{table}[htbp]
@@ -1306,7 +1304,7 @@ In addition to the high efficiency,  our algorithm  \(\text{Approx}\mathcal{HK}\
     \centering
     \fontsize{8.0}{8.8}\selectfont
     \begin{threeparttable}
-        \caption{Mean relative error \(\sigma\) of \(\text{Approx}\mathcal{HK}\) (\(\times \num{e-2}\)).} %100\%
+        \caption{Mean relative error \(\sigma\) of \textsc{ApproxHK} (\(\times \num{e-2}\)).} %100\%
         \label{tab:accuracy}
         \begin{tabularx}{8.5cm}{c p{0.5cm} p{0.5cm} p{0.5cm} p{0.5cm} p{0.5cm}}
             \toprule[1pt]
@@ -1335,10 +1333,10 @@ In addition to the high efficiency,  our algorithm  \(\text{Approx}\mathcal{HK}\
     \end{threeparttable}
 \end{table}
 
-To further demonstrate the performance of our proposed algorithm \(\text{Approx}\mathcal{HK}\), we use it to compute the Kemeny constant for some model networks.  Although for a general graph, the exact result for its  Kemeny constant is difficult to obtain, for some model networks generated by an iterative way, their Kemeny constant can be determined explicitly.
+To further demonstrate the performance of our proposed algorithm \textsc{ApproxHK}, we use it to compute the Kemeny constant for some model networks.  Although for a general graph, the exact result for its  Kemeny constant is difficult to obtain, for some model networks generated by an iterative way, their Kemeny constant can be determined explicitly.
 For example, for the pseudofractal scale-free web~\cite{XiZhCo16}, the Koch network~\cite{XiLiZh15}, Cayley tree~\cite{CaCh97,ChCa99}, and the extended Tower of Hanoi graph~\cite{KlMo05}, one can obtain exact expressions for their Kemeny constant.
 
-In the following we use algorithm \(\text{Approx}\mathcal{HK}\) to approximately compute the Kemeny constant for the aforementioned four model networks. One main justification for selecting  these four networks lies in their relevance to real-world systems. For example,  the pseudofractal scale-free web and the Koch network display the remarkable scale-free small-world properties as observed in most real networks~\cite{Ne03}, while  Cayley trees are useful for parallel and distributed computing, since they can be embedded into many other interconnection architectures, such as butterfly networks~\cite{GuHa91} and M{\"o}bius cubes~\cite{LiFaJi16}.
+In the following we use algorithm \textsc{ApproxHK} to approximately compute the Kemeny constant for the aforementioned four model networks. One main justification for selecting  these four networks lies in their relevance to real-world systems. For example,  the pseudofractal scale-free web and the Koch network display the remarkable scale-free small-world properties as observed in most real networks~\cite{Ne03}, while  Cayley trees are useful for parallel and distributed computing, since they can be embedded into many other interconnection architectures, such as butterfly networks~\cite{GuHa91} and M{\"o}bius cubes~\cite{LiFaJi16}.
 
 All the four model networks are constructed in an iterative way. Their particular constructions allow to explicitly determine their Kemeny constant.
 
@@ -1446,7 +1444,7 @@ The extended  Tower of Hanoi graph denoted by \(\overline{\mathcal{H}}_{g}(g\ge 
     \label{Kg04}
 \end{align}
 
-We use our algorithm \(\text{Approx}\mathcal{HK}\) to compute the Kemeny constant on   pseudofractal scale-free web \(\mathcal{F}_{12}\),  Koch network \(\mathcal{M}_{10}\),   Cayley tree \(\mathcal{C}_{3,19}\), and   extended  Tower of Hanoi graph \(\overline{\mathcal{H}}_{13}\). The numerical results are reported in  Table~\ref{tab:Kemeny}, which shows that the approximation algorithm \(\text{Approx}\mathcal{HK}\) works effectively for the four  networks. This again demonstrates the advantage of our proposed algorithm for large networks.
+We use our algorithm \textsc{ApproxHK} to compute the Kemeny constant on   pseudofractal scale-free web \(\mathcal{F}_{12}\),  Koch network \(\mathcal{M}_{10}\),   Cayley tree \(\mathcal{C}_{3,19}\), and   extended  Tower of Hanoi graph \(\overline{\mathcal{H}}_{13}\). The numerical results are reported in  Table~\ref{tab:Kemeny}, which shows that the approximation algorithm \textsc{ApproxHK} works effectively for the four  networks. This again demonstrates the advantage of our proposed algorithm for large networks.
 
 \begin{table*}[htbp]
     %\tabcolsep=5pt
@@ -1454,7 +1452,7 @@ We use our algorithm \(\text{Approx}\mathcal{HK}\) to compute the Kemeny constan
     \normalsize
     %\fontsize{6.51}{8.0}\selectfont
     \begin{threeparttable}
-        \caption{Exact Kemeny constant \(K\),   their approximation \(\tilde{K}\),  relative error \(\rho=\abs{K-\tilde{K}}/K\), and running time (seconds, \(s\)) for \(\tilde{K}\) on networks \(\mathcal{F}_{12}\), \(\mathcal{M}_{10}\), \(\mathcal{C}_{3,19}\) and \(\overline{\mathcal{H}}_{13}\).  \(K\) is obtained via~\eqref{Kg01} and~\eqref{Kg02}, while \(\tilde{K}\) is obtained through algorithm \(\text{Approx}\mathcal{HK}\) with \(\epsilon=0.2\).}
+        \caption{Exact Kemeny constant \(K\),   their approximation \(\tilde{K}\),  relative error \(\rho=\abs{K-\tilde{K}}/K\), and running time (seconds, \(s\)) for \(\tilde{K}\) on networks \(\mathcal{F}_{12}\), \(\mathcal{M}_{10}\), \(\mathcal{C}_{3,19}\) and \(\overline{\mathcal{H}}_{13}\).  \(K\) is obtained via~\eqref{Kg01} and~\eqref{Kg02}, while \(\tilde{K}\) is obtained through algorithm \textsc{ApproxHK} with \(\epsilon=0.2\).}
         \label{tab:Kemeny}
         \begin{tabular}{ccccccc}
             \toprule
@@ -1474,13 +1472,13 @@ We use our algorithm \(\text{Approx}\mathcal{HK}\) to compute the Kemeny constan
     \end{threeparttable}
 \end{table*}
 
-\subsection{Results for \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\)}
+\subsection{Results for \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}}
 
-We first compare the performance of \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\) with the optimum solution on four toy networks~\cite{Ku13}: \(\mathit{Zebra}\) with 23 vertices, \(\mathit{Zachary\ karate\ club}\) with 34 vertices, \(\mathit{Contiguous\ USA}\) with 49 vertices and \(\mathit{Les\ Miserables}\) with 77 vertices.
+We first compare the performance of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} with the optimum solution on four toy networks~\cite{Ku13}: \(\mathit{Zebra}\) with 23 vertices, \(\mathit{Zachary\ karate\ club}\) with 34 vertices, \(\mathit{Contiguous\ USA}\) with 49 vertices and \(\mathit{Les\ Miserables}\) with 77 vertices.
 
 To find the set of \(k\) elements with the lowest GWC value for each network \(\gr=(V,E)\), the optimum solution iterates through all the \(k\)-element subsets of \(V\), where \(k\) ranges from \(1\) to \(5\).
-We then compare the smallest GWC value with the solution provided by \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\), whose results are shown in \figref{pic:compare-effect-optimum}.
-During the execution of \(\text{Approx}\mathcal{GWCM}\), we set the error parameter \(\epsilon\) to \(0.2\).
+We then compare the smallest GWC value with the solution provided by \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}, whose results are shown in \figref{pic:compare-effect-optimum}.
+During the execution of \textsc{ApproxMinGWC}, we set the error parameter \(\epsilon\) to \(0.2\).
 The results in \figref{pic:compare-effect-optimum} demonstrate that the solutions provided by our algorithms are almost identical to each other, and both are very close to the optimum solution.
 This indicates that our proposed algorithms have a much better approximation ratio than the theoretical guarantees.
 
@@ -1491,7 +1489,7 @@ This indicates that our proposed algorithms have a much better approximation rat
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
                 legend style={font=\Large},
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),\(\text{Optimum}\mathcal{GWCM}\)},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},\textsc{OptimumMinGWC}},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1507,7 +1505,7 @@ This indicates that our proposed algorithms have a much better approximation rat
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
                 legend style={font=\Large},
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),\(\text{Optimum}\mathcal{GWCM}\)},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},\textsc{OptimumMinGWC}},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1524,7 +1522,7 @@ This indicates that our proposed algorithms have a much better approximation rat
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
                 legend style={font=\Large},
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),\(\text{Optimum}\mathcal{GWCM}\)},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},\textsc{OptimumMinGWC}},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1540,7 +1538,7 @@ This indicates that our proposed algorithms have a much better approximation rat
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
                 legend style={font=\Large},
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),\(\text{Optimum}\mathcal{GWCM}\)},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},\textsc{OptimumMinGWC}},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1551,13 +1549,13 @@ This indicates that our proposed algorithms have a much better approximation rat
             \node [font=\huge] at (3.5,9) {(d)};
         \end{axis}
     \end{tikzpicture}
-    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by three different algorithms(\(\text{Exact}\mathcal{GWCM}\),\(\text{Approx}\mathcal{GWCM}\) and \(\text{Optimum}\mathcal{GWCM}\)) on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c) and Les Miserables (d).\label{pic:compare-effect-optimum}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by three different algorithms(\textsc{DeterMinGWC},\textsc{ApproxMinGWC} and \textsc{OptimumMinGWC}) on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c) and Les Miserables (d).\label{pic:compare-effect-optimum}}
 \end{figure}
 
-We then compare the performance of \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\) with three other algorithms: \text{Top-Absorb}, \text{Top-Degree}, and \text{Top-PageRank}.
+We then compare the performance of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} with three other algorithms: \text{Top-Absorb}, \text{Top-Degree}, and \text{Top-PageRank}.
 \text{Top-Absorb} simply selects \(k\) absorbing vertices with the lowest absorbing random-walk centrality, while \text{Top-Degree} and \text{Top-PageRank} select the vertices with the largest degrees and PageRank values, respectively.
 We execute these four algorithms on eight medium-sized networks.
-During the execution of \(\text{Approx}\mathcal{GWCM}\), we set the error parameter \(\epsilon\) to \(0.2\).
+During the execution of \textsc{ApproxMinGWC}, we set the error parameter \(\epsilon\) to \(0.2\).
 The results are shown in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}.
 As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, both of our algorithms produce similar approximate solutions in larger networks, which outperform the solutions of other algorithms.
 
@@ -1573,7 +1571,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
                 ymax=800,
             ]
             \addplot+[
@@ -1597,7 +1595,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
                 ymax=4500,
             ]
             \addplot+[
@@ -1623,7 +1621,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
                 ymax=1600,
             ]
             \addplot+[
@@ -1647,7 +1645,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
                 ymax=12000,
             ]
             \addplot+[
@@ -1661,7 +1659,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
             \node [font=\huge] at (10,90) {(d)};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\(\text{Exact}\mathcal{GWCM}\),\(\text{Approx}\mathcal{GWCM}\),\text{Top-Absorb} and \text{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d).\label{pic:compare-effect1}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{DeterMinGWC},\textsc{ApproxMinGWC},\text{Top-Absorb} and \text{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d).\label{pic:compare-effect1}}
 \end{figure}
 
 \begin{figure}[!t]
@@ -1676,7 +1674,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=800,
             ]
             \addplot+[
@@ -1700,7 +1698,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=4500,
             ]
             \addplot+[
@@ -1726,7 +1724,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=1600,
             ]
             \addplot+[
@@ -1750,7 +1748,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                         font=\footnotesize,
                         legend columns=2,
                     },
-                legend entries={\(\text{Approx}\mathcal{GWCM}\),\(\text{Exact}\mathcal{GWCM}\),Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=12000,
             ]
             \addplot+[
@@ -1764,25 +1762,25 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
             \node [font=\huge] at (15,4) {(d)};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\(\text{Exact}\mathcal{GWCM}\),\(\text{Approx}\mathcal{GWCM}\),\text{Top-Absorb} and \text{Top-Degree}) on four networks: Hamster friends (a), Hamster full (b), Reactome (c) and Route views (d).\label{pic:compare-effect2}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{DeterMinGWC},\textsc{ApproxMinGWC},\text{Top-Absorb} and \text{Top-Degree}) on four networks: Hamster friends (a), Hamster full (b), Reactome (c) and Route views (d).\label{pic:compare-effect2}}
 \end{figure}
 
-Finally, we demonstrate that the \(\text{Approx}\mathcal{GWCM}\) algorithm is significantly more efficient than the \(\text{Exact}\mathcal{GWCM}\) algorithm, particularly when applied to large networks.
+Finally, we demonstrate that the \textsc{ApproxMinGWC} algorithm is significantly more efficient than the \textsc{DeterMinGWC} algorithm, particularly when applied to large networks.
 We test both algorithms on a wider range of real networks.
-For each network, we use \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\) separately to solve the GWC minimization problem, with \(k=10\) and \(\epsilon=0.2\).
+For each network, we use \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} separately to solve the GWC minimization problem, with \(k=10\) and \(\epsilon=0.2\).
 The running times of both algorithms are shown in \tabref{tab:running-time}.
 
-From \tabref{tab:running-time}, we can observe that the running time of \(\text{Approx}\mathcal{GWCM}\) is proportional to the number of edges in the network, leading to an increase in the speedup ratio of \(\text{Approx}\mathcal{GWCM}\) as the network size grows.
+From \tabref{tab:running-time}, we can observe that the running time of \textsc{ApproxMinGWC} is proportional to the number of edges in the network, leading to an increase in the speedup ratio of \textsc{ApproxMinGWC} as the network size grows.
 Furthermore, \tabref{tab:running-time} indicates that when processing networks marked with \(\ast\),
-\(\text{Approx}\mathcal{GWCM}\) remains usable while \(\text{Exact}\mathcal{GWCM}\) fails due to its high time complexity.
-This result demonstrates the scalability of \(\text{Approx}\mathcal{GWCM}\) when applied to large networks.
+\textsc{ApproxMinGWC} remains usable while \textsc{DeterMinGWC} fails due to its high time complexity.
+This result demonstrates the scalability of \textsc{ApproxMinGWC} when applied to large networks.
 
 \begin{table}[htbp]
     \tabcolsep=8pt
     \centering
     \fontsize{8.0}{8.8}\selectfont
     \begin{threeparttable}
-        \caption{The running time (seconds, \(s\)) of \(\text{Exact}\mathcal{GWCM}\) and \(\text{Approx}\mathcal{GWCM}\) (denoted as \text{Exact} and \text{Approx} in the table to save space) with various \(\epsilon\) on several realistic networks}
+        \caption{The running time (seconds, \(s\)) of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} (denoted as \text{Exact} and \text{Approx} in the table to save space) with various \(\epsilon\) on several realistic networks}
         \label{tab:running-time}
         \begin{tabularx}{8.25cm}{c p{1cm} p{0.5cm} p{0.5cm} p{0.5cm}}
             \toprule[1pt]
