@@ -869,7 +869,7 @@ In order to further decrease the time complexity of the na\"{\i}ve greedy algori
 \end{IEEEproof}
 
 
-\lemref{lem:delta} demonstrate that for any empty set $S$ if \(\lap_{-S}\)  is already computed, by using~\eqref{eq:delta}  we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) in $O((n-|S|)^2)$ time. This avoids directly inverting the matrix \(\lap_{-(S+u)}\), which needs time $O((n-|S|+1)^3)$. When \(S=\varnothing\),~\eqref{eq:delta} becomes invalid.  For this case, we use the result \(H_u=d\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\) in~\lemref{HjK} to compute the walk centrality $H_u$ for every vertex $u \in V$, and add the vertex $u$ with the smallest $H_u$ to $S$.  Based on~\lemref{HjK} and~\lemref{lem:delta}, we propose a simple greedy algorithm \textsc {ExactMinGWC}$ (\gr,k)$ to solve the MinGWC problem, which is  outlined in~\algoref{algo:exact-gwcm}. The algorithm first computes $H_u$ for every vertex $u \in V$ in time $O(n^3)$. Then, it works in $k-1$ rounds. In each round, it evaluates  \(\Delta(u,S)\) for all the $ (n-|S|)$ vertices in set $V \setminus S$ (Line 6)  in $O((n-|S|)^3)$ time. Therefore, the whole running time of~\algoref{algo:exact-gwcm} is \(O(kn^3)\),  much lower than the time complexity   \(O(kn^4)\) of the  na\"{\i}ve greedy  algorithm.
+\lemref{lem:delta} demonstrate that for any empty set $S$ if \(\lap_{-S}\)  is already computed, by using~\eqref{eq:delta}  we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) in $O((n-|S|)^2)$ time. This avoids directly inverting the matrix \(\lap_{-(S+u)}\), which needs time $O((n-|S|+1)^3)$. When \(S=\varnothing\),~\eqref{eq:delta} becomes invalid.  For this case, we use the result \(H_u=d\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\) in~\lemref{HjK} to compute the walk centrality $H_u$ for every vertex $u \in V$, and add the vertex $u$ with the smallest $H_u$ to $S$.  Based on~\lemref{HjK} and~\lemref{lem:delta}, we propose a simple greedy algorithm \textsc{ExactMinGWC}$(\gr,k)$ to solve the MinGWC problem, which is  outlined in~\algoref{algo:exact-gwcm}. The algorithm first computes $H_u$ for every vertex $u \in V$ in time $O(n^3)$. Then, it works in $k-1$ rounds. In each round, it evaluates  \(\Delta(u,S)\) for all the $ (n-|S|)$ vertices in set $V \setminus S$ (Line 6)  in $O((n-|S|)^3)$ time. Therefore, the whole running time of~\algoref{algo:exact-gwcm} is \(O(kn^3)\),  much lower than the time complexity   \(O(kn^4)\) of the  na\"{\i}ve greedy  algorithm.
 
 
 \begin{algorithm}
@@ -921,9 +921,9 @@ Although \algoref{algo:exact-gwcm} is much faster than the  na\"{\i}ve greedy  a
 In the rest of this section, we first approximate $\vece_u^\top \lap_{-S}^{-1} \vecd_{-S}$ and $\vece_u^\top \lap_{-S}^{-1}\vece_u$. Then, we present an  error-guaranteed approximation to  \(\Delta(u,S)\), based on which we further propose  a fast approximation algorithm to the MinGWC problem  with $(1-\frac{k}{k-1} \frac{1}{e}-\epsilon)$ approximation ratio and time complexity $\tilde{O}(km\epsilon^{-2})$ for any error parameter $0< \epsilon < 1$.
 
 
-\subsection{Approximation of the Quantity $\mathbf{e}_u^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_S$}
+\subsection{Approximation of the Quantity $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_S$}
 
-We first  approximate the quantity \(\vece_u^\top\lap_{-S}^{-1}\vecd_{-S}\). To this end, we introduce the following two lemmas.
+We first  approximate the quantity \(\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\) for any node $i\in V\setminus S$. To this end, we introduce the following two lemmas.
 \begin{lemma}\label{lem:norm-ineq}
     Let \(\gr=(V,E,w)\) be a connected weighted undirected graph with Laplacian matrix  \(\lap\). Then, for an arbitrary subset \(S\subseteq V\) of vertices and an arbitrary vector \(\vecv\in\rea^{n-\abs{S}}\), the relation \(v_i^2\le nw_{\min}^{-1}\Abs{\vecv}^2_{\lap_{-S}}\) holds.
 \end{lemma}
@@ -985,47 +985,41 @@ With the above two lemmas, we can approximate \(\vece_u^\top\lap_{-S}^{-1}\vecd_
 
 %\subsection{Approximation of the denominator  of \(\Delta(u,S)\)}
 
-\subsection{Approximation of the Quantity $\mathbf{e}_u^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_u$}
+\subsection{Approximation of the Quantity $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_i$}
 
-Next, we aim to estimate the denominator of \(\Delta(u,S)\). This can be represented as a Euclidian norm through the use of \lemref{lemma:JL}.
+We next estimate the quantity $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_i$ in the denominator  of~\eqref{eq:delta}. For this purpose,
+we represent $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_i$ in terms of an Euclidean norm as
 \begin{equation}\label{eq:denom-solver}
     \begin{split}
-        \vece_i^\top\lap_{-S}^{-1}\vece_i
-        =&\vece_i^\top\lap_{-S}^{-1}(\matb'^\top\matw'\matb'+\matz)\lap_{-S}^{-1}\vece_i\\
+        & \vece_i^\top\lap_{-S}^{-1}\vece_i
+        =\vece_i^\top\lap_{-S}^{-1}(\matb'^\top\matw'\matb'+\matz)\lap_{-S}^{-1}\vece_i\\
         =&\vece_i^\top\lap_{-S}^{-1}\matb'^\top\matw'\matb'\lap_{-S}^{-1}\vece_i+\vece_i^\top\lap_{-S}^{-1}\matz\lap_{-S}^{-1}\vece_i\\
         =&\Abs{\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2.
     \end{split}
 \end{equation}
+Thus, the evaluation of $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_i$ is reduced to computing  the $\ell_2$-norm of two vectors in $\rea^m$ and $\rea^n$, respectively. However, exactly calculating $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_i$ by evaluating $\ell_2$-norms still has a high computational cost, since we still need to invert the matrix  $\mathbf{L}_{-S}$. Although by utilizing \lemref{lemma:ST}, one can approximate $\ell_2$-norms. Unfortunately,  since the dimensions of matrices \(\matw'\) and \(\matz\) are, respectively,  $O(m)$ and  $O(n)$, resulting in an unacceptable number of calls to the \(\mathtt{Solver}\) function. In the following text, by using~\lemref{lemma:JL} we will propose an approximating algorithm to estimate the two $\ell_2$-norms, which significantly lessens the computational cost.
 
-Although~\eqref{eq:denom-solver} suggests that we can avoid matrix inversion by utilizing \lemref{lemma:ST}, the size of the matrices \(\matw'\) and \(\matz\) being \(\abs{E}=m\) and \(\abs{V}=n\) respectively, results in an unacceptable number of calls to the \(\mathtt{Solver}\) function.
-As a solution, it is necessary to use \lemref{lemma:JL} to reduce the size of the corresponding matrices.
-
-According to \lemref{lemma:JL}, let us denote the projection matrices as \(\matq\in\rea^{q\times m}\) and \(\matr\in\rea^{r\times n}\), where \(q=r=\ceil{24\epsilon^{-2}\log n}\).
-Then we can infer that
+In order to exploit \lemref{lemma:JL}, we introduce two projection matrices \(\matq\in\rea^{q\times m}\) and \(\matr\in\rea^{r\times n}\), where \(q=r=\ceil{24\epsilon^{-2}\log n}\). Each of the entry for \(\matq\in\rea^{q\times m}\) and \(\matr\in\rea^{r\times n}\) is  $1/\sqrt{q}$ or $1/\sqrt{q}$ with identical probability $1/2$. Then, we have
 \begin{equation}\label{eq:denom-jl}
     \begin{split}
-        &\Abs{\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2\\
+        &\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_i =\Abs{\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2\\
         \approx_\epsilon&\Abs{\matq\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matr\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2.
     \end{split}
 \end{equation}
-
-For the sake of simplicity, we refer to \(\matw'^{1/2}\matb'\lap_{-S}^{-1}\) and \(\matq\matw'^{1/2}\matb'\lap_{-S}^{-1}\) as \(\matx\) and \(\tilde{\matx}\), respectively.
-We also refer to \(\matz^{1/2}\lap_{-S}^{-1}\) and \(\matr\matz^{1/2}\lap_{-S}^{-1}\) as \(\maty\) and \(\tilde{\maty}\), respectively.
-Then~\eqref{eq:denom-solver} and~\eqref{eq:denom-jl} can be rephrased as follows:
+For the sake of simplicity, we denote \(\matw'^{1/2}\matb'\lap_{-S}^{-1}\) and \(\matq\matw'^{1/2}\matb'\lap_{-S}^{-1}\) as \(\matx\) and \(\tilde{\matx}\), respectively. Moreover, we  denote \(\matz^{1/2}\lap_{-S}^{-1}\) and \(\matr\matz^{1/2}\lap_{-S}^{-1}\) as \(\maty\) and \(\tilde{\maty}\), respectively.
+Then~\eqref{eq:denom-jl} can be rephrased as
 \begin{equation}\label{eq:denom-solver-simp}
-    \vece_i^\top\lap_{-S}^{-1}\vece_i=\Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2,
+    \begin{split}
+        \vece_i^\top\lap_{-S}^{-1}\vece_i &=\Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2\\
+        &\approx_\epsilon\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2.
+    \end{split}
 \end{equation}
-\begin{equation}\label{eq:denom-jl-simp}
-    \Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2\approx_\epsilon\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2.
-\end{equation}
+Making this expression,  we can efficiently approximate the quantity $\vece_i^\top\lap_{-S}^{-1}\vece_i$.
 
-Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can efficiently approximate the denominator of \(\Delta(u,S)\).
 \begin{lemma}\label{lem:approx-denom}
-    Given a connected weighted undirected graph \(\gr=(V,E,w)\), the nonempty vertex group \(S\), the Laplacian matrix \(\lap\) and an error parameter \(\epsilon\in(0,1)\).
-    We define \(\overline{\matx}\) and \(\overline{\maty}\) as \(\matq\matw^{1/2}\matb\) and \(\matr\matz^{1/2}\) respectively.
-    Let \(\matx'\in\rea^{q\times n}\) and \(\maty'\in\rea^{r\times n}\) be matrices such that \(\matx'_{[i,:]}=\mathtt{Solver}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\), \(\maty'_{[i,:]}=\mathtt{Solver}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\), where \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\), \(\delta_2=\frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\). Then for any vertex \(i\in V\setminus S\), we have
+    Let \(\gr=(V,E,w)\) be a connected weighted undirected graph with Laplacian matrix \(\lap\). Let  \(S\) be a nonempty subset of vertex set $V$, and let  $\epsilon$ be an error parameter in $(0,1)$. Let  \(\overline{\matx}\) and \(\overline{\maty}\)   denote \(\matq\matw^{1/2}\matb\) and \(\matr\matz^{1/2}\) respectively.   Let \(\matx'\in\rea^{q\times n}\) and \(\maty'\in\rea^{r\times n}\) be matrices such that \(\matx'_{[i,:]}=\mathtt{Solver}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\), \(\maty'_{[i,:]}=\mathtt{Solver}(\lap_{-S},\overline{\maty}_{[i,:]},\delta_2)\), where \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\), \(\delta_2=\frac{w_{\min}\epsilon}{31n^2}\sqrt{\frac{1-\epsilon/7}{2w_{\max}(1+\epsilon/7)}}\). Then, for any vertex \(i\in V\setminus S\),
     \begin{equation}\label{eq:approx-denom}
-        \Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2=\vece_i^\top\lap_{-S}^{-1}\vece_i\approx_{\epsilon/3}\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2.
+        \vece_i^\top\lap_{-S}^{-1}\vece_i = \Abs{\matx\vece_i}^2+\Abs{\maty\vece_i}^2 \approx_{\epsilon/3}\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2.
     \end{equation}
 \end{lemma}
 \begin{IEEEproof}
@@ -1036,9 +1030,9 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
         \le & \sqrt{\sum_{j=1}^qnw_{\min}^{-1}\Abs{\tilde{\matx}_{[j,:]}-\matx'_{[j,:]}}_{\lap_{-S}}^2}                                                   \\
         \le & \sqrt{\sum_{j=1}^qnw_{\min}^{-1}\delta_2^2\Abs{\tilde{\matx}_{[j,:]}}_{\lap_{-S}}^2}\le n\delta_2\sqrt{w_{\min}^{-1}}\Abs{\tilde{\matx}}_F,
     \end{align*}
-    where the third inequality and the fourth inequality are due to \lemref{lem:norm-ineq} and \lemref{lemma:ST} respectively.
+    where the third inequality and the fourth inequality are due to \lemref{lem:norm-ineq} and \lemref{lemma:ST}, respectively.
 
-    As \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\), by using \lemref{lemma:JL}, we are able to further obtain
+    Considering \(q=r=\ceil{24(\epsilon/7)^{-1}}\log n\) and~\lemref{lemma:JL}, we further obtain
     \begin{align*}
             & n\delta_2\sqrt{w_{\min}^{-1}}\Abs{\tilde{\matx}}_F\le n\delta_2\sqrt{w_{\min}^{-1}(1+\epsilon/7)\sum_{i\in V\setminus S}\Abs{\matx\vece_i}^2} \\
         \le & n\delta_2\sqrt{w_{\min}^{-1}(1+\epsilon/7)\trace{\lap_{-S}^{-1}}}\le n^2\delta_2w_{\min}^{-1}\sqrt{1+\epsilon/7},
@@ -1048,14 +1042,14 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
     \begin{equation}\label{eq:approx-maty-raw}
         \abs{\Abs{\tilde{\maty}\vece_i}-\Abs{\maty'\vece_i}}\le n^2\delta_2w_{\min}^{-1}\sqrt{1+\epsilon/7}.
     \end{equation}
-    On the other hand, according to \lemref{lemma:JL},
+    On the other hand, according to \lemref{lemma:JL}, we have
     \[\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2\ge(1-\epsilon/7)\vece_i^\top\lap_{-S}^{-1}\vece_i\ge(1-\epsilon/7)n^{-2}w_{\max}^{-1}\]
     where the last inequality is due to the scaling of \(\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\ge1\).
 
     According to the Pigeonhole Principle, at least one element of \(\setof{\Abs{\tilde{\matx}\vece_i},\Abs{\tilde{\maty}\vece_i}}\) is no less than \(\frac{1}{n}\sqrt{\frac{1-\epsilon/7}{2w_{\max}}}\).
-    Without loss of generality, we let \(\Abs{\tilde{\matx}\vece_i}\ge\frac{1}{n}\sqrt{\frac{1-\epsilon/7}{2w_{\max}}}\), then we have
+    Without loss of generality, we suppose \(\Abs{\tilde{\matx}\vece_i}\ge\frac{1}{n}\sqrt{\frac{1-\epsilon/7}{2w_{\max}}}\). Then, we have
     \[\frac{\abs{\Abs{\tilde{\matx}\vece_i}-\Abs{\matx'\vece_i}}}{\Abs{\tilde{\matx}\vece_i}}\le n\delta_2w_{\min}^{-1}\sqrt{\frac{2w_{\max}(1+\epsilon/7)}{1-\epsilon/7}}=\frac{\epsilon}{31}.\]
-    According to the inequality above, we can further obtain
+    In addition, we obtain
     \begin{align*}
             & \frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2}                                                   \\
         =   & \frac{\abs{\Abs{\tilde{\matx}\vece_i}-\Abs{\matx'\vece_i}}\mypar{\Abs{\tilde{\matx}\vece_i}+\Abs{\matx'\vece_i}}}{\Abs{\tilde{\matx}\vece_i}^2} \\
@@ -1065,9 +1059,9 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
     \begin{equation}\label{eq:approx-matx}
         \frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2}\le\frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2}\le\frac{\epsilon}{15}.
     \end{equation}
-    For the case of \(\Abs{\maty'\vece_i}^2\), as~\eqref{eq:approx-maty-raw} still holds, we can obtain
+    Using~\eqref{eq:approx-maty-raw}, it is not difficult to  obtain
     \[\frac{\abs{\Abs{\tilde{\maty}\vece_i}-\Abs{\maty'\vece_i}}}{\Abs{\tilde{\matx}\vece_i}}\le n\delta_2w_{\min}^{-1}\sqrt{\frac{2w_{\max}(1+\epsilon/7)}{1-\epsilon/7}}=\frac{\epsilon}{31},\]
-    thus indicating that
+    which indicates
     \begin{equation}\label{eq:approx-maty}
         \begin{split}
             &\frac{\abs{\Abs{\tilde{\maty}\vece_i}^2-\Abs{\maty'\vece_i}^2}}{\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2}\\
@@ -1080,26 +1074,27 @@ Combining~\eqref{eq:denom-solver-simp} and~\eqref{eq:denom-jl-simp}, we can effi
             & \frac{\abs{\mypar{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}-\mypar{\Abs{\tilde{\matx}\vece_i}^2+\Abs{\tilde{\maty}\vece_i}^2}}}{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}             \\
         \le & \frac{\abs{\Abs{\tilde{\matx}\vece_i}^2-\Abs{\matx'\vece_i}^2}+\abs{\Abs{\tilde{\maty}\vece_i}^2-\Abs{\maty'\vece_i}^2}}{\Abs{\matx'\vece_i}^2+\Abs{\maty'\vece_i}^2}\le\frac{\epsilon}{7},
     \end{align*}
-    which completes our proof in conjunction with \lemref{lemma:JL}.
+    which, together with~\lemref{lemma:JL}, completes the proof.
 \end{IEEEproof}
 
-\subsection{Details of Algorithms \text{ApproxDelta} and \(\text{Approx}\mathcal{GWCM}\)}
 
-By combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose the \text{ApproxDelta} algorithm for approximating \(\Delta(u,S)\) when \(S\neq\varnothing\).
-The \text{ApproxDelta} algorithm calls algorithm \(\mathtt{Solver}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\).
-Here, \(\tilde{O}(\cdot)\) hides the poly(\(\log n\)) factors.
-Additionally, we can provide an approximation guarantee for this algorithm.
+
+\subsection{Efficient Evaluation of Marginal Gain \(\Delta(u,S)\)}
+
+Combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose an efficient algorithm called \text{ApproxDelta} approximating \(\Delta(u,S)\) for  \(S\neq\varnothing\). The outline of  \text{ApproxDelta} is presented in Algorithm~\ref{algo:approxdelta}. The \text{ApproxDelta} algorithm calls the \(\mathtt{Solver}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\). The approximation guarantee for Algorithm~\ref{algo:approxdelta} is provided in
+Lemma~\ref{lem:approx-marginest}.
+
 
 \begin{algorithm}
     \caption{\text{ApproxDelta}\((\gr,S,\epsilon)\)}
     \label{algo:approxdelta}
     \Input{
         A connected weighted undirected graph \(\gr=(V,E,w)\);
-        The absorbing vertex group \(S\subseteq V\);
+        The absorbing vertex set \(S\subseteq V\);
         an error parameter \(\epsilon\in(0,1)\)
     }
     \Output{
-        The margin \(\Delta(u,S)\) of GWC created by adding vertex \(u\) to \(S\) for any vertex \(u\in V\setminus S\)
+        The margin \(\Delta(u,S)\)  for any vertex \(u\in V\setminus S\)
     }
     Compute \(\lap\) and \(\vecd\)\;
     \(n\gets\abs{V},m\gets\abs{E}\)\;
@@ -1109,7 +1104,7 @@ Additionally, we can provide an approximation guarantee for this algorithm.
     \(\vecx'\gets\mathtt{Solver}(\lap_{-S},\vecd_{-S},\delta_1)\)\;
     \(\matq\gets\text{GenerateRandomMatrix}(q,m)\)\;
     \(\matr\gets\text{GenerateRandomMatrix}(r,n)\)\;
-    Decompose \(\lap_{-S}\) into \(\matb'\in\rea^{m\times n}\), \(\matw'\in\rea^{m\times m}\) and \(\matz\in\rea^{n\times n}\), where \(\lap_{-S}=\matb'^\top\matw'\matb'+\matz\)\;
+    Decompose \(\lap_{-S}\) into \(\matb'\in\rea^{m\times n}\), \(\matw'\in\rea^{m\times m}\) and \(\matz\in\rea^{n\times n}\), satisfying \(\lap_{-S}=\matb'^\top\matw'\matb'+\matz\)\;
     \(\overline{\matx}\gets\matq\matw^{1/2}\matb\),\(\overline{\maty}\gets\matr\matz^{1/2}\)\;
     \For{\(i=1,2,\dots,q\)}{
     \(\matx'_{[i,:]}\gets\mathtt{Solver}(\lap_{-S},\overline{\matx}_{[i,:]},\delta_2)\)\;
@@ -1123,7 +1118,7 @@ Additionally, we can provide an approximation guarantee for this algorithm.
 \end{algorithm}
 
 \begin{lemma}\label{lem:approx-marginest}
-    For any real number \(\epsilon\in(0,1)\), \(\Delta'(u,S)\) satisfies
+    For any real number \(\epsilon\in(0,1)\), the returned value \(\Delta'(u,S)\) of Algorithm~\ref{algo:approxdelta} satisfies
     \begin{equation*}
         \Delta(u,S)\approx_\epsilon \Delta'(u,S)
     \end{equation*}
@@ -1132,6 +1127,12 @@ Additionally, we can provide an approximation guarantee for this algorithm.
 % \begin{IEEEproof}
 
 % \end{IEEEproof}
+
+
+
+
+
+\subsection{Nearly Linear Algorithm for the MinGWC Problem}
 
 By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we are able to create a faster greedy algorithm called \(\text{Approx}\mathcal{GWCM}\) with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor.
 The complexity of \(\text{Approx}\mathcal{GWCM}\) is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear, as it calls \(\text{Approx\(\mathcal{HK}\)}\) once and \text{ApproxDelta} \(k-1\) times.
