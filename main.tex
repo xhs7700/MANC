@@ -820,7 +820,7 @@ Given a connected 3-regular graph \(G=(V,E)\) with every edge having a unit weig
         >\vecpi_{-S}^\top\vecone=(n-k)/n.
     \end{align*}
     This finishes the proof.
-    % According to the proposition above, we can create a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of GWCM, which proves that GWCM is NP-hard.
+    % According to the proposition above, we can create a polynomial reduction from Vertex Cover on \(c\)-regular graphs to a decision version of MinGWC, which proves that MinGWC is NP-hard.
 \end{IEEEproof}
 
 \subsection{A Simple Greedy Algorithm}
@@ -873,7 +873,7 @@ In order to further decrease the time complexity of the na\"{\i}ve greedy algori
 
 
 \begin{algorithm}
-    \caption{\(\text{ExactMinGWC}\)\((\gr,k)\)}
+    \caption{\textsc{DeterMinGWC}\((\gr,k)\)}
     \label{algo:exact-gwcm}
     \Input{
         A connected weighted undirected graph \(\gr=(V,E,w)\);
@@ -895,7 +895,7 @@ In order to further decrease the time complexity of the na\"{\i}ve greedy algori
 
 In addition to good efficiency, \algoref{algo:exact-gwcm} is very effective since it has a $(1-\frac{k}{k-1}\cdot\frac{1}{e})$ approximation factor, as shown in the following theorem.
 \begin{theorem}
-    The algorithm $S_k$= \textsc {ExactMinGWC}$ (\gr,k)$ takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(1 \geq k \ll n\), and returns a  group \(S_k\) of \(k\) vertices.
+    The algorithm $S_k$= \textsc {DeterMinGWC}$ (\gr,k)$ takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(1 \geq k \ll n\), and returns a  group \(S_k\) of \(k\) vertices.
     The return vertex group \(S\) satisfies
     \[\manc{\setof{u^*}}-\manc{S_k}\ge\mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}}\mypar{\manc{\setof{u^*}}-\manc{S^*}},\]
     where
@@ -1081,7 +1081,7 @@ Making this expression,  we can efficiently approximate the quantity $\vece_i^\t
 
 \subsection{Efficient Evaluation of Marginal Gain \(\Delta(u,S)\)}
 
-Combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose an efficient algorithm called \textsc{ApproxDelta} approximating \(\Delta(u,S)\) for  \(S\neq\varnothing\). The outline of  \textsc{ApproxDelta} is presented in Algorithm~\ref{algo:approxdelta}. The \textsc{ApproxDelta} algorithm calls the \(\mathtt{Solver}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\). The approximation guarantee for Algorithm~\ref{algo:approxdelta} is provided in
+Combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose an efficient algorithm called \text{ApproxDelta} approximating \(\Delta(u,S)\) for  \(S\neq\varnothing\). The outline of  \text{ApproxDelta} is presented in Algorithm~\ref{algo:approxdelta}. The \text{ApproxDelta} algorithm calls the \(\mathtt{Solver}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\). The approximation guarantee for Algorithm~\ref{algo:approxdelta} is provided in
 Lemma~\ref{lem:approx-marginest}.
 
 
@@ -1132,8 +1132,7 @@ Lemma~\ref{lem:approx-marginest}.
 
 \subsection{Nearly Linear Algorithm for the MinGWC Problem}
 
-By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we are able to create a faster greedy algorithm called \textsc{ApproxMinGWC} with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor.
-The complexity of \textsc{ApproxMinGWC} is \(\tilde{O}\mypar{km\epsilon^{-2}}\), which is nearly linear, as it calls \textsc{ApproxHK} once and \textsc{ApproxDelta} \(k-1\) times.
+By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we develop a faster greedy approximation algorithm called \(\textsc{ApproxMinGWC}\), outlined in Algorithm~\ref{algo:approx}. The algorithm has time  complexity \(\tilde{O}\mypar{km\epsilon^{-2}}\), which  is nearly linear in $m$,  since it calls \textsc{ApproxHK} once and \textsc{ApproxDelta} \(k-1\) times. Algorithm~\ref{algo:approx} has a $(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon)$ approximation factor, as shown in Theorem~\ref{Mainthm}.
 
 \begin{algorithm}
     \caption{\textsc{ApproxMinGWC}\((\gr,k,\epsilon)\)}
@@ -1154,47 +1153,55 @@ The complexity of \textsc{ApproxMinGWC} is \(\tilde{O}\mypar{km\epsilon^{-2}}\),
     \Return{\(S_k\)}
 \end{algorithm}
 
-\begin{theorem}
-    The algorithm \(S_k=\textsc{ApproxMinGWC}(\gr,k,\epsilon)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) ,a positive integer \(k\) and an error parameter \(\epsilon\in(0,1)\), then returns a vertex group \(S_k\) with capacity \(k\). When \(k>1\), the vertex group \(S\) satisfies
+\begin{theorem}\label{Mainthm}
+    The algorithm \(\textsc{ApproxMinGWC}(\gr,k,\epsilon)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) with Laplacian matrix \(\lap\) , a positive integer \(1<k \ll n\), and an error parameter \(\epsilon\in(0,1)\), and returns a set  \(S_k\) of \(k\) vertices. With high probability, the returned vertex set \(S\) satisfies
     \begin{align*}
         \mypar{1+\epsilon} & \manc{\setof{u^*}}-\manc{S_k}\ge                                                                         \\
                            & \mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon}\mypar{\mypar{1+\epsilon}\manc{\setof{u^*}}-\manc{S^*}},
     \end{align*}
     where
-    \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}},S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
+    \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}}, S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
 \end{theorem}
 \begin{IEEEproof}
-    Since \algoref{algo:approx} use \(\Delta'(u,S)\) computed by \algoref{algo:approxdelta} instead of \(\Delta(u,S)\), combining \lemref{lem:approx-marginest} and supermodularity, we are able to obtain that
+    Considering~\lemref{lem:approx-marginest} and the supermodular property of the objective function $H(\cdot)$, we are able to obtain  that for any positive integer \(i\),
     \begin{equation*}
-        \manc{S_i}-\manc{S_{i+1}}\ge\frac{1-\epsilon}{k}\mypar{\manc{S_i}-\manc{S^*}}
+        \manc{S_i}-\manc{S_{i+1}}\ge\frac{1-\epsilon}{k}\mypar{\manc{S_i}-\manc{S^*}},
     \end{equation*}
-    holds for any positive integer \(i\), which indicates that
+    which indicates
     \begin{equation*}
         \manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1-\epsilon}{k}}\mypar{\manc{S_i}-\manc{S^*}}.
     \end{equation*}
-    Subsequently, we can further obtain that
+    % By Theorem~\ref{TheoAlg1}, 
+    Repeating the above process, we  further obtain
     \begin{align*}
         \manc{S_k}-\manc{S^*} \le & \mypar{1-\frac{1-\epsilon}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}            \\
         \le                       & \mypar{\frac{k}{k-1}\cdot\frac{1}{e}+\epsilon}\mypar{\manc{S_1}-\manc{S^*}},
     \end{align*}
-    which completes our proof based on the fact that \(\manc{S_1}\le\mypar{1+\epsilon}\manc{\setof{u^*}}\).
+    which, together with  the fact that \(\manc{S_1}\le\mypar{1+\epsilon}\manc{\setof{u^*}}\),
+    completes the proof.
 \end{IEEEproof}
+
 
 \section{Numerical Experiments}
 
-In this section, we present experimental results for various real and model networks to demonstrate the  efficiency and accuracy of our approximation algorithms:
-\begin{itemize}
-    \item \textsc{ApproxHK} for computing the walk centrality \(H_u\) of  every vertex and the Kemeny constant \(K\);
-    \item \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} for solving the GWC Minimization problem.
-\end{itemize}
+In this section, we present experimental results for various real and model networks to demonstrate the  efficiency and accuracy of our  approximation algorithms:  \textsc{ApproxHK} for computing the walk centrality \(H_u\) of  every vertex $u$ and the Kemeny constant \(K\), \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} for solving the problem of Minimizing GWC.
 
-The data of these networks are taken from the Koblenz Network Collection~\cite{Ku13} and SNAP~\cite{LeKr14}. For those networks that are disconnected originally, we perform our experiments on their largest connected components (LCC). Related information about the number of vertices and edges for the studied real networks and their LCC is shown  in \tabref{tab:runtime_comparison},  where networks are listed in an increasing order of the number of vertices in the networks. The smallest network has 198 vertices, while the largest one consists of more than \(1.9 \times 10^{6}\) vertices.
 
-All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement the approximation algorithms \textsc{ApproxHK} and \textsc{ApproxMinGWC} in \textit{Julia v1.8.5}, where the \(\mathtt{Solver}\) is from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
+\subsection{Experimental Settings}
 
-\subsection{Results for \textsc{ApproxHK}}
+\textbf{Datasets.} The data of realistic networks are taken from the Koblenz Network Collection~\cite{Ku13} and SNAP~\cite{LeKr14}. For those networks that are disconnected originally, we perform our experiments on their largest connected components (LCC). Related information about the number of vertices and edges for the studied real networks and their LCC is shown  in \tabref{tab:runtime_comparison},  where networks are listed in an increasing order of the number of vertices in the networks. The smallest network has 198 vertices, while the largest one consists of more than \(1.9 \times 10^{6}\) vertices.
 
-We begin by evaluating the effectiveness of algorithm \textsc{ApproxHK} in approximating centrality \(H_u\) across a diverse range of realistic networks from various domains. Our investigation focuses on examining the efficiency of \textsc{ApproxHK}.
+\textbf{Machine.} All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement all the  algorithms in \textit{Julia v1.8.5}. For  \textsc{ApproxHK}  and  \textsc{ApproxMinGWC}, we use the  \(\mathtt{Solver}\) from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
+
+\subsection{Performance for \textsc{ApproxHK} }
+
+In this subsection, we present experimental results for \textsc{ApproxHK} on real and model networks
+
+\subsubsection{Results on Real Networks.}
+
+We first evaluate the efficiency of algorithm \textsc{ApproxHK}  in approximating centrality \(H_u\) for realistic networks.
+In \tabref{tab:runtime_comparison}, we report the running time of \textsc{ApproxHK} and that of the direct deterministic algorithm called \textsc{DeterHK} that calculates the centrality \(H_u\) for each \(u \in V\) by calculating the pseudoinverse of \(\lap\) as given  in \lemref{HjK}. To objectively evaluate the running time, for both \textsc{DeterHK} and \textsc{ApproxHK} on all considered networks except the last ten ones marked with \(\ast\), we enforce the program to run on 16 threads. From \tabref{tab:runtime_comparison} we can see that for moderate approximation parameter \(\epsilon\), the computational time for \textsc{ApproxHK} is significantly  smaller than  that  for \textsc{DeterHK}, especially for large-scale networks tested.  Thus, \textsc{ApproxHK} can significantly improve the performance compared with \textsc{DeterHK}. For the  ten networks marked with \(\ast\), the number of vertices for which ranges from \(10^5\) to \(10^6\), we cannot run the \textsc{DeterHK} algorithm on the machine due to the limits of memory and time. However, for these networks, we can approximately compute their walk centrality for all vertices by using algorithm \textsc{ApproxHK}, which further show that \textsc{ApproxHK} is efficient and scalable to large networks.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 % \begin{table}[!b]
@@ -1243,8 +1250,6 @@ We begin by evaluating the effectiveness of algorithm \textsc{ApproxHK} in appro
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-In \tabref{tab:runtime_comparison}, we report the running time of \textsc{ApproxHK} and that of the direct accurate algorithm called \textsc{ExactHK} that calculates the centrality \(H_u\) for each \(u \in V\) by calculating the pseudoinverse of \(\lap\) as given  in \lemref{HjK}. To objectively evaluate the running time, for both \textsc{ExactHK} and \textsc{ApproxHK} on all considered networks except the last ten ones marked with \(\ast\), we enforce the program to run on 16 threads. From \tabref{tab:runtime_comparison} we can see that for  moderate approximation parameter \(\epsilon\), the computational time for \textsc{ApproxHK} is significantly  smaller than  that  for \textsc{ExactHK}, especially for large-scale networks tested.  Thus,   \textsc{ApproxHK} can significantly improve the performance compared with  \textsc{ExactHK}. For the  ten networks marked with \(\ast\), the number of vertices for which ranges from \(10^5\) to \(10^6\), we cannot run the \textsc{ExactHK} algorithm on the machine due to the limits of memory and time. However, for these networks, we can approximately compute their walk centrality for all vertices by using algorithm \textsc{ApproxHK}, which further show that   \textsc{ApproxHK} is  efficient and scalable to large networks.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{table*}[htbp]
     \centering
@@ -1253,7 +1258,7 @@ In \tabref{tab:runtime_comparison}, we report the running time of \textsc{Approx
     %\small
     \fontsize{8.0}{8.8}\selectfont
     \begin{threeparttable}
-        \caption{The running time (seconds, \(s\)) of \textsc{ExactHK} and \textsc{ApproxHK} with various \(\epsilon\) on several realistic networks.}
+        \caption{The running time (seconds, \(s\)) of \textsc{DeterHK} and \textsc{ApproxHK} with various \(\epsilon\) on a diverse range of realistic networks from various domains.}
         \label{tab:runtime_comparison}
         \begin{tabular}{crrcccccc}
             \toprule
@@ -1261,7 +1266,7 @@ In \tabref{tab:runtime_comparison}, we report the running time of \textsc{Approx
             \multirow{2}{*}{Network}          &
             \multirow{2}{*}{Vertices}         &
             \multirow{2}{*}{Edges}            &
-            \multirow{2}{*}{\textsc{ExactHK}} &
+            \multirow{2}{*}{\textsc{DeterHK}} &
             \multicolumn{5}{c}{\textsc{ApproxHK} (\(s\)) with various \(\epsilon\)}                                                 \\
             \cmidrule{5-9}                    &           &           & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\) & \(0.15\) & \(0.1\) \\
             \midrule
@@ -1296,7 +1301,7 @@ In \tabref{tab:runtime_comparison}, we report the running time of \textsc{Approx
     \end{threeparttable}
 \end{table*}
 
-In addition to the high efficiency,  our algorithm  \textsc{ApproxHK} also provides a desirable approximation \(\hat{H}_u\) for the walk centrality \(H_u\).   To show the accuracy of   \textsc{ApproxHK}, we compare the  approximate  results for \textsc{ApproxHK} with the exact results computed by  Lemma~\ref{HjK}. In \tabref{tab:accuracy}, we report the mean relative error \(\sigma\) of algorithm  \textsc{ApproxHK}, with \(\sigma\) being defined by \(\sigma=\frac{1}{n}\sum_{u\in V}|{H_u}-\tilde{H}_u|/{H_u}\). From  \tabref{tab:accuracy} we can see that  the actual mean relative errors for all \(\epsilon\) and all networks are  very small, and are almost negligible for smaller \(\epsilon\). More interestingly, for all networks tested,   \(\sigma\) are magnitudes smaller than the theoretical guarantee. Therefore, the  approximation algorithm  \textsc{ApproxHK} provides very accurate results in practice.
+In addition to the high efficiency,  our algorithm  \textsc{ApproxHK} also provides a desirable approximation \(\hat{H}_u\) for the walk centrality \(H_u\).   To show the accuracy of   \\textsc{ApproxHK}, we compare the  approximate  results for \textsc{ApproxHK} with the exact results computed by  Lemma~\ref{HjK}. In \tabref{tab:accuracy}, we report the mean relative error \(\sigma\) of algorithm  \textsc{ApproxHK}, with \(\sigma\) being defined by \(\sigma=\frac{1}{n}\sum_{u\in V}|{H_u}-\tilde{H}_u|/{H_u}\). From  \tabref{tab:accuracy} we can see that  the actual mean relative errors for all \(\epsilon\) and all networks are  very small, and are almost negligible for smaller \(\epsilon\). More interestingly, for all networks tested,   \(\sigma\) are magnitudes smaller than the theoretical guarantee. Therefore, the  approximation algorithm  \textsc{ApproxHK} provides very accurate results in practice.
 
 
 \begin{table}[htbp]
@@ -1332,6 +1337,8 @@ In addition to the high efficiency,  our algorithm  \textsc{ApproxHK} also provi
         \end{tabularx}
     \end{threeparttable}
 \end{table}
+
+\subsubsection{Results on Model Networks.}
 
 To further demonstrate the performance of our proposed algorithm \textsc{ApproxHK}, we use it to compute the Kemeny constant for some model networks.  Although for a general graph, the exact result for its  Kemeny constant is difficult to obtain, for some model networks generated by an iterative way, their Kemeny constant can be determined explicitly.
 For example, for the pseudofractal scale-free web~\cite{XiZhCo16}, the Koch network~\cite{XiLiZh15}, Cayley tree~\cite{CaCh97,ChCa99}, and the extended Tower of Hanoi graph~\cite{KlMo05}, one can obtain exact expressions for their Kemeny constant.
@@ -1780,41 +1787,41 @@ This result demonstrates the scalability of \textsc{ApproxMinGWC} when applied t
     \centering
     \fontsize{8.0}{8.8}\selectfont
     \begin{threeparttable}
-        \caption{The running time (seconds, \(s\)) of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} (denoted as \text{Exact} and \text{Approx} in the table to save space) with various \(\epsilon\) on several realistic networks}
+        \caption{The running time (seconds, \(s\)) of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} (denoted as \textsc{Deter} and \textsc{Approx} in the table to save space) with various \(\epsilon\) on several realistic networks}
         \label{tab:running-time}
         \begin{tabularx}{8.25cm}{c p{1cm} p{0.5cm} p{0.5cm} p{0.5cm}}
             \toprule[1pt]
-            \multirow{2}{*}{Network}      &
-            \multirow{2}{*}{\text{Exact}} &
-            \multicolumn{3}{c}{\text{Approx} (\(s\)) for various \(\epsilon\)}\cr
+            \multirow{2}{*}{Network}        &
+            \multirow{2}{*}{\textsc{Deter}} &
+            \multicolumn{3}{c}{\textsc{Approx} (\(s\)) for various \(\epsilon\)}\cr
             \cmidrule{3-5}
-                                          & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\)\cr
+                                            & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\)\cr
             \midrule
-            Jazz musicians                & 0.214   & 0.157   & 0.178    & 0.194\cr
-            Euroroads                     & 0.498   & 0.239   & 0.277    & 0.281\cr
-            Hamster friends               & 1.183   & 0.348   & 0.450    & 0.629\cr
-            Hamster full                  & 1.267   & 0.402   & 0.525    & 1.049\cr
-            Facebook (NIPS)               & 10.20   & 1.956   & 2.919    & 4.349\cr
-            CA-GrQc                       & 10.74   & 0.686   & 0.896    & 0.968\cr
-            US power grid                 & 17.62   & 0.500   & 0.634    & 0.977\cr
-            Reactome                      & 30.13   & 3.593   & 4.680    & 7.329\cr
-            Route views                   & 37.55   & 0.582   & 0.704    & 1.024\cr
-            CA-HepTh                      & 85.83   & 1.108   & 1.602    & 2.476\cr
-            Sister cities                 & 143.3   & 3.246   & 3.974    & 7.013\cr
-            Pretty Good Privacy           & 157.7   & 3.844   & 5.170    & 7.657\cr
-            CA-HepPh                      & 180.8   & 6.601   & 9.775    & 15.74\cr
-            Astro-ph                      & 715.8   & 13.51   & 18.26    & 31.31\cr
-            CAIDA                         & 2272    & 6.355   & 7.838    & 11.28\cr
-            Brightkite*                   & --      & 23.31   & 32.68    & 54.21\cr
-            Livemocha*                    & --      & 177.0   & 250.6    & 392.1\cr
-            WordNet*                      & --      & 83.89   & 124.5    & 221.4\cr
-            Gowalla*                      & --      & 129.1   & 195.7    & 342.8\cr
-            com-DBLP*                     & --      & 232.7   & 399.1    & 756.8\cr
-            Amazon*                       & --      & 349.5   & 652.3    & 1082\cr
-            roadNet-PA*                   & --      & 2215    & 3349     & 5714\cr
-            YouTube*                      & --      & 1482    & 2197     & 3661\cr
-            roadNet-TX*                   & --      & 3135    & 4464     & 9338\cr
-            roadNet-CA*                   & --      & 5445    & 8214     & 14458\cr
+            Jazz musicians                  & 0.214   & 0.157   & 0.178    & 0.194\cr
+            Euroroads                       & 0.498   & 0.239   & 0.277    & 0.281\cr
+            Hamster friends                 & 1.183   & 0.348   & 0.450    & 0.629\cr
+            Hamster full                    & 1.267   & 0.402   & 0.525    & 1.049\cr
+            Facebook (NIPS)                 & 10.20   & 1.956   & 2.919    & 4.349\cr
+            CA-GrQc                         & 10.74   & 0.686   & 0.896    & 0.968\cr
+            US power grid                   & 17.62   & 0.500   & 0.634    & 0.977\cr
+            Reactome                        & 30.13   & 3.593   & 4.680    & 7.329\cr
+            Route views                     & 37.55   & 0.582   & 0.704    & 1.024\cr
+            CA-HepTh                        & 85.83   & 1.108   & 1.602    & 2.476\cr
+            Sister cities                   & 143.3   & 3.246   & 3.974    & 7.013\cr
+            Pretty Good Privacy             & 157.7   & 3.844   & 5.170    & 7.657\cr
+            CA-HepPh                        & 180.8   & 6.601   & 9.775    & 15.74\cr
+            Astro-ph                        & 715.8   & 13.51   & 18.26    & 31.31\cr
+            CAIDA                           & 2272    & 6.355   & 7.838    & 11.28\cr
+            Brightkite*                     & --      & 23.31   & 32.68    & 54.21\cr
+            Livemocha*                      & --      & 177.0   & 250.6    & 392.1\cr
+            WordNet*                        & --      & 83.89   & 124.5    & 221.4\cr
+            Gowalla*                        & --      & 129.1   & 195.7    & 342.8\cr
+            com-DBLP*                       & --      & 232.7   & 399.1    & 756.8\cr
+            Amazon*                         & --      & 349.5   & 652.3    & 1082\cr
+            roadNet-PA*                     & --      & 2215    & 3349     & 5714\cr
+            YouTube*                        & --      & 1482    & 2197     & 3661\cr
+            roadNet-TX*                     & --      & 3135    & 4464     & 9338\cr
+            roadNet-CA*                     & --      & 5445    & 8214     & 14458\cr
             \bottomrule
         \end{tabularx}
     \end{threeparttable}
@@ -1830,13 +1837,13 @@ This connection also holds for the case of multiple nodes.
 
 There also exist various random walk-based centralities, such as the \textit{Random Walk Decay Centrality}~\cite{WaRaSk19} and the \textit{Group-to-group random walk betweenness centrality}~\cite{GiBaRa21}, both of them are variants of existing centralities.
 Besides, Mavroforakis et al.~\cite{MaMaGi15} presented \textit{\(k\) absorbing random-walk centrality}, which is the most directly related to our work.
-We give new proofs on the monotonicity and supermodularity of MANC from the perspective of numerical analysis, which is more concise and intuitive.
-Moreover, we design and implement a nearly linear algorithm for MANC minimization problem, which is proved to have an approximation guarantee.
+We give new proofs on the monotonicity and supermodularity of GWC from the perspective of numerical analysis, which is more concise and intuitive.
+Moreover, we design and implement a nearly linear algorithm for GWC minimization problem, which is proved to have an approximation guarantee.
 
 Admittedly, many existing studies have focused on the notion of selecting \(k\) nodes in the network to optimize some quantities related to absorbing random walk, such as absorbing distance~\cite{LiYuHuCh14,MoBaZhPe20} and absorbing probability~\cite{RoGl16}.
 However, computing these quantities on infinite random walk models requires time-consuming matrix inversions.
 Most of researchers use finite random walk models to approximate the infinite case, except for Rosenfeld et al.~\cite{RoGl16}, who use LU decomposition to reduce the complexity of computing absorbing probability.
-Instead of constructing finite random walk models, our work focus on the infinite random walk model, use a nearly linear algorithm to minimize MANC, which has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any error parameter \(\epsilon\in(0,1)\).
+Instead of constructing finite random walk models, our work focus on the infinite random walk model, use a nearly linear algorithm to minimize GWC, which has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any error parameter \(\epsilon\in(0,1)\).
 
 \section{Conclusions}
 
