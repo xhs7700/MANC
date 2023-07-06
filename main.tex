@@ -142,13 +142,13 @@ Note that the subscript takes precedence over the superscript, thus \(\mata_{-S}
 
 \subsection{Graph and Laplacian Matrix}\label{sub:lap}
 
-Let \(\gr=(V,E,w)\) denote a connected undirected weighted graph or network,  where \(V\) is the set of vertices,  \(E\) is the set of edges, and  \(w: E\to \mathbb{R}_{+}\) is the positive edge weight function, with \(w_e\) being the weight for edge \(e\). Then, there are total \(n=|V|\) vertices and \(m=|E|\) edges in graph \(\gr\). We use \(u \sim v\) to indicate that two vertices \(u\) and \(v\) are connected by an edge. Let \(w_{\max}\) and \(w_{\min}\) denote the maximum edge weight and minimum edge weight, respectively. Namely, \(w_{\max}=\max_{e\in E} w_e \) and \(w_{\min}=\min_{e\in E} w_e\).
+Let \(\gr=(V,E,w)\) denote a connected undirected weighted graph or network,  where \(V\) is the set of vertices,  \(E\) is the set of edges, and  \(w: E\to \mathbb{R}_{+}\) is the positive edge weight function, with \(w_e\) being the weight for edge \(e\). Then, there are total \(n=\abs{V}\) vertices and \(m=|E|\) edges in graph \(\gr\). We use \(u \sim v\) to indicate that two vertices \(u\) and \(v\) are connected by an edge. Let \(w_{\max}\) and \(w_{\min}\) denote the maximum edge weight and minimum edge weight, respectively. Namely, \(w_{\max}=\max_{e\in E} w_e \) and \(w_{\min}=\min_{e\in E} w_e\).
 
 Mathematically, the topological and weighted properties of a graph \(\gr\) are encoded in its generalized adjacency matrix \(\mata\) with the entry \(a_{ij}\) denoting the adjacency relation between vertices \(i\) and \(j\). If vertices \(i\) and \(j\) are linked to each other by an edge, then we denote this edge as \(e=\edge{i}{j}\), with \(a_{ij}= a_{ji}=w_{e}> 0\). If vertices \(i\) and \(j\) are not adjacent, \(a_{ij}=a_{ji}=0\). In a weighted graph \(\gr\), the degree \(d_i\) of a vertex \(i\) is defined by \(d_i=\sum_{j=1}^n a_{ij}\)~\cite{BaBaPaVe04}, where we denote the maximal vertex degree as \(d_{\max}=\max\setof{d_i|i\in V}\).
 The diagonal degree vector of graph \(\gr\) is defined to be \(\vecd=\mypar{d_1,d_2,\cdots,d_n}^\top\), while the diagonal degree matrix of graph \(\gr\) is defined to be \({\matd} = {\rm diag}(d_1, d_2, \ldots, d_n)\), and the Laplacian matrix of \(\gr\) is \({\lap}={\matd}-{\mata}\). Thus, \(\lap\)  is a symmetric diagonally dominant (SDD) matrix. Moreover, for
 any  nonempty  proper subset  \(S \) of vertex set $V$, \(\lap_{-S}\) is a symmetric diagonally dominant M-matrix (SDDM).
 
-Let \(\matb \in \mathbb{R}^{|E| \times |V|}\) be the incidence matrix of graph \(\gr\). For each edge \(e\) with two end vertices \(i\) and \(j\), a direction is assigned arbitrarily. Let \(\vecb_e^\top\) be the row of matrix \(\matb\) associated with edge \(e\). Then the element \(b_{eu}\) at row corresponding to edge \(e\) and column corresponding to vertex \(u\) is defined as follows: \(b_{eu} = 1\) if vertex \(u\) is the tail of edge \(e\), \(b_{eu}=-1\) if vertex \(u\) is the head of  edge \(e\), and \(b_{eu}=0\) otherwise. Let \(\vece_u\) be the \(u\)-th canonical basis of the space \(\mathbb{R}^{|V|}\), then for an edge \(e\) connecting two vertices \(i\) and \(j\), \(\vecb_e\) can also be recast as \(\vecb_e=\vece_{i}-\vece_{j}\).  Let  \(\matw \in \mathbb{R}^{|E| \times |E|}\) be a diagonal matrix with every diagonal entry corresponding to the weight  \(w_e\) of an edge  $e\in E$. Then the Laplacian matrix \(\lap\) of graph \(\gr\) can be written as \(\lap=\matb^T\matw\matb=\sum_{e\in E}w_e\vecb_e\vecb_e^{\top}\).
+Let \(\matb \in \mathbb{R}^{|E| \times \abs{V}}\) be the incidence matrix of graph \(\gr\). For each edge \(e\) with two end vertices \(i\) and \(j\), a direction is assigned arbitrarily. Let \(\vecb_e^\top\) be the row of matrix \(\matb\) associated with edge \(e\). Then the element \(b_{eu}\) at row corresponding to edge \(e\) and column corresponding to vertex \(u\) is defined as follows: \(b_{eu} = 1\) if vertex \(u\) is the tail of edge \(e\), \(b_{eu}=-1\) if vertex \(u\) is the head of  edge \(e\), and \(b_{eu}=0\) otherwise. Let \(\vece_u\) be the \(u\)-th canonical basis of the space \(\mathbb{R}^{\abs{V}}\), then for an edge \(e\) connecting two vertices \(i\) and \(j\), \(\vecb_e\) can also be recast as \(\vecb_e=\vece_{i}-\vece_{j}\).  Let  \(\matw \in \mathbb{R}^{|E| \times |E|}\) be a diagonal matrix with every diagonal entry corresponding to the weight  \(w_e\) of an edge  $e\in E$. Then the Laplacian matrix \(\lap\) of graph \(\gr\) can be written as \(\lap=\matb^T\matw\matb=\sum_{e\in E}w_e\vecb_e\vecb_e^{\top}\).
 
 The Laplacian matrix \(\lap\) is symmetric and positive semidefinite. All  its eigenvalues  are non-negative, with a unique zero eigenvalue. Let \(0=\lambda_1< \lambda_2 \leq \lambda_3\leq \dots\leq \lambda_{n}\) be the \(n\) eigenvalues of  \(\lap\), and let \(u_i\), \( i={1,2,\dots,n}\), be their corresponding mutually orthogonal  unit eigenvectors. Then, \(\lap\) has the following spectral decomposition:  \(\lap=\sum_{i=2}^{n}\lambda_i u_iu_i^\top\).  It is easy to verify that \( \lambda_{n}\leq n w_{\max}\)~\cite{LiSc18}.
 Since \(\lap\) is not invertible, we use \(\lap^{\dagger}\) to denote its pseudoinverse, which can be written as \(\lap^{\dagger}=\sum_{i=2}^{n}\frac{1}{\lambda_i}u_iu_i^{\top}\). Let \(\matj\) denote the matrix with all entries being ones. Then the pseudoinverse \(\lap^{\dagger}\) can also be recast as \(\mypar{\lap +\frac{1}{n}\matj}^{-1} - \frac{1}{n}\matj\)~\cite{GhBoSa08}. Note that for a general symmetric matrix, it shares the same null space as its Moore-Penrose generalized inverse~\cite{BeGrTh74}.
@@ -754,11 +754,11 @@ Next we demonstrate that the set function \(\manc{\cdot}\) is  monotonically dec
 
 \section{Minimizing  Group Walk Centrality Subject to Cardinality Constraint }
 
-In this section, we define and study the problem of minimizing the GWC \(\manc{S}\) by optimally  selecting a fixed number $k=|S|$ vertices constituting set.
+In this section, we define and study the problem of minimizing the GWC \(\manc{S}\) by optimally  selecting a fixed number $k=\abs{S}$ vertices constituting set.
 
 \subsection{Problem Formulation}
 
-As shown above, \(\manc{S}\) is a monotonically deceasing set function, since the addition of any vertex to set $S$ will lead to an decrease of the quantity \(\manc{S}\). Then, we naturally raise the following problem called MinGWC: How to optimally choose a set $S$ of $k=|S|$ vertices in graph \(\gr=(V,E)\), so that the quantity \(\manc{S}\) is minimized. Mathematically, the optimization problem subject to a cardinality constraint can be formally stated as follows.
+As shown above, \(\manc{S}\) is a monotonically deceasing set function, since the addition of any vertex to set $S$ will lead to an decrease of the quantity \(\manc{S}\). Then, we naturally raise the following problem called MinGWC: How to optimally choose a set \(S\) of \(k=\abs{S}\) vertices in graph \(\gr=(V,E)\), so that the quantity \(\manc{S}\) is minimized. Mathematically, the optimization problem subject to a cardinality constraint can be formally stated as follows.
 
 %When considering GWC, we naturally address the issue of selecting a vertex group (\(S\)) with a capacity of \(k\) from a network that minimizes its GWC (\(\manc{S}\)).
 
@@ -827,7 +827,7 @@ Given a connected 3-regular graph \(G=(V,E)\) with every edge having a unit weig
 
 Since the MinGWC problem is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve it. One often resorts to greedy algorithm. Due to the proved fact that the objective function \(\manc{\cdot}\) of  the MinGWC problem is monotonic and supermodular, a na\"{\i}ve greedy strategy for vertex selection yields an approximated   solution  with a $(1-\frac{k}{k-1}\cdot\frac{1}{e})$ approximation factor~\cite{NeWoFi78}. Initially, we set $S$ to be empty, then $k$ vertices from set $V \setminus S$ are added to $S$ iteratively. During the first iteration, the vertex $u$ with the minimum walk centrality $H_u$ is chosen to be added to $S$. Then, in each iteration step $i>1$, the vertex $u$ in the set $V \setminus S$ of candidate vertices is selected, which has the maximum marginal gain $\Delta(u,S) \triangleq \manc{S}-\manc{S+u}$.  The algorithm terminates when $k$ vertices are chosen to be added to set $S$.
 
-At each iteration of the naive greedy algorithm, one needs computing the maximum marginal gain $\Delta(u,S)$ for every candidate vertex in set $V \setminus S$. As shown in~\eqref{eq:GWC}, a straightforward calculation of  $\Delta(u,S)$ for every vertex \(u\) requires inverting a matrix, which needs $O((n-|S|)^3)$ time.  Thus, for the $(O(n-|S|))$ candidate vertices, the computation time at each iteration is $O((n-|S|)^4)$. Hence, the total computation complexity of the na\"{\i}ve greedy algorithm is \(O(kn^4)\) since $|S| \ll n$.
+At each iteration of the naive greedy algorithm, one needs computing the maximum marginal gain $\Delta(u,S)$ for every candidate vertex in set $V \setminus S$. As shown in~\eqref{eq:GWC}, a straightforward calculation of  $\Delta(u,S)$ for every vertex \(u\) requires inverting a matrix, which needs $O((n-\abs{S})^3)$ time.  Thus, for the $(O(n-\abs{S}))$ candidate vertices, the computation time at each iteration is $O((n-\abs{S})^4)$. Hence, the total computation complexity of the na\"{\i}ve greedy algorithm is \(O(kn^4)\) since $\abs{S} \ll n$.
 
 \iffalse
     \begin{gather*}
@@ -869,7 +869,8 @@ In order to further decrease the time complexity of the na\"{\i}ve greedy algori
 \end{IEEEproof}
 
 
-\lemref{lem:delta} demonstrate that for any empty set $S$ if \(\lap_{-S}\)  is already computed, by using~\eqref{eq:delta}  we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) in $O((n-|S|)^2)$ time. This avoids directly inverting the matrix \(\lap_{-(S+u)}\), which needs time $O((n-|S|+1)^3)$. When \(S=\varnothing\),~\eqref{eq:delta} becomes invalid.  For this case, we use the result \(H_u=d\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\) in~\lemref{HjK} to compute the walk centrality $H_u$ for every vertex $u \in V$, and add the vertex $u$ with the smallest $H_u$ to $S$.  Based on~\lemref{HjK} and~\lemref{lem:delta}, we propose a simple greedy algorithm \textsc{DeterMinGWC}$(\gr,k)$ to solve the MinGWC problem, which is  outlined in~\algoref{algo:exact-gwcm}. The algorithm first computes $H_u$ for every vertex $u \in V$ in time $O(n^3)$. Then, it works in $k-1$ rounds. In each round, it evaluates  \(\Delta(u,S)\) for all the $ (n-|S|)$ vertices in set $V \setminus S$ (Line 6)  in $O((n-|S|)^3)$ time. Therefore, the whole running time of~\algoref{algo:exact-gwcm} is \(O(kn^3)\),  much lower than the time complexity   \(O(kn^4)\) of the  na\"{\i}ve greedy  algorithm.
+\lemref{lem:delta} demonstrate that for any empty set $S$ if \(\lap_{-S}\)  is already computed, by using~\eqref{eq:delta}  we can calculate \(\Delta(u,S)\) for any vertex \(u\in V\setminus S\) in $O((n-\abs{S})^2)$ time.
+This avoids directly inverting the matrix \(\lap_{-(S+u)}\), which needs time $O((n-\abs{S}+1)^3)$. When \(S=\varnothing\),~\eqref{eq:delta} becomes invalid.  For this case, we use the result \(H_u=d\mypar{\vece_u-\vecpi}^\top\lap^{\dagger}\mypar{\vece_u-\vecpi}\) in~\lemref{HjK} to compute the walk centrality $H_u$ for every vertex $u \in V$, and add the vertex $u$ with the smallest $H_u$ to $S$.  Based on~\lemref{HjK} and~\lemref{lem:delta}, we propose a simple greedy algorithm \textsc{DeterMinGWC}$(\gr,k)$ to solve the MinGWC problem, which is  outlined in~\algoref{algo:exact-gwcm}. The algorithm first computes $H_u$ for every vertex $u \in V$ in time $O(n^3)$. Then, it works in $k-1$ rounds. In each round, it evaluates  \(\Delta(u,S)\) for all the $ (n-\abs{S})$ vertices in set $V \setminus S$ (Line 6)  in $O((n-\abs{S})^3)$ time. Therefore, the whole running time of~\algoref{algo:exact-gwcm} is \(O(kn^3)\),  much lower than the time complexity   \(O(kn^4)\) of the  na\"{\i}ve greedy  algorithm.
 
 
 \begin{algorithm}
@@ -877,7 +878,7 @@ In order to further decrease the time complexity of the na\"{\i}ve greedy algori
     \label{algo:exact-gwcm}
     \Input{
         A connected weighted undirected graph \(\gr=(V,E,w)\);
-        an integer \(k \ll |V|\)
+        an integer \(k \ll \abs{V}\)
     }
     \Output{\(S_k\): A subset of \(V\) with \(\abs{S_k}=k\)}
     Compute \(\lap\) and \(\vecd\)\;
@@ -1496,11 +1497,17 @@ This indicates that our proposed algorithms have a much better approximation rat
 \begin{figure}[!t]
     \centering
     \begin{tikzpicture}[scale=\scaleoptimum,baseline]
-        \begin{axis}[
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
+        \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
-                legend style={font=\Large},
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},\textsc{OptimumMinGWC}},
+                legend style={font=\Large,legend columns=2},
+                legend entries={\textsc{Approx},\textsc{Deter},\textsc{Optimum},\textsc{Random}},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1508,15 +1515,22 @@ This indicates that our proposed algorithms have a much better approximation rat
             ] table {compare_effects/optimum/Zebra/Approx.dat};
             \addplot table {compare_effects/optimum/Zebra/Exact.dat};
             \addplot table {compare_effects/optimum/Zebra/Optimum.dat};
-            \node [font=\huge] at (3.5,10) {(a)};
-        \end{axis}
+            \addplot table {compare_effects/optimum/Zebra/Random.dat};
+            \node [font=\huge] at (1.5,2.5) {(a)};
+        \end{semilogyaxis}
     \end{tikzpicture}
     \begin{tikzpicture}[scale=\scaleoptimum,baseline]
-        \begin{axis}[
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
+        \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
-                legend style={font=\Large},
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},\textsc{OptimumMinGWC}},
+                legend style={font=\Large,legend columns=2},
+                legend entries={\textsc{Approx},\textsc{Deter},\textsc{Optimum},\textsc{Random}},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1524,16 +1538,23 @@ This indicates that our proposed algorithms have a much better approximation rat
             ] table {compare_effects/optimum/Zachary karate club/Approx.dat};
             \addplot table {compare_effects/optimum/Zachary karate club/Exact.dat};
             \addplot table {compare_effects/optimum/Zachary karate club/Optimum.dat};
-            \node [font=\huge] at (3.5,7) {(b)};
-        \end{axis}
+            \addplot table {compare_effects/optimum/Zachary karate club/Random.dat};
+            \node [font=\huge] at (1.5,1.5) {(b)};
+        \end{semilogyaxis}
     \end{tikzpicture}
 
     \begin{tikzpicture}[scale=\scaleoptimum,baseline]
-        \begin{axis}[
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
+        \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
-                legend style={font=\Large},
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},\textsc{OptimumMinGWC}},
+                legend style={font=\Large,legend columns=2},
+                legend entries={\textsc{Approx},\textsc{Deter},\textsc{Optimum},\textsc{Random}},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1541,15 +1562,22 @@ This indicates that our proposed algorithms have a much better approximation rat
             ] table {compare_effects/optimum/Contiguous USA/Approx.dat};
             \addplot table {compare_effects/optimum/Contiguous USA/Exact.dat};
             \addplot table {compare_effects/optimum/Contiguous USA/Optimum.dat};
-            \node [font=\huge] at (3.5,25) {(c)};
-        \end{axis}
+            \addplot table {compare_effects/optimum/Contiguous USA/Random.dat};
+            \node [font=\huge] at (1.5,6.5) {(c)};
+        \end{semilogyaxis}
     \end{tikzpicture}
     \begin{tikzpicture}[scale=\scaleoptimum,baseline]
-        \begin{axis}[
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
+        \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
-                legend style={font=\Large},
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},\textsc{OptimumMinGWC}},
+                legend style={font=\Large,legend columns=2},
+                legend entries={\textsc{Approx},\textsc{Deter},\textsc{Optimum},\textsc{Random}},
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1557,10 +1585,11 @@ This indicates that our proposed algorithms have a much better approximation rat
             ] table {compare_effects/optimum/Les Miserables/Approx.dat};
             \addplot table {compare_effects/optimum/Les Miserables/Exact.dat};
             \addplot table {compare_effects/optimum/Les Miserables/Optimum.dat};
-            \node [font=\huge] at (3.5,9) {(d)};
-        \end{axis}
+            \addplot table {compare_effects/optimum/Les Miserables/Random.dat};
+            \node [font=\huge] at (1.5,3) {(d)};
+        \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by three different algorithms(\textsc{DeterMinGWC},\textsc{ApproxMinGWC} and \textsc{OptimumMinGWC}) on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c) and Les Miserables (d).\label{pic:compare-effect-optimum}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{DeterMinGWC},\textsc{ApproxMinGWC}, \textsc{Random} and \textsc{Optimum}) on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c) and Les Miserables (d), where \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are denoted as \textsc{Deter} and \textsc{Approx} in the legend to save space.\label{pic:compare-effect-optimum}}
 \end{figure}
 
 We then compare the performance of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} with three other algorithms: \text{Top-Absorb}, \text{Top-Degree}, and \text{Top-PageRank}.
@@ -1573,6 +1602,12 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
 \begin{figure}[!t]
     \centering
     \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
         \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
@@ -1580,10 +1615,10 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                 minor y tick num=4,
                 legend style={
                         font=\footnotesize,
-                        legend columns=2,
+                        legend columns=3,
                     },
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
-                ymax=800,
+                legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
+                % ymax=800,
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1597,6 +1632,12 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
         \end{semilogyaxis}
     \end{tikzpicture}
     \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
         \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
@@ -1604,10 +1645,10 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                 minor y tick num=4,
                 legend style={
                         font=\footnotesize,
-                        legend columns=2,
+                        legend columns=3,
                     },
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
-                ymax=4500,
+                legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
+                % ymax=4500,
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1622,6 +1663,12 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
     \end{tikzpicture}
 
     \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
         \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
@@ -1630,10 +1677,10 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                 minor y tick num=4,
                 legend style={
                         font=\footnotesize,
-                        legend columns=2,
+                        legend columns=3,
                     },
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
-                ymax=1600,
+                legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
+                % ymax=1600,
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1647,6 +1694,12 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
         \end{semilogyaxis}
     \end{tikzpicture}
     \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
         \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
@@ -1654,10 +1707,10 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                 minor y tick num=4,
                 legend style={
                         font=\footnotesize,
-                        legend columns=2,
+                        legend columns=3,
                     },
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
-                ymax=12000,
+                legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
+                % ymax=12000,
             ]
             \addplot+[
                 mark=pentagon*,
@@ -1670,12 +1723,18 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
             \node [font=\huge] at (10,90) {(d)};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{DeterMinGWC},\textsc{ApproxMinGWC},\text{Top-Absorb} and \text{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d).\label{pic:compare-effect1}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{DeterMinGWC},\textsc{ApproxMinGWC},\text{Top-Absorb} and \text{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d), where \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are denoted as \textsc{Deter} and \textsc{Approx} in the legend to save space.\label{pic:compare-effect1}}
 \end{figure}
 
 \begin{figure}[!t]
     \centering
     \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
         \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
@@ -1683,9 +1742,9 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                 minor y tick num=4,
                 legend style={
                         font=\footnotesize,
-                        legend columns=2,
+                        legend columns=3,
                     },
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=800,
             ]
             \addplot+[
@@ -1700,6 +1759,12 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
         \end{semilogyaxis}
     \end{tikzpicture}
     \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
         \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
@@ -1707,9 +1772,9 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                 minor y tick num=4,
                 legend style={
                         font=\footnotesize,
-                        legend columns=2,
+                        legend columns=3,
                     },
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=4500,
             ]
             \addplot+[
@@ -1725,6 +1790,12 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
     \end{tikzpicture}
 
     \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
         \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
@@ -1733,9 +1804,9 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                 minor y tick num=4,
                 legend style={
                         font=\footnotesize,
-                        legend columns=2,
+                        legend columns=3,
                     },
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=1600,
             ]
             \addplot+[
@@ -1750,6 +1821,12 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
         \end{semilogyaxis}
     \end{tikzpicture}
     \begin{tikzpicture}[scale=\scaleexact,baseline]
+        \pgfplotsset{
+            every axis legend/.append style={
+                    at={(0.5,1.03)},
+                    anchor=south
+                },
+        }
         \begin{semilogyaxis}[
                 xlabel=\Large{\(k\)},
                 ylabel=\Large{\(H(S)\)},
@@ -1757,9 +1834,9 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
                 minor y tick num=4,
                 legend style={
                         font=\footnotesize,
-                        legend columns=2,
+                        legend columns=3,
                     },
-                legend entries={\textsc{ApproxMinGWC},\textsc{DeterMinGWC},Top-Absorb,Top-Degree,Top-PageRank},
+                legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
                 % ymax=12000,
             ]
             \addplot+[
@@ -1773,7 +1850,7 @@ As displayed in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}, b
             \node [font=\huge] at (15,4) {(d)};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{DeterMinGWC},\textsc{ApproxMinGWC},\text{Top-Absorb} and \text{Top-Degree}) on four networks: Hamster friends (a), Hamster full (b), Reactome (c) and Route views (d).\label{pic:compare-effect2}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms \textsc{DeterMinGWC},\textsc{ApproxMinGWC},\text{Top-Absorb} and \text{Top-Degree} on four networks: Hamster friends (a), Hamster full (b), Reactome (c) and Route views (d), where \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are denoted as \textsc{Deter} and \textsc{Approx} in the legend to save space.\label{pic:compare-effect2}}
 \end{figure}
 
 Finally, we demonstrate that the \textsc{ApproxMinGWC} algorithm is significantly more efficient than the \textsc{DeterMinGWC} algorithm, particularly when applied to large networks.
