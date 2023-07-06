@@ -1,0 +1,93 @@
+\begin{tikzpicture}[scale=\scaleoptimum,baseline]
+    \pgfplotsset{
+        every axis legend/.append style={
+                at={(0.5,1.03)},
+                anchor=south
+            },
+    }
+    \begin{semilogyaxis}[
+            xlabel=\Large{\(k\)},
+            ylabel=\Large{\(H(S)\)},
+            legend style={font=\Large,legend columns=2},
+            legend entries={\textsc{Approx},\textsc{Deter},\textsc{Optimum},\textsc{Random}},
+        ]
+        \addplot+[
+            mark=pentagon*,
+            mark size = 3pt
+        ] table {compare_effects/optimum/Zebra/Approx.dat};
+        \addplot table {compare_effects/optimum/Zebra/Exact.dat};
+        \addplot table {compare_effects/optimum/Zebra/Optimum.dat};
+        \addplot table {compare_effects/optimum/Zebra/Random.dat};
+        \node [font=\huge] at (1.5,2.5) {(a)};
+    \end{semilogyaxis}
+\end{tikzpicture}
+\begin{tikzpicture}[scale=\scaleoptimum,baseline]
+    \pgfplotsset{
+        every axis legend/.append style={
+                at={(0.5,1.03)},
+                anchor=south
+            },
+    }
+    \begin{semilogyaxis}[
+            xlabel=\Large{\(k\)},
+            ylabel=\Large{\(H(S)\)},
+            legend style={font=\Large,legend columns=2},
+            legend entries={\textsc{Approx},\textsc{Deter},\textsc{Optimum},\textsc{Random}},
+        ]
+        \addplot+[
+            mark=pentagon*,
+            mark size = 3pt
+        ] table {compare_effects/optimum/Zachary karate club/Approx.dat};
+        \addplot table {compare_effects/optimum/Zachary karate club/Exact.dat};
+        \addplot table {compare_effects/optimum/Zachary karate club/Optimum.dat};
+        \addplot table {compare_effects/optimum/Zachary karate club/Random.dat};
+        \node [font=\huge] at (1.5,1.5) {(b)};
+    \end{semilogyaxis}
+\end{tikzpicture}
+
+\begin{tikzpicture}[scale=\scaleoptimum,baseline]
+    \pgfplotsset{
+        every axis legend/.append style={
+                at={(0.5,1.03)},
+                anchor=south
+            },
+    }
+    \begin{semilogyaxis}[
+            xlabel=\Large{\(k\)},
+            ylabel=\Large{\(H(S)\)},
+            legend style={font=\Large,legend columns=2},
+            legend entries={\textsc{Approx},\textsc{Deter},\textsc{Optimum},\textsc{Random}},
+        ]
+        \addplot+[
+            mark=pentagon*,
+            mark size = 3pt
+        ] table {compare_effects/optimum/Contiguous USA/Approx.dat};
+        \addplot table {compare_effects/optimum/Contiguous USA/Exact.dat};
+        \addplot table {compare_effects/optimum/Contiguous USA/Optimum.dat};
+        \addplot table {compare_effects/optimum/Contiguous USA/Random.dat};
+        \node [font=\huge] at (1.5,6.5) {(c)};
+    \end{semilogyaxis}
+\end{tikzpicture}
+\begin{tikzpicture}[scale=\scaleoptimum,baseline]
+    \pgfplotsset{
+        every axis legend/.append style={
+                at={(0.5,1.03)},
+                anchor=south
+            },
+    }
+    \begin{semilogyaxis}[
+            xlabel=\Large{\(k\)},
+            ylabel=\Large{\(H(S)\)},
+            legend style={font=\Large,legend columns=2},
+            legend entries={\textsc{Approx},\textsc{Deter},\textsc{Optimum},\textsc{Random}},
+        ]
+        \addplot+[
+            mark=pentagon*,
+            mark size = 3pt
+        ] table {compare_effects/optimum/Les Miserables/Approx.dat};
+        \addplot table {compare_effects/optimum/Les Miserables/Exact.dat};
+        \addplot table {compare_effects/optimum/Les Miserables/Optimum.dat};
+        \addplot table {compare_effects/optimum/Les Miserables/Random.dat};
+        \node [font=\huge] at (1.5,3) {(d)};
+    \end{semilogyaxis}
+\end{tikzpicture}

@@ -1,0 +1,122 @@
+\begin{tikzpicture}[scale=\scaleexact,baseline]
+    \pgfplotsset{
+        every axis legend/.append style={
+                at={(0.5,1.03)},
+                anchor=south
+            },
+    }
+    \begin{semilogyaxis}[
+            xlabel=\Large{\(k\)},
+            ylabel=\Large{\(H(S)\)},
+            minor x tick num=1,
+            minor y tick num=4,
+            legend style={
+                    font=\footnotesize,
+                    legend columns=3,
+                },
+            legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
+            % ymax=800,
+        ]
+        \addplot+[
+            mark=pentagon*,
+            mark size = 3pt
+        ] table {compare_effects/exact/CA-GrQc/Approx.dat};
+        \addplot table {compare_effects/exact/CA-GrQc/Exact.dat};
+        \addplot table {compare_effects/exact/CA-GrQc/Top-Absorb.dat};
+        \addplot table {compare_effects/exact/CA-GrQc/Top-Degree.dat};
+        \addplot table {compare_effects/exact/CA-GrQc/Top-PageRank.dat};
+        \node [font=\huge] at (10,30) {(a)};
+    \end{semilogyaxis}
+\end{tikzpicture}
+\begin{tikzpicture}[scale=\scaleexact,baseline]
+    \pgfplotsset{
+        every axis legend/.append style={
+                at={(0.5,1.03)},
+                anchor=south
+            },
+    }
+    \begin{semilogyaxis}[
+            xlabel=\Large{\(k\)},
+            ylabel=\Large{\(H(S)\)},
+            minor x tick num=1,
+            minor y tick num=4,
+            legend style={
+                    font=\footnotesize,
+                    legend columns=3,
+                },
+            legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
+            % ymax=4500,
+        ]
+        \addplot+[
+            mark=pentagon*,
+            mark size = 3pt
+        ] table {compare_effects/exact/ego-Facebook/Approx.dat};
+        \addplot table {compare_effects/exact/ego-Facebook/Exact.dat};
+        \addplot table {compare_effects/exact/ego-Facebook/Top-Absorb.dat};
+        \addplot table {compare_effects/exact/ego-Facebook/Top-Degree.dat};
+        \addplot table {compare_effects/exact/ego-Facebook/Top-PageRank.dat};
+        \node [font=\huge] at (10,20) {(b)};
+    \end{semilogyaxis}
+\end{tikzpicture}
+
+\begin{tikzpicture}[scale=\scaleexact,baseline]
+    \pgfplotsset{
+        every axis legend/.append style={
+                at={(0.5,1.03)},
+                anchor=south
+            },
+    }
+    \begin{semilogyaxis}[
+            xlabel=\Large{\(k\)},
+            ylabel=\Large{\(H(S)\)},
+            ytick distance=10^1,
+            minor x tick num=1,
+            minor y tick num=4,
+            legend style={
+                    font=\footnotesize,
+                    legend columns=3,
+                },
+            legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
+            % ymax=1600,
+        ]
+        \addplot+[
+            mark=pentagon*,
+            mark size = 3pt
+        ] table {compare_effects/exact/Euroroads/Approx.dat};
+        \addplot table {compare_effects/exact/Euroroads/Exact.dat};
+        \addplot table {compare_effects/exact/Euroroads/Top-Absorb.dat};
+        \addplot table {compare_effects/exact/Euroroads/Top-Degree.dat};
+        \addplot table {compare_effects/exact/Euroroads/Top-PageRank.dat};
+        \node [font=\huge] at (10,25) {(c)};
+    \end{semilogyaxis}
+\end{tikzpicture}
+\begin{tikzpicture}[scale=\scaleexact,baseline]
+    \pgfplotsset{
+        every axis legend/.append style={
+                at={(0.5,1.03)},
+                anchor=south
+            },
+    }
+    \begin{semilogyaxis}[
+            xlabel=\Large{\(k\)},
+            ylabel=\Large{\(H(S)\)},
+            minor x tick num=1,
+            minor y tick num=4,
+            legend style={
+                    font=\footnotesize,
+                    legend columns=3,
+                },
+            legend entries={\textsc{Approx},\textsc{Deter},Top-Absorb,Top-Degree,Top-PageRank},
+            % ymax=12000,
+        ]
+        \addplot+[
+            mark=pentagon*,
+            mark size = 3pt
+        ] table {compare_effects/exact/US power grid/Approx.dat};
+        \addplot table {compare_effects/exact/US power grid/Exact.dat};
+        \addplot table {compare_effects/exact/US power grid/Top-Absorb.dat};
+        \addplot table {compare_effects/exact/US power grid/Top-Degree.dat};
+        \addplot table {compare_effects/exact/US power grid/Top-PageRank.dat};
+        \node [font=\huge] at (10,90) {(d)};
+    \end{semilogyaxis}
+\end{tikzpicture}
