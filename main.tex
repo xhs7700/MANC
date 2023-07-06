@@ -1191,13 +1191,13 @@ In this section, we present experimental results for various real and model netw
 
 \textbf{Datasets.} The data of realistic networks are taken from the Koblenz Network Collection~\cite{Ku13} and SNAP~\cite{LeKr14}. For those networks that are disconnected originally, we perform our experiments on their largest connected components (LCC). Related information about the number of vertices and edges for the studied real networks and their LCC is shown  in \tabref{tab:runtime_comparison},  where networks are listed in an increasing order of the number of vertices in the networks. The smallest network has 198 vertices, while the largest one consists of more than \(1.9 \times 10^{6}\) vertices.
 
-\textbf{Machine.} All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement all the  algorithms in \textit{Julia v1.8.5}. For  \textsc{ApproxHK}  and  \textsc{ApproxMinGWC}, we use the  \(\mathtt{Solver}\) from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
+\textbf{Environment.} All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement all the  algorithms in \textit{Julia v1.8.5}. For  \textsc{ApproxHK}  and  \textsc{ApproxMinGWC}, we use the  \(\mathtt{Solver}\) from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
 
-\subsection{Performance for \textsc{ApproxHK} }
+\subsection{Performance for Algorithm \textsc{ApproxHK} }
 
 In this subsection, we present experimental results for \textsc{ApproxHK} on real and model networks
 
-\subsubsection{Results on Real Networks.}
+\subsubsection{Results on Real Networks}
 
 We first evaluate the efficiency of algorithm \textsc{ApproxHK}  in approximating centrality \(H_u\) for realistic networks.
 In \tabref{tab:runtime_comparison}, we report the running time of \textsc{ApproxHK} and that of the direct deterministic algorithm called \textsc{DeterHK} that calculates the centrality \(H_u\) for each \(u \in V\) by calculating the pseudoinverse of \(\lap\) as given  in \lemref{HjK}. To objectively evaluate the running time, for both \textsc{DeterHK} and \textsc{ApproxHK} on all considered networks except the last ten ones marked with \(\ast\), we enforce the program to run on 16 threads. From \tabref{tab:runtime_comparison} we can see that for moderate approximation parameter \(\epsilon\), the computational time for \textsc{ApproxHK} is significantly  smaller than  that  for \textsc{DeterHK}, especially for large-scale networks tested.  Thus, \textsc{ApproxHK} can significantly improve the performance compared with \textsc{DeterHK}. For the  ten networks marked with \(\ast\), the number of vertices for which ranges from \(10^5\) to \(10^6\), we cannot run the \textsc{DeterHK} algorithm on the machine due to the limits of memory and time. However, for these networks, we can approximately compute their walk centrality for all vertices by using algorithm \textsc{ApproxHK}, which further show that \textsc{ApproxHK} is efficient and scalable to large networks.
@@ -1301,7 +1301,7 @@ In \tabref{tab:runtime_comparison}, we report the running time of \textsc{Approx
     \end{threeparttable}
 \end{table*}
 
-In addition to the high efficiency,  our algorithm  \textsc{ApproxHK} also provides a desirable approximation \(\hat{H}_u\) for the walk centrality \(H_u\).   To show the accuracy of   \\textsc{ApproxHK}, we compare the  approximate  results for \textsc{ApproxHK} with the exact results computed by  Lemma~\ref{HjK}. In \tabref{tab:accuracy}, we report the mean relative error \(\sigma\) of algorithm  \textsc{ApproxHK}, with \(\sigma\) being defined by \(\sigma=\frac{1}{n}\sum_{u\in V}|{H_u}-\tilde{H}_u|/{H_u}\). From  \tabref{tab:accuracy} we can see that  the actual mean relative errors for all \(\epsilon\) and all networks are  very small, and are almost negligible for smaller \(\epsilon\). More interestingly, for all networks tested,   \(\sigma\) are magnitudes smaller than the theoretical guarantee. Therefore, the  approximation algorithm  \textsc{ApproxHK} provides very accurate results in practice.
+In addition to the high efficiency,  our algorithm  \textsc{ApproxHK} also provides a desirable approximation \(\hat{H}_u\) for the walk centrality \(H_u\).   To show the accuracy of  \textsc{ApproxHK}, we compare the  approximate  results for \textsc{ApproxHK} with the exact results computed by  Lemma~\ref{HjK}. In \tabref{tab:accuracy}, we report the mean relative error \(\sigma\) of algorithm  \textsc{ApproxHK}, with \(\sigma\) being defined by \(\sigma=\frac{1}{n}\sum_{u\in V}|{H_u}-\tilde{H}_u|/{H_u}\). From  \tabref{tab:accuracy} we can see that  the actual mean relative errors for all \(\epsilon\) and all networks are  very small, and are almost negligible for smaller \(\epsilon\). More interestingly, for all networks tested,   \(\sigma\) are magnitudes smaller than the theoretical guarantee. Therefore, the  approximation algorithm  \textsc{ApproxHK} provides very accurate results in practice.
 
 
 \begin{table}[htbp]
@@ -1338,18 +1338,18 @@ In addition to the high efficiency,  our algorithm  \textsc{ApproxHK} also provi
     \end{threeparttable}
 \end{table}
 
-\subsubsection{Results on Model Networks.}
+\subsubsection{Results on Model Networks}
 
 To further demonstrate the performance of our proposed algorithm \textsc{ApproxHK}, we use it to compute the Kemeny constant for some model networks.  Although for a general graph, the exact result for its  Kemeny constant is difficult to obtain, for some model networks generated by an iterative way, their Kemeny constant can be determined explicitly.
-For example, for the pseudofractal scale-free web~\cite{XiZhCo16}, the Koch network~\cite{XiLiZh15}, Cayley tree~\cite{CaCh97,ChCa99}, and the extended Tower of Hanoi graph~\cite{KlMo05}, one can obtain exact expressions for their Kemeny constant.
+For example, for the pseudofractal scale-free web~\cite{XiZhCo16,ShLiZh17}, the Koch network~\cite{XiLiZh15}, Cayley tree~\cite{CaCh97,ChCa99}, and the extended Tower of Hanoi graph~\cite{KlMo05}, one can obtain exact expressions for their Kemeny constant.
 
 In the following we use algorithm \textsc{ApproxHK} to approximately compute the Kemeny constant for the aforementioned four model networks. One main justification for selecting  these four networks lies in their relevance to real-world systems. For example,  the pseudofractal scale-free web and the Koch network display the remarkable scale-free small-world properties as observed in most real networks~\cite{Ne03}, while  Cayley trees are useful for parallel and distributed computing, since they can be embedded into many other interconnection architectures, such as butterfly networks~\cite{GuHa91} and M{\"o}bius cubes~\cite{LiFaJi16}.
 
-All the four model networks are constructed in an iterative way. Their particular constructions allow to explicitly determine their Kemeny constant.
+%All the four model networks are constructed in an iterative way. Their particular constructions allow to explicitly determine their Kemeny constant.
 
 % \subsubsection{Pseudofractal scale-free web}
 
-Let \(\mathcal{F}_g\) (\(g \geq 0\)) denote the pseudofractal scale-free web after \(g\) iterations. For \(g=0\), \( \mathcal{F}_0\) consists of a triangle of three vertices and three edges. For \(g>0\), \(\mathcal{F}_g\) is obtained from \(\mathcal{F}_{g-1}\) as follows. For each existing edge in \(\mathcal{F}_{g-1}\), a new vertex is created and linked to both end vertices of the edge.  \figref{psfw1} schematically illustrates the construction process of the pseudofractal scale-free web. In network \(\mathcal{F}_g\), there are \((3^{g+1}+3)/2\) vertices and \(3^{g+1}\) edges.  It has been shown~\cite{XiZhCo16} that the Kemeny constant \(K(\mathcal{F}_g) \) for \(\mathcal{F}_g\) is
+\textbf{Kemeny Constant of Pseudofractal Scale-Free Web.} Let \(\mathcal{F}_g\) (\(g \geq 0\)) denote the pseudofractal scale-free web after \(g\) iterations. For \(g=0\), \( \mathcal{F}_0\) consists of a triangle of three vertices and three edges. For \(g>0\), \(\mathcal{F}_g\) is obtained from \(\mathcal{F}_{g-1}\) as follows. For each existing edge in \(\mathcal{F}_{g-1}\), a new vertex is created and linked to both end vertices of the edge.  \figref{psfw1} schematically illustrates the construction process of the pseudofractal scale-free web. In network \(\mathcal{F}_g\), there are \((3^{g+1}+3)/2\) vertices and \(3^{g+1}\) edges.  It has been shown~\cite{XiZhCo16} that the Kemeny constant \(K(\mathcal{F}_g) \) for \(\mathcal{F}_g\) is
 \begin{equation}\label{Kg01}
     K(\mathcal{F}_g)=\frac{5}{2}\times3^g-\frac{5}{3}\times2^g+\frac{1}{2}\,. %\notag
 \end{equation}
@@ -1360,13 +1360,13 @@ Let \(\mathcal{F}_g\) (\(g \geq 0\)) denote the pseudofractal scale-free web aft
 \begin{figure}[!t]
     \centering
     \includegraphics[width=0.75\linewidth]{Pseudofractal-eps-converted-to.pdf}
-    \caption{ Illustration of the first several iterations of the pseudofractal scale-free web. }
+    \caption{The first several iterations of the pseudofractal scale-free web. }
     \label{psfw1}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-The Koch network is also built in an iterative way~\cite{XiLiZh15}. Let \(\mathcal{M}_{g}\) (\(g \geq 0\)) denote the Koch network after \(g\) iterations. Initially (\(g=0\)), \(\mathcal{M}_{0}\) is a triangle with three
+\textbf{Kemeny Constant of  Koch Network.}
+The Koch network is also built in an iterative way~\cite{ZhZhXiLiGu09}. Let \(\mathcal{M}_{g}\) (\(g \geq 0\)) denote the Koch network after \(g\) iterations. Initially (\(g=0\)), \(\mathcal{M}_{0}\) is a triangle with three
 vertices and three edges. For \(g\geq 1\), \(\mathcal{M}_{g}\) is obtained from \(\mathcal{M}_{g-1}\) by
 performing the following operations. For each of the three vertices in
 every existing triangle in \(\mathcal{M}_{g-1}\), two new vertices are created, both of which and their
@@ -1388,6 +1388,7 @@ edges is \(3\times 4^{g}\).  In~\cite{XiLiZh15}, the Kemeny constant \(K(\mathca
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\textbf{Kemeny Constant of Cayley Tree.}
 Let \(\mathcal{C}_{b,g}(b\ge3,g\ge0)\) represent the Cayley tree after
 \(g\) iterations, which are constructed  as follows~\cite{CaCh97,ChCa99}. Initially \((g = 0)\), \(\mathcal{C}_{b,0}\) only contains a central vertex. To obtain \(\mathcal{C}_{b,1}\), we generate  \(b\) vertices and linked them to
 the central one. For any \(g>1\), \(\mathcal{C}_{b,g}\) is obtained from \(\mathcal{C}_{b,g-1}\) by performing the following operation. For every periphery vertex of \(\mathcal{C}_{b,g-1}\), \(b-1\) vertices are created and connected to
@@ -1409,7 +1410,8 @@ the periphery vertex. \figref{Cayley} illustrates a special Cayley tree,
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-As the name suggests, the extended Tower of Hanoi graph is constructed  based on the Tower of Hanoi graph.  Let \(\mathcal{H}_{g}\)  be the  Tower of Hanoi graph of generation \(g\)~\cite{HiKlMiPeSt13}. The vertex set of \(\mathcal{H}_{g}\) consists of all \(3\)-tuples of integers \(1,2,3\), i.e., \(V(\mathcal{H}_{g})=\{1,2,3\}^g\). All vertices in \(\mathcal{H}_{g}\) are labelled as \((x_1,x_2,\cdots,x_g)\), hereafter written in regular expression form \(x_1x_2\cdots x_g\), with \(x_i\in\{1,2,3\}\) for \(i=1,2,...,g\). Two vertices \(u=u_1u_2\cdots u_g\) and \(v=v_1v_2\cdots v_g\) in \(\mathcal{H}_{g}\) are directly connected by an edge if and only if there exists an \(h(1\le h\le g)\) such that
+
+\textbf{Kemeny Constant of Extended Tower of Hanoi graph.}  As the name suggests, the extended Tower of Hanoi graph is constructed  based on the Tower of Hanoi graph.  Let \(\mathcal{H}_{g}\)  be the  Tower of Hanoi graph of generation \(g\)~\cite{HiKlMiPeSt13}. The vertex set of \(\mathcal{H}_{g}\) consists of all \(3\)-tuples of integers \(1,2,3\), i.e., \(V(\mathcal{H}_{g})=\{1,2,3\}^g\). All vertices in \(\mathcal{H}_{g}\) are labelled as \((x_1,x_2,\cdots,x_g)\), hereafter written in regular expression form \(x_1x_2\cdots x_g\), with \(x_i\in\{1,2,3\}\) for \(i=1,2,...,g\). Two vertices \(u=u_1u_2\cdots u_g\) and \(v=v_1v_2\cdots v_g\) in \(\mathcal{H}_{g}\) are directly connected by an edge if and only if there exists an \(h(1\le h\le g)\) such that
 \begin{enumerate}
     \item \(u_t=v_t\) for \(1\le t\le h-1\);
     \item \(u_h\neq v_h\);
@@ -1445,18 +1447,18 @@ Figure~\ref{Sierpinski} illustrates the  Tower of Hanoi graph \(\mathcal{H}_{3}\
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The extended  Tower of Hanoi graph denoted by \(\overline{\mathcal{H}}_{g}(g\ge 1)\)  proposed by Klava\u zar and Mohar~\cite{KlMo05}, is defined as follows. For \(g=1\), \(\overline{\mathcal{H}}_{1}\) is a triangle. For \(g\ge2\),  \(\overline{\mathcal{H}}_{g}\) was obtained from the disjoint union of \(4\) copies of \(\mathcal{H}_{g-1}\), where the extreme vertices in different  replicas of \(\mathcal{H}_{g-1}\) are connected as the 4-vertex complete graph. Figure~\ref{exSierpinski} shows the extended  Tower of Hanoi graph \(\overline{\mathcal{H}}_{3}\) and the its labeling. In graph \(\overline{\mathcal{H}}_{g}\), the number of nodes is \(4\cdot3^{g-1}\), and the number of edges is \(4\cdot3^g/2\). As shown in~\cite{QiZh18}, the Kemeny constant \(K(\overline{\mathcal{H}}_{g})\) for \(\overline{\mathcal{H}}_{g}\) is
+The extended  Tower of Hanoi graph denoted by \(\overline{\mathcal{H}}_{g}(g\ge 1)\)  proposed by Klava\u zar and Mohar~\cite{KlMo05,ZhWuLiCo16,QiDoZhZh20}, is defined as follows. For \(g=1\), \(\overline{\mathcal{H}}_{1}\) is a triangle. For \(g\ge2\),  \(\overline{\mathcal{H}}_{g}\) was obtained from the disjoint union of \(4\) copies of \(\mathcal{H}_{g-1}\), where the extreme vertices in different  replicas of \(\mathcal{H}_{g-1}\) are connected as the 4-vertex complete graph. Figure~\ref{exSierpinski} shows the extended  Tower of Hanoi graph \(\overline{\mathcal{H}}_{3}\) and the its labeling. In graph \(\overline{\mathcal{H}}_{g}\), the number of nodes is \(4\cdot3^{g-1}\), and the number of edges is \(4\cdot3^g/2\). As shown in~\cite{QiZh18}, the Kemeny constant \(K(\overline{\mathcal{H}}_{g})\) for \(\overline{\mathcal{H}}_{g}\) is
 \begin{align}
     K(\overline{\mathcal{H}}_{g}) = \frac{32\times5^g\times3^{g-1}-64\times3^{2g-2}-2\times3^g}{10(3^g+3^{g-1}-1)}.
     \label{Kg04}
 \end{align}
 
-We use our algorithm \textsc{ApproxHK} to compute the Kemeny constant on   pseudofractal scale-free web \(\mathcal{F}_{12}\),  Koch network \(\mathcal{M}_{10}\),   Cayley tree \(\mathcal{C}_{3,19}\), and   extended  Tower of Hanoi graph \(\overline{\mathcal{H}}_{13}\). The numerical results are reported in  Table~\ref{tab:Kemeny}, which shows that the approximation algorithm \textsc{ApproxHK} works effectively for the four  networks. This again demonstrates the advantage of our proposed algorithm for large networks.
+\textit{Numerical Results.} We use our algorithm \textsc{ApproxHK} to compute the Kemeny constant on   pseudofractal scale-free web \(\mathcal{F}_{12}\),  Koch network \(\mathcal{M}_{10}\),   Cayley tree \(\mathcal{C}_{3,19}\), and   extended  Tower of Hanoi graph \(\overline{\mathcal{H}}_{13}\). The numerical results are reported in  Table~\ref{tab:Kemeny}, which shows that the approximation algorithm \textsc{ApproxHK} works effectively for the four networks. This again demonstrates the advantage of our proposed algorithm  \textsc{ApproxHK} for large networks.
 
 \begin{table*}[htbp]
     %\tabcolsep=5pt
     \centering
-    \normalsize
+    % \normalsize
     %\fontsize{6.51}{8.0}\selectfont
     \begin{threeparttable}
         \caption{Exact Kemeny constant \(K\),   their approximation \(\tilde{K}\),  relative error \(\rho=\abs{K-\tilde{K}}/K\), and running time (seconds, \(s\)) for \(\tilde{K}\) on networks \(\mathcal{F}_{12}\), \(\mathcal{M}_{10}\), \(\mathcal{C}_{3,19}\) and \(\overline{\mathcal{H}}_{13}\).  \(K\) is obtained via~\eqref{Kg01} and~\eqref{Kg02}, while \(\tilde{K}\) is obtained through algorithm \textsc{ApproxHK} with \(\epsilon=0.2\).}
@@ -1479,7 +1481,9 @@ We use our algorithm \textsc{ApproxHK} to compute the Kemeny constant on   pseud
     \end{threeparttable}
 \end{table*}
 
-\subsection{Results for \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}}
+
+
+\subsection{Performance for Algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}}
 
 We first compare the performance of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} with the optimum solution on four toy networks~\cite{Ku13}: \(\mathit{Zebra}\) with 23 vertices, \(\mathit{Zachary\ karate\ club}\) with 34 vertices, \(\mathit{Contiguous\ USA}\) with 49 vertices and \(\mathit{Les\ Miserables}\) with 77 vertices.
 
