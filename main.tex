@@ -13,7 +13,7 @@
 \author{Haisong~Xia,
     Wanyue~Xu~\IEEEmembership{Student Member,~IEEE},
     Zuobai~Zhang,
-    Zhuoqing~Song,
+    %Zhuoqing~Song,
     Zhongzhi~Zhang~\IEEEmembership{Member,~IEEE}
     \thanks{This work was  supported  by the National Natural Science Foundation of China (No. U20B2051) and the Shanghai Municipal Science and Technology
         Major Project  (No. 2021SHZDZX03). Any correspondence should be addressed to Zhongzhi Zhang.
@@ -21,8 +21,8 @@
 
 
     \thanks{
-        Haisong Xia, Wanyue Xu and Zhongzhi Zhang are with the Shanghai Key Laboratory of Intelligent Information Processing, School of Computer Science, Fudan University, Shanghai 200433, China;
-        Zhongzhi Zhang is also with the Shanghai Engineering Research Institute of Blockchain, Shanghai 200433, China. {\tt\small zhangzz@fudan.edu.cn}
+        Haisong Xia, Wanyue Xu,  Zuobai~Zhang, and Zhongzhi Zhang are with the Shanghai Key Laboratory of Intelligent Information Processing, School of Computer Science, Fudan University, Shanghai 200433, China; Zhongzhi Zhang is also with the Shanghai Engineering Research Institute of Blockchains, Fudan University, Shanghai 200433, China; and Research
+        Institute of Intelligent Complex Systems, Fudan University, Shanghai 200433, China. {\tt\small zhangzz@fudan.edu.cn}
     }
     \thanks{
         An earlier version of this paper was presented in part at the Thirteenth ACM International Conference on Web Search and Data Mining (WSDM)~\cite{ZhXuZh20} [DOI: 10.1145/3336191.3371777].
@@ -36,19 +36,12 @@
 
 \IEEEtitleabstractindextext{
     \begin{abstract}
-        For random walks on an undirected graph, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution.
-        Both quantities have found a large variety of applications in different areas.
-        However, their high computational complexity limits their applications, especially for large networks with millions of vertices.
-        In this paper, we first establish a connection between the two quantities, representing \(K\) in terms of \(H_j\) for all vertices.
-        Subsequently, we extend the notion of mean hitting time to the case of multiple vertices, proposing a vertex group centrality called Group Walk Centrality (GWC).
-        We then express these quantities in terms of either the pseudoinverse for graph Laplacian or the inverse for a SDDM matrix, based on which we develop an efficient algorithm that provides an approximation of \(H_j\) for all vertices and \(K\) in nearly linear time with respect to the edge number, with high probability.
-        Moreover, we study the problem of finding a subset \(S\) of \(k\) vertices to minimize its GWC \(\manc{S}\), proving its NP-hardness.
-        Based on the aforementioned algorithm, we provide another nearly linear greedy algorithm to solve the GWC minimization problem with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor for any error parameter \(\epsilon\in(0,1)\).
-        Extensive experiment results on real-life and model networks validate both the efficiency and accuracy of our proposed algorithms.
+        For random walks on an undirected graph $\gr$ with $n$ vertices and $m$ edges, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution. In this paper, we first establish a connection between the two quantities, representing $K$ in terms of $H_j$ for all vertices. We then develop an efficient algorithm that provides an approximation of $H_j$ for all vertices and $K$ in nearly linear time with respect to $m$. Moreover, we extend the centrality \(H_j\) of a single vertex to a set $S$ of vertices, denoted as  $H(S)$, and  establish a link between  $H(S)$ and other quantities related to hitting times.  We further study the NP-hard problem of selecting a group $S$ of a fixed number of $k \ll n$ vertices with the minimum $H(S)$, whose objective function is monotonic and supermodular. We finally propose two greedy algorithms to approximately solve the problem. The former has an approximation factor $(1-\frac{k}{k-1}\frac{1}{e})$ and $O(kn^3)$ running time, while the latter returns a $(1-\frac{k}{k-1}\frac{1}{e}-\epsilon)$-approximation solution in nearly-linear time of $m$, for any parameter $0<\epsilon <1$. Extensive experiment results validate the performance of our proposed algorithms.
+        % For random walks on an undirected graph, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution.         Both quantities have found a large variety of applications in different areas.         However, their high computational complexity limits their applications, especially for large networks with millions of vertices.         In this paper, we first establish a connection between the two quantities, representing \(K\) in terms of \(H_j\) for all vertices.         Subsequently, we extend the notion of mean hitting time to the case of multiple vertices, proposing a vertex group centrality called Group Walk Centrality (GWC).         We then express these quantities in terms of either the pseudoinverse for graph Laplacian or the inverse for a SDDM matrix, based on which we develop an efficient algorithm that provides an approximation of \(H_j\) for all vertices and \(K\) in nearly linear time with respect to the edge number, with high probability.         Moreover, we study the problem of finding a subset \(S\) of \(k\) vertices to minimize its GWC \(\manc{S}\), proving its NP-hardness.         Based on the aforementioned algorithm, we provide another nearly linear greedy algorithm to solve the GWC minimization problem with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor for any error parameter \(\epsilon\in(0,1)\).         Extensive experiment results on real-life and model networks validate both the efficiency and accuracy of our proposed algorithms.
     \end{abstract}
 
     \begin{IEEEkeywords}
-        Random walk, hitting time, Kemeny constant, spectral algorithm, complex network, vertex centrality.
+        Random walk, hitting time, Kemeny constant, spectral algorithm, complex network, optimization, vertex centrality.
     \end{IEEEkeywords}
 }
 
@@ -87,41 +80,33 @@ Thus, for large realistic networks with millions of vertices, we cannot obtain t
 Moreover, in various practical applications, many problems cannot be reduced to determining the importance of individual nodes, but are essentially to find a group of $k$ nodes that is the most important among all node groups, each containing exactly $k$ nodes. For example, how to place resources on a fixed number of $k$ peers in P2P networks, so that they are easily accessed by others~\cite{GkMiSa06}.  Again for instance, in the field of wireless networks, sensor placement involves selecting an optimal subset of vertices to place sensors to sample physical signals~\cite{KrSiGu08,RaChVe14}, such as radiation or temperature. Finally, in the context of point cloud sampling~\cite{DiChWaBa20,ChTiFeVeKo17}, it requires selecting a representative subset of points to preserve the geometric features of reconstruction. Recently, the absorbing random-walk centrality for an individual vertex~\cite{WhSm03} has been extended to a group of vertices~\cite{MaMaGi15}. Moreover, the problem of choosing \(k\) most important vertices was proposed, and an approximated algorithm was developed to solve the problem in cubic running time, which is not applicable to large networks. Thus, it is of great significance to propose a hitting time based centrality for vertex group and design fast algorithm to find the most important  $k$ vertices.
 
 
-We introduce a new vertex group centrality called Group Walk Centrality (GWC) by extending absorbing random-walk centrality to the case of multiple vertices.
-For a connected undirected graph and a vertex group \(S\), GWC \(\manc{S}\) is the expected hitting time for a random walker starting from a vertex \(u\) to an arbitrary vertex in \(S\). Here, vertex \(u\) is chosen based on the stationary distribution \(\vecpi\).
-We also introduce the GWC minimization problem, which involves identifying the vertex group \(S^*\) with capacity \(k\) that minimizes GWC \(\manc{S^*}\).
+\textbf{ Contributions}. In a preliminary version~\cite{ZhXuZh20} of this paper, we studied the absorbing random-walk centrality $H_j=\sum_{i} \rho(i) H_{ij}$ for an individual vertex and Kemeny constant $K$. We focused on a special absorbing random-walk centrality $H_j=\sum_{i} \pi_i H_{ij}$, where the starting probability distribution $\rho(\cdot)$ is the stationary distribution $\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}$ of the random walk, and we call $H_j$ walk centrality. The walk centrality $H_j=\sum_{i} \pi_i H_{ij}$ has received considerable attention~\cite{TeBeVo09,Be09,Be16}. We first expressed \(K\) in terms of \(H_j\) for all vertices, and further expressed \(H_j\) and \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix. We then proposed a fast algorithm \textsc{ApproxHK} to compute approximate \(H_j\) for all vertices in $V$ and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16,GaKySp23}. Finally, we experimentally demonstrated that \textsc{ApproxHK} is accurate and is significantly faster than the direct exact computation of related quantities according to their definitions.
 
-For the absorbing random-walk centrality \(H_j=\sum_{i} \rho(i) H_{ij}\), we focus on the special case when the starting probability distribution \(\rho(\cdot)\) is the stationary distribution \(\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}\) of the random walk.
-In other words, we study \(H_j=\sum_{i} \pi_i H_{ij}\), which has received considerable attention~\cite{TeBeVo09,Be09,Be16}.
-We first express \(K\) in terms of \(H_j\) for all vertices, and further express \(H_j\) and \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix.
+The contributions of the current presentation are as follows. We extend the walk centrality  $H_j$ of individual vertices by proposing group walk centrality (GWC) for vertex groups.   In a graph \(\gr=(V,E,w)\) with $n=|V|$ vertices and $m=|E|$ edges,  the GWC $H(S)$ of a group $S \subset V$  is defined as  $H(S) =\sum_{i \in V \setminus S} \pi_i H_{iS}$, where is $H_{iS}$ is the expected time taken by a random walker starting from vertex $i$ to visit any vertex in \(S\) for the first time. We establish a connection between  $H(S)$ and two other quantities related to hitting times.  We show that $H(\cdot)$ is a monotonic and supermodular set function. We then consider an NP-hard optimization problem MinGWC: how to find an optimal set $S^*$ of $k \ll n$ vertices such that $H(S^*)$ is minimized.  We devise two greedy algorithms,  \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} to approximately solve this problem. The former has a $(1-\frac{k}{k-1} \frac{1}{e})$  approximation factor and $O(n^3)$ running time, while the latter has a $(1-\frac{k}{k-1} \frac{1}{e}-\epsilon)$ approximation factor for any error parameter \(\epsilon\in(0,1)\) and $\Otil (km \epsilon^{-2})$ running time, where $\Otil (\cdot)$ notation hides the ${\rm poly}\log $ factors. Finally, extensive experiment results demonstrate that both \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}  are accurate, while \textsc{ApproxMinGWC} is more efficient and is scalable to massive networks with millions of vertices.
 
-We then propose a fast algorithm called \textsc{ApproxHK} to compute approximate \(H_j\) for all vertices and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16,GaKySp23}.
 
-For Group Walk Centrality (GWC), we reformulate it as the inverse of a SDDM matrix.
-Although the GWC minimization problem is proved to be NP-hard, we can utilize the monotonicity and supermodularity of GWC to develop a fast greedy algorithm called \textsc{ApproxMinGWC}.
-\textsc{ApproxMinGWC} is based on \textsc{ApproxHK} and yields an approximation factor of \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) for any error parameter \(\epsilon\in(0,1)\).
 
-Finally, we experimentally demonstrate that our algorithms are accurate and are significantly faster than the direct exact computation of related quantities according to their definitions.
 
-The primary version of our work has been published in WSDM '20: The Thirteenth ACM International Conference on Web Search and Data Mining~\cite{ZhXuZh20}. The contributions of the conference version are summarized as follows:
+\iffalse
+    The primary version of our work has been published in WSDM '20: The Thirteenth ACM International Conference on Web Search and Data Mining~\cite{ZhXuZh20}. The contributions of the conference version are summarized as follows:
 
-\begin{itemize}
-    \item We express the absorbing random-walk centrality \(H_j\) and the Kemeny constant \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix.
-    \item We propose an approximation algorithm called \textsc{ApproxHK} to compute \(H_j\) and \(K\) in nearly linear time of the number of graph edges.
-    \item Numerical experiments reveal the accuracy and efficiency of \textsc{ApproxHK}.
-\end{itemize}
+    \begin{itemize}
+        \item We express the absorbing random-walk centrality \(H_j\) and the Kemeny constant \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix.
+        \item We propose an approximation algorithm called \textsc{ApproxHK} to compute \(H_j\) and \(K\) in nearly linear time of the number of graph edges.
+        \item Numerical experiments reveal the accuracy and efficiency of \textsc{ApproxHK}.
+    \end{itemize}
 
-In the conference version~\cite{ZhXuZh20}, we focus solely on the mean hitting time for a single vertex.
-In the extended version, we broaden the concept of mean hitting time to encompass multiple vertices and introduce a vertex group centrality along with a corresponding minimization problem.
-The following are our primary additional contributions:
+    In the conference version~\cite{ZhXuZh20}, we focus solely on the mean hitting time for a single vertex.
+    In the extended version, we broaden the concept of mean hitting time to encompass multiple vertices and introduce a vertex group centrality along with a corresponding minimization problem.
+    The following are our primary additional contributions:
 
-\begin{itemize}
-    \item We propose a vertex group centrality called Group Walk Centrality (GWC) based on the group hitting time.
-    \item We introduce the GWC minimization problem, proving its NP-hardness.
-    \item Due to the monotonicity and supermodularity of GWC, we develop an efficient greedy algorithm called \textsc{ApproxMinGWC} based on \textsc{ApproxHK} to approximately solve the GWC minimization problem.
-    \item Extensive experiment results demonstrate that both of \textsc{ApproxHK} and \textsc{ApproxMinGWC} are accurate and scalable, which can be applied to networks with millions of vertices.
-\end{itemize}
-
+    \begin{itemize}
+        \item We propose a vertex group centrality called Group Walk Centrality (GWC) based on the group hitting time.
+        \item We introduce the GWC minimization problem, proving its NP-hardness.
+        \item Due to the monotonicity and supermodularity of GWC, we develop an efficient greedy algorithm called \textsc{ApproxMinGWC} based on \textsc{ApproxHK} to approximately solve the GWC minimization problem.
+        \item Extensive experiment results demonstrate that both of \textsc{ApproxHK} and \textsc{ApproxMinGWC} are accurate and scalable, which can be applied to networks with millions of vertices.
+    \end{itemize}
+\fi
 
 \section{Preliminaries}
 
@@ -1194,7 +1179,7 @@ In this section, we present experimental results for various real and model netw
 
 \subsection{Experimental Settings}
 
-\textbf{Datasets.} The data of realistic networks are taken from the Koblenz Network Collection~\cite{Ku13} and SNAP~\cite{LeKr14}. For those networks that are disconnected originally, we perform our experiments on their largest connected components (LCC). Related information about the number of vertices and edges for the studied real networks and their LCC is shown  in \tabref{tab:runtime_comparison},  where networks are listed in an increasing order of the number of vertices in the networks. The smallest network has 198 vertices, while the largest one consists of more than \(1.9 \times 10^{6}\) vertices.
+\textbf{Datasets.} The data of realistic networks are taken from the Koblenz Network Collection~\cite{Ku13} and SNAP~\cite{LeKr14}. For those networks that are disconnected originally, we perform our experiments on their largest connected components (LCCs). Related information about the number of vertices and edges for the studied real networks and their LCCs is shown  in \tabref{tab:runtime_comparison},  where networks are listed in an increasing order of the number of vertices in the networks. The smallest network has 198 vertices, while the largest one consists of more than \(1.9 \times 10^{6}\) vertices.
 
 \textbf{Environment.} All experiments are conducted on a machine with 16-core 2.55GHz AMD EPYC Milan CPU and with 64GB of RAM. We implement all the  algorithms in \textit{Julia v1.8.5}. For  \textsc{ApproxHK}  and  \textsc{ApproxMinGWC}, we use the  \(\mathtt{Solver}\) from~\cite{GaKySp23}. %, the \textit{Julia language} implementation for which is available  on the website~\footnote{http://danspielman.github.io/Laplacians.jl/latest/}.
 
@@ -1205,7 +1190,7 @@ In this subsection, we present experimental results for \textsc{ApproxHK} on rea
 \subsubsection{Results on Real Networks}
 
 We first evaluate the efficiency of algorithm \textsc{ApproxHK}  in approximating centrality \(H_u\) for realistic networks.
-In \tabref{tab:runtime_comparison}, we report the running time of \textsc{ApproxHK} and that of the direct deterministic algorithm called \textsc{DeterHK} that calculates the centrality \(H_u\) for each \(u \in V\) by calculating the pseudoinverse of \(\lap\) as given  in \lemref{HjK}. To objectively evaluate the running time, for both \textsc{DeterHK} and \textsc{ApproxHK} on all considered networks except the last ten ones marked with \(\ast\), we enforce the program to run on 16 threads. From \tabref{tab:runtime_comparison} we can see that for moderate approximation parameter \(\epsilon\), the computational time for \textsc{ApproxHK} is significantly  smaller than  that  for \textsc{DeterHK}, especially for large-scale networks tested.  Thus, \textsc{ApproxHK} can significantly improve the performance compared with \textsc{DeterHK}. For the  ten networks marked with \(\ast\), the number of vertices for which ranges from \(10^5\) to \(10^6\), we cannot run the \textsc{DeterHK} algorithm on the machine due to the limits of memory and time. However, for these networks, we can approximately compute their walk centrality for all vertices by using algorithm \textsc{ApproxHK}, which further show that \textsc{ApproxHK} is efficient and scalable to large networks.
+In \tabref{tab:runtime_comparison}, we report the running time of \textsc{ApproxHK} and that of the direct deterministic algorithm called \textsc{DeterHK} that calculates the centrality \(H_u\) for each \(u \in V\) by calculating the pseudoinverse \(\mypar{\lap +\frac{1}{n}\matj}^{-1} - \frac{1}{n}\matj\) of \(\lap\) as given  in \lemref{HjK}. To objectively evaluate the running time, for both \textsc{DeterHK} and \textsc{ApproxHK} on all considered networks except the last ten ones marked with \(\ast\), we enforce the program to run on 16 threads. From \tabref{tab:runtime_comparison} we can see that for moderate approximation parameter \(\epsilon\), the computational time for \textsc{ApproxHK} is significantly  smaller than  that  for \textsc{DeterHK}, especially for large-scale networks tested.  Thus, \textsc{ApproxHK} can significantly improve the performance compared with \textsc{DeterHK}. For the  ten networks marked with \(\ast\), the number of vertices for which ranges from \(10^5\) to \(10^6\), we cannot run the \textsc{DeterHK} algorithm on the machine due to the limits of memory and time. However, for these networks, we can approximately compute their walk centrality for all vertices by using algorithm \textsc{ApproxHK}, which further shows that \textsc{ApproxHK} is efficient and scalable to large networks.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
@@ -1346,9 +1331,9 @@ In addition to the high efficiency,  our algorithm  \textsc{ApproxHK} also provi
 \subsubsection{Results on Model Networks}
 
 To further demonstrate the performance of our proposed algorithm \textsc{ApproxHK}, we use it to compute the Kemeny constant for some model networks.  Although for a general graph, the exact result for its  Kemeny constant is difficult to obtain, for some model networks generated by an iterative way, their Kemeny constant can be determined explicitly.
-For example, for the pseudofractal scale-free web~\cite{XiZhCo16,ShLiZh17}, the Koch network~\cite{XiLiZh15}, Cayley tree~\cite{CaCh97,ChCa99}, and the extended Tower of Hanoi graph~\cite{KlMo05}, one can obtain exact expressions for their Kemeny constant.
+For example, for the pseudofractal scale-free web~\cite{XiZhCo16,ShLiZh17}, the Koch network~\cite{XiLiZh15}, the Cayley tree~\cite{CaCh97,ChCa99}, and the extended Tower of Hanoi graph~\cite{KlMo05}, one can obtain exact expressions for their Kemeny constant.
 
-In the following we use algorithm \textsc{ApproxHK} to approximately compute the Kemeny constant for the aforementioned four model networks. One main justification for selecting  these four networks lies in their relevance to real-world systems. For example,  the pseudofractal scale-free web and the Koch network display the remarkable scale-free small-world properties as observed in most real networks~\cite{Ne03}, while  Cayley trees are useful for parallel and distributed computing, since they can be embedded into many other interconnection architectures, such as butterfly networks~\cite{GuHa91} and M{\"o}bius cubes~\cite{LiFaJi16}.
+In the following we use algorithm \textsc{ApproxHK} to approximately compute the Kemeny constant for the aforementioned four model networks. One main justification for selecting  these four networks lies in their relevance to real-world systems. For example,  the pseudofractal scale-free web and the Koch network display the remarkable scale-free small-world properties as observed in most real networks~\cite{Ne03}, while the Cayley tree is useful for parallel and distributed computing, since it can be embedded into many other interconnection architectures, such as butterfly networks~\cite{GuHa91} and M{\"o}bius cubes~\cite{LiFaJi16}.
 
 %All the four model networks are constructed in an iterative way. Their particular constructions allow to explicitly determine their Kemeny constant.
 
@@ -1491,33 +1476,33 @@ The extended  Tower of Hanoi graph denoted by \(\overline{\mathcal{H}}_{g}(g\ge 
 \subsection{Performance for Algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}}
 
 
-\textbf{Accuracy of Algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}.} We first demonstrate the accuracy of our algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} by comparing their results of with the optimum and random solutions on four small-scale networks~\cite{Ku13}: \(\mathit{Zebra}\) with 23 vertices and *** edges, \(\mathit{Zachary\ karate\ club}\) with 34 vertices and *** edges, \(\mathit{Contiguous\ USA}\) with 49 vertices and *** edges, and \(\mathit{Les\ Miserables}\) with 77 vertices and *** edges. For each network, a random solution is obtained by choosing $k$ vertices uniformly at random. Moreover, since these small networks, we are able to compute the optimum solutions by brute-force search. For each $k=1,2,\ldots,5$, we find $k$ vertices  by optimal and stochastic schemes, and \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}, with the error parameter $\epsilon$ in \textsc{ApproxMinGWC} being  \(0.2\). We report the GWC results on these four strategies in~\figref{pic:compare-effect-optimum}. As shown in~\figref{pic:compare-effect-optimum},  the solutions provided by our algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are almost identical, with both being very close to the optimum solutions. This indicates that the practical approximation ratios of our algorithms are much better than their theoretical guarantees. In addition,  \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are far better than the random strategy.
+\textbf{Accuracy of Algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}.} We first demonstrate the accuracy of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} by comparing their results of with the optimum and random solutions on four small-scale networks~\cite{Ku13}: \(\mathit{Zebra}\) with 23 vertices and 105 edges, \(\mathit{Zachary\ karate\ club}\) with 34 vertices and 78 edges, \(\mathit{Contiguous\ USA}\) with 49 vertices and 107 edges, and \(\mathit{Les\ Miserables}\) with 77 vertices and 254 edges. For each network, a random solution is obtained by choosing $k$ vertices uniformly. Moreover, since these small networks, we are able to compute the optimum solutions by brute-force search. For each $k=1,2,\ldots,5$, we find $k$ vertices  by optimal and stochastic schemes, and \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}, with the error parameter $\epsilon$ in \textsc{ApproxMinGWC} being  \(0.2\). We report the GWC results on these four strategies in~\figref{pic:compare-effect-optimum}. As shown in~\figref{pic:compare-effect-optimum},  the solutions provided by \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are almost identical, with both being very close to the optimum solutions. This indicates that the practical approximation ratios of our algorithms are much better than their theoretical guarantees. In addition,  \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are far better than the random strategy.
 
 
 
 \begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{compare_effects_optimum.pdf}
-    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{DeterMinGWC},\textsc{ApproxMinGWC}, \textsc{Random} and \textsc{Optimum}) on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c) and Les Miserables (d), where \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are denoted as \textsc{Deter} and \textsc{Approx} in the legend to save space.\label{pic:compare-effect-optimum}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms, \textsc{DeterMinGWC} (\textsc{Deter}), \textsc{ApproxMinGWC} (\textsc{Approx}), \textsc{Random}, and \textsc{Optimum}, on four networks: Zebra (a), Zachary karate club (b), Contiguous USA (c), and Les Miserables (d).\label{pic:compare-effect-optimum}}
 \end{figure}
 
-We continue to demonstrate the effective of our algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} by comparing their performance  with three baseline algorithms: \text{Top-Absorb}, \text{Top-Degree}, and \text{Top-PageRank}. \text{Top-Absorb} simply selects \(k\) vertices with the lowest value of walk centrality, \text{Top-Degree} selects \(k\) vertices with the largest degrees, while \text{Top-PageRank} selects \(k\) vertices with the largest  PageRank values. We execute these five strategies of vertex selection on eight medium-sized networks, with the parameter $\epsilon$ in \textsc{ApproxMinGWC} being  \(0.2\). The results for these schemes are shown in \figref{pic:compare-effect1} and \figref{pic:compare-effect2}. As displayed in these two figures, both of our algorithms produce similar approximate solutions, outperforming the other three baseline strategies.
+We continue to demonstrate the effective of our algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} by comparing their performance  with three baseline algorithms: \text{Top-Absorb}, \text{Top-Degree}, and \text{Top-PageRank}. \text{Top-Absorb} simply selects \(k\) vertices with the lowest value of walk centrality, \text{Top-Degree} selects \(k\) vertices with the largest degrees, while \text{Top-PageRank} selects \(k\) vertices with the largest  PageRank values. We execute these five strategies for vertex selection on eight medium-sized networks, with the parameter $\epsilon$ in \textsc{ApproxMinGWC} being  \(0.2\). The results for these schemes are shown in Figures~\ref{pic:compare-effect1} and~\ref{pic:compare-effect2} for various $k$. As displayed in these two figures, both of our algorithms produce similar approximation solutions, outperforming the  three baseline strategies.
 
 \begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{compare_effects_exact1.pdf}
-    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms(\textsc{DeterMinGWC},\textsc{ApproxMinGWC},\text{Top-Absorb} and \text{Top-Degree}) on four networks: CA-GrQc (a), ego-Facebook (b), Euroroads (c) and US power grid (d), where \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are denoted as \textsc{Deter} and \textsc{Approx} in the legend to save space.\label{pic:compare-effect1}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by five different algorithms, \textsc{DeterMinGWC} (\textsc{Deter}), \textsc{ApproxMinGWC} (\textsc{Approx}), \text{Top-Absorb},  \text{Top-Degree}, and  \text{Top-PageRank}  on four networks: US power grid (a), CA-GrQc (b), CA-HepTh (c), and Euroroads (d).\label{pic:compare-effect1}}
 \end{figure}
 
 \begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{compare_effects_exact2.pdf}
-    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by four different algorithms \textsc{DeterMinGWC},\textsc{ApproxMinGWC},\text{Top-Absorb} and \text{Top-Degree} on four networks: Hamster friends (a), Hamster full (b), Reactome (c) and Route views (d), where \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are denoted as \textsc{Deter} and \textsc{Approx} in the legend to save space.\label{pic:compare-effect2}}
+    \caption{GWC \(\manc{S}\) of vertex group \(S\) computed by five different algorithms, \textsc{DeterMinGWC} (\textsc{Deter}), \textsc{ApproxMinGWC} (\textsc{Approx}), \text{Top-Absorb},  \text{Top-Degree}, and  \text{Top-PageRank}  on four networks: Astro-ph (a), Pretty Good Privacy (b), Sister cities (c), and CA-HepPh (d).\label{pic:compare-effect2}}
 \end{figure}
 
 \textbf{Comparison of Efficiency between \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}.} Although both \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are very effective, below we demonstrate that \textsc{ApproxMinGWC} is significantly more efficient than \textsc{DeterMinGWC}, particularly in large networks. To this end, we compare the running time of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} and the GWC of vertex group returned by these two algorithms on a set of real-life networks. For each network, we use \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} to select \(k=10\) vertices. We present the results in \tabref{tab:running-time}, from which we observe that the running time of  \textsc{ApproxMinGWC} is much lower than  that of \textsc{DeterMinGWC}, while the vertex sets returned by  \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} have almost the same GWC.
 
-The efficiency advantage of   \textsc{ApproxMinGWC} over  \textsc{DeterMinGWC} becomes more obvious for larger networks. \tabref{tab:running-time} shows the difference of running time between   \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} increases rapidly when the networks become larger. For those networks marked with \(\ast\) in \tabref{tab:running-time},  \textsc{DeterMinGWC} cannot run due to the memory and time limitations, while  \textsc{ApproxMinGWC} still works well. In particular, \textsc{ApproxMinGWC} scales to massive networks with one million nodes. For example, for the roadNet-CA network with almost two million nodes, \textsc{ApproxMinGWC} solves the MinGWC problem in about four hours. Thus, \textsc{ApproxMinGWC} is both efficient and effective, and scalable to massive networks.
+The efficiency advantage of   \textsc{ApproxMinGWC} over  \textsc{DeterMinGWC} becomes more obvious for larger networks. \tabref{tab:running-time} shows the difference of running time between   \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} increases rapidly when the networks become larger. For those networks marked with \(\ast\) in \tabref{tab:running-time},  \textsc{DeterMinGWC} cannot run due to the memory and time limitations, while  \textsc{ApproxMinGWC} still works well. In particular, \textsc{ApproxMinGWC} scales to massive networks with one million nodes. For example, for the roadNet-CA network with almost two million nodes, \textsc{ApproxMinGWC} solves the MinGWC problem in about four hours. Thus, \textsc{ApproxMinGWC} is both efficient and effective, being scalable to massive networks.
 
 \iffalse
     \textbf{Comparison of Efficiency between \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}.}
@@ -1534,79 +1519,79 @@ The efficiency advantage of   \textsc{ApproxMinGWC} over  \textsc{DeterMinGWC} b
 
 
 \begin{table}[htbp]
-    \tabcolsep=8pt
+    \normalsize
+    % \tabcolsep=8pt
     \centering
-    \fontsize{8.0}{8.8}\selectfont
+    \fontsize{7.5}{8.0}\selectfont
     \begin{threeparttable}
-        \caption{The running time (seconds, \(s\)) of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} (denoted as \textsc{Deter} and \textsc{Approx} in the table to save space) with various \(\epsilon\) on several realistic networks}
+        \caption{The running time (seconds, \(s\)) and the relative error (\(\times10^{-2}\)) of \textsc{DeterMinGWC}(\textsc{Deter}) and \textsc{ApproxMinGWC}(\textsc{Approx}) on several realistic networks for various \(\epsilon\)}
         \label{tab:running-time}
-        \begin{tabularx}{8.25cm}{c p{1cm} p{0.5cm} p{0.5cm} p{0.5cm}}
+        \begin{tabularx}{8.75cm}{p{1.75cm}<{\centering} p{0.5cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering}}
             \toprule[1pt]
-            \multirow{2}{*}{Network}        &
-            \multirow{2}{*}{\textsc{Deter}} &
-            \multicolumn{3}{c}{\textsc{Approx} (\(s\)) for various \(\epsilon\)}\cr
-            \cmidrule{3-5}
-                                            & (\(s\)) & \(0.3\) & \(0.25\) & \(0.2\)\cr
+            \multirow{3}{*}{Network}                                           &
+            \multicolumn{4}{c}{Running time (\(s\)) for \textsc{Deter}}        &
+            \multicolumn{3}{c}{Relative error (\(\times10^{-2}\))}                                                                                            \\ &
+            \multicolumn{4}{c}{and \textsc{Approx} with varioius \(\epsilon\)} &
+            \multicolumn{3}{c}{of \textsc{Approx} with varioius \(\epsilon\)}                                                                                 \\
+            \cmidrule{2-8}                                                     & \textsc{Deter} & \(0.3\) & \(0.25\) & \(0.2\) & \(0.3\) & \(0.25\) & \(0.2\) \\
             \midrule
-            Jazz musicians                  & 0.214   & 0.157   & 0.178    & 0.194\cr
-            Euroroads                       & 0.498   & 0.239   & 0.277    & 0.281\cr
-            Hamster friends                 & 1.183   & 0.348   & 0.450    & 0.629\cr
-            Hamster full                    & 1.267   & 0.402   & 0.525    & 1.049\cr
-            Facebook (NIPS)                 & 10.20   & 1.956   & 2.919    & 4.349\cr
-            CA-GrQc                         & 10.74   & 0.686   & 0.896    & 0.968\cr
-            US power grid                   & 17.62   & 0.500   & 0.634    & 0.977\cr
-            Reactome                        & 30.13   & 3.593   & 4.680    & 7.329\cr
-            Route views                     & 37.55   & 0.582   & 0.704    & 1.024\cr
-            CA-HepTh                        & 85.83   & 1.108   & 1.602    & 2.476\cr
-            Sister cities                   & 143.3   & 3.246   & 3.974    & 7.013\cr
-            Pretty Good Privacy             & 157.7   & 3.844   & 5.170    & 7.657\cr
-            CA-HepPh                        & 180.8   & 6.601   & 9.775    & 15.74\cr
-            Astro-ph                        & 715.8   & 13.51   & 18.26    & 31.31\cr
-            CAIDA                           & 2272    & 6.355   & 7.838    & 11.28\cr
-            Brightkite*                     & --      & 23.31   & 32.68    & 54.21\cr
-            Livemocha*                      & --      & 177.0   & 250.6    & 392.1\cr
-            WordNet*                        & --      & 83.89   & 124.5    & 221.4\cr
-            Gowalla*                        & --      & 129.1   & 195.7    & 342.8\cr
-            com-DBLP*                       & --      & 232.7   & 399.1    & 756.8\cr
-            Amazon*                         & --      & 349.5   & 652.3    & 1082\cr
-            roadNet-PA*                     & --      & 2215    & 3349     & 5714\cr
-            YouTube*                        & --      & 1482    & 2197     & 3661\cr
-            roadNet-TX*                     & --      & 3135    & 4464     & 9338\cr
-            roadNet-CA*                     & --      & 5445    & 8214     & 14458\cr
+            Jazz musicians                                                     & 0.214          & 0.157   & 0.178    & 0.194   & 0.959   & 0.631    & 0.473   \\
+            Euroroads                                                          & 0.498          & 0.239   & 0.277    & 0.281   & 2.457   & 2.154    & 0.261   \\
+            Hamster friends                                                    & 1.183          & 0.348   & 0.450    & 0.629   & 0.266   & 0.250    & 0.132   \\
+            Hamster full                                                       & 1.267          & 0.402   & 0.525    & 1.049   & 0.415   & 0.094    & 0.079   \\
+            Facebook (NIPS)                                                    & 10.20          & 1.956   & 2.919    & 4.349   & 1.050   & 0.649    & 0.072   \\
+            CA-GrQc                                                            & 10.74          & 0.686   & 0.896    & 0.968   & 1.339   & 1.067    & 0.812   \\
+            US power grid                                                      & 17.62          & 0.500   & 0.634    & 0.977   & 1.907   & 1.121    & 0.534   \\
+            Reactome                                                           & 30.13          & 3.593   & 4.680    & 7.329   & 0.895   & 0.668    & 0.479   \\
+            Route views                                                        & 37.55          & 0.582   & 0.704    & 1.024   & 0.326   & 0.184    & 0.031   \\
+            CA-HepTh                                                           & 85.83          & 1.108   & 1.602    & 2.476   & 0.475   & 0.090    & 0.067   \\
+            Sister cities                                                      & 143.3          & 3.246   & 3.974    & 7.013   & 0.355   & 0.152    & 0.131   \\
+            Pretty Good Privacy                                                & 157.7          & 3.844   & 5.170    & 7.657   & 0.286   & 0.118    & 0.069   \\
+            CA-HepPh                                                           & 180.8          & 6.601   & 9.775    & 15.74   & 0.321   & 0.207    & 0.053   \\
+            Astro-ph                                                           & 715.8          & 13.51   & 18.26    & 31.31   & 1.041   & 0.208    & 0.042   \\
+            CAIDA                                                              & 2272           & 6.355   & 7.838    & 11.28   & 0.228   & 0.216    & 0.141   \\
+            Brightkite*                                                        & --             & 23.31   & 32.68    & 54.21   & --      & --       & --      \\
+            Livemocha*                                                         & --             & 177.0   & 250.6    & 392.1   & --      & --       & --      \\
+            WordNet*                                                           & --             & 83.89   & 124.5    & 221.4   & --      & --       & --      \\
+            Gowalla*                                                           & --             & 129.1   & 195.7    & 342.8   & --      & --       & --      \\
+            com-DBLP*                                                          & --             & 232.7   & 399.1    & 756.8   & --      & --       & --      \\
+            Amazon*                                                            & --             & 349.5   & 652.3    & 1082    & --      & --       & --      \\
+            roadNet-PA*                                                        & --             & 2215    & 3349     & 5714    & --      & --       & --      \\
+            YouTube*                                                           & --             & 1482    & 2197     & 3661    & --      & --       & --      \\
+            roadNet-TX*                                                        & --             & 3135    & 4464     & 9338    & --      & --       & --      \\
+            roadNet-CA*                                                        & --             & 5445    & 8214     & 14458   & --      & --       & --      \\
             \bottomrule
         \end{tabularx}
     \end{threeparttable}
 \end{table}
 
-\section{Related Works}
+\section{Related Work}
 
-Many researchers have noticed the connection between random detour time and their proposed centralities.
-Ranjan et al.~\cite{RaZh13} presented \textit{topological centrality} \(\cscr^*(u)\) as the reciprocal of \(\lap^\dagger_{[u,u]}\), and found that \(\cscr^*(u)\) can be represented by random detour time and hitting time, that is, \({\cscr^*(u)}^{-1}\propto \sum_{i=1}^n\sum_{j=1}^n\mypar{D_{ij}(u)-H_{ij}}\).
-Gangemi et al.~\cite{GaLePaGoLiZh15} simply took variants of random detour time as components of \textit{pivotality}, which is the measure of node reachability.
-We prove that random detour time is also related to Kemeny constant and absorbing random-walk centrality.
-This connection also holds for the case of multiple nodes.
+As a fundamental concept in social network analysis and complex networks, network centrality has received considerable attention from the scientific community~\cite{Ne10}. The value of centrality metrics can be used to rank nodes or edges in networks~\cite{LuChReZhZhZh16}, with an aim to identify important nodes or edges for different applications. In the past decades, a host of centrality measures were presented to describe and characterize the roles of nodes or edges in networks~\cite{WhSm03,BoVi14,BeKl15,BoDeRi16,LiZh18,YiShLiZh18,BaXuZh22,BaZh22}. Among various centrality metrics, a class of popular ones are based on shortest paths, of which   betweennees centrality~\cite{Br01,GeSaSc08} and closeness centrality~\cite{Ba48,Ba50} are probably the two most popular ones. A main drawback of these two measures is that they only consider the shortest paths, neglecting contributions from other paths, even the second shortest paths. To overcome this flaw, betweenness centrality based on random walks~\cite{Ne05} and Markov centrality~\cite{WhSm03}  were introduced, both of which display better discriminate power than their traditional shortest path based centrality metrics~\cite{Ne05,BeWeLuMe16}, since they incorporate the contributions from all paths between different node pairs.
 
-There also exist various random walk-based centralities, such as the \textit{Random Walk Decay Centrality}~\cite{WaRaSk19} and the \textit{Group-to-group random walk betweenness centrality}~\cite{GiBaRa21}, both of them are variants of existing centralities.
-Besides, Mavroforakis et al.~\cite{MaMaGi15} presented \textit{\(k\) absorbing random-walk centrality}, which is the most directly related to our work.
-We give new proofs on the monotonicity and supermodularity of GWC from the perspective of numerical analysis, which is more concise and intuitive.
-Moreover, we design and implement a nearly linear algorithm for GWC minimization problem, which is proved to have an approximation guarantee.
+%To overcome this flaw, betweenness centrality based on random walks~\cite{Ne05} and current flow closeness centrality~\cite{BrFl05} based on electrical networks were introduced, both of which display better discriminate power than their traditional counterparts~\cite{Ne05,BeWeLuMe16}, since they incorporate the contributions from all paths between different node pairs.
 
-Admittedly, many existing studies have focused on the notion of selecting \(k\) nodes in the network to optimize some quantities related to absorbing random walk, such as absorbing distance~\cite{LiYuHuCh14,MoBaZhPe20} and absorbing probability~\cite{RoGl16}.
-However, computing these quantities on infinite random walk models requires time-consuming matrix inversions.
-Most of researchers use finite random walk models to approximate the infinite case, except for Rosenfeld et al.~\cite{RoGl16}, who use LU decomposition to reduce the complexity of computing absorbing probability.
-Instead of constructing finite random walk models, our work focus on the infinite random walk model, use a nearly linear algorithm to minimize GWC, which has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any error parameter \(\epsilon\in(0,1)\).
+In addition to the measurs of centrality for an individal vertex,  many metrics for centrality of node group were presented, in order to measure the importance of a node group. Most previous  node group centrality measures are based on graph structure~\cite{XuReLiYuLi17} or dynamic processes~\cite{MaMaGi15}. For example, based on the shortest paths, group betweenness~\cite{DoelPuZi09,Yo14,MaTsUp16} and group closeness~\cite{EvBo99,ZhLuToGu14,BeGoMe18} were proposed. Similar to the case of individual nodes, group betweenness and group closeness ignore contributions from non-shortest paths. To capture the contributions of all path, motivated by the work of White and Smyth~\cite{WhSm03}, absorbing random-walk group centrality was proposed~\cite{MaMaGi15}. And a algorithm for minimizing the absorbing random-walk group centrality with a cardinality constraint was proposed~\cite{MaMaGi15}. It has a $O(kn^3)$, and is thus not applicable to large networks.
+Our group walk centrality is different from that in~\cite{MaMaGi15}. Moreover,  our fast algorithm \textsc{ApproxMinGWC} has a nearly-linear time complexity.
 
-\section{Conclusions}
+%Many researchers have noticed the connection between random detour time and their proposed centralities. Ranjan et al.~\cite{RaZh13} presented \textit{topological centrality} \(\cscr^*(u)\) as the reciprocal of \(\lap^\dagger_{[u,u]}\), and found that \(\cscr^*(u)\) can be represented by random detour time and hitting time, that is, \({\cscr^*(u)}^{-1}\propto \sum_{i=1}^n\sum_{j=1}^n\mypar{D_{ij}(u)-H_{ij}}\). Gangemi et al.~\cite{GaLePaGoLiZh15} simply took variants of random detour time as components of \textit{pivotality}, which is the measure of node reachability. We prove that random detour time is also related to Kemeny constant and absorbing random-walk centrality. This connection also holds for the case of multiple nodes.
 
-The hitting time of random walks arises in many practical scenarios.
-However, exactly computing the hitting time is prohibitively expensive, making it difficult to solve corresponding optimization problems.
-In this paper, we studied absorbing random-walk centrality and Kemeny constant of a graph, both of which are actually weighted average of hitting times and have found wide applications.
-We established a link between the two quantities and reformulated them in terms of quadratic forms of the pseudoinverse of graph Laplacian.
-Subsequently, we extended the notion of mean hitting time to multiple vertices, proposing Group Walk Centrality (GWC) and its minimization problem.
-We demonstrated the monotonicity and supermodularity of this newly proposed centrality, expressing it in terms of the inverse of a SDDM matrix.
-Moreover, we provided a randomized approximation algorithm with probabilistic guarantee, which computes the walk centrality for all vertices and Kemeny constant in nearly linear time with respect to the number of edges.
-Based on this algorithm, we provided another nearly linear greedy approximate algorithm to solve the minimization problem of GWC, which is proved to be NP-hard.
-Finally, we conducted extensive experiments on various real-world and model networks, which show that the proposed algorithms are both efficient and accurate, especially for large-scale networks.
+%There also exist various random walk-based centralities, such as the \textit{Random Walk Decay Centrality}~\cite{WaRaSk19} and the \textit{Group-to-group random walk betweenness centrality}~\cite{GiBaRa21}, both of them are variants of existing centralities. Besides, Mavroforakis et al.~\cite{MaMaGi15} presented \textit{\(k\) absorbing random-walk centrality}, which is the most directly related to our work. We give new proofs on the monotonicity and supermodularity of GWC from the perspective of numerical analysis, which is more concise and intuitive. Moreover, we design and implement a nearly linear algorithm for GWC minimization problem, which is proved to have an approximation guarantee.
+
+%Admittedly, many existing studies have focused on the notion of selecting \(k\) nodes in the network to optimize some quantities related to absorbing random walk, such as absorbing distance~\cite{LiYuHuCh14,MoBaZhPe20} and absorbing probability~\cite{RoGl16}. However, computing these quantities on infinite random walk models requires time-consuming matrix inversions. Most of researchers use finite random walk models to approximate the infinite case, except for Rosenfeld et al.~\cite{RoGl16}, who use LU decomposition to reduce the complexity of computing absorbing probability. Instead of constructing finite random walk models, our work focus on the infinite random walk model, use a nearly linear algorithm to minimize GWC, which has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any error parameter \(\epsilon\in(0,1)\).
+
+
+\section{Conclusion}
+
+The hitting time of random walks arises in many practical scenarios. However, the time cost of exactly computing hitting time is prohibitively expensive. In this paper, we studied a walk centrality $H_j$ for a single vertex and Kemeny constant $K$ of a graph \(\gr=(V,E,w)\) with $n$ vertices and $m$ edges, both of which are actually weighted averages of hitting times and have found wide applications. We established a link between the two quantities, and reformulated them in terms of quadratic forms of the pseudoinverse of the Laplacian $\lap$ for graph $\gr$. Moreover, we provided a randomized approximation algorithm \textsc{ApproxHK} with probabilistic guarantee, which computes the walk centrality $H_j$ for all vertices $j \in V$ and Kemeny constant $K$ in nearly linear time with respect to the edge number $m$.
+
+We then introduced the group walk centrality  for a group $H(S)$ of vertices, which extends the notion of walk centrality of an individual vertex to multiple vertices in set $S$. We proved that as a set function, $H(\cdot)$ is monotone and supermodular.
+We established a link between  $H(S)$ and some quantities related to hitting times.  We then considered the NP-hard optimization problem MinGWC of finding the set $S^*$ of $k \ll n$ vertices, aiming to minimize $H(S^*)$. We then developed two greedy approximation algorithms, \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}, which solve the problem MinGWC by iteratively selected $k$ vertices. The former obtains a $(1-\frac{k}{k-1} \frac{1}{e})$ approximation factor in time $O(n^3)$; while the latter achieves a $(1-\frac{k}{k-1}\frac{1}{e}-\epsilon)$ approximation ratio in time $\Otil (mk\epsilon^{-2})$ for any $0<\epsilon <1$.
+
+Finally, we conducted extensive experiments on various real and model networks, in order to verify the performance of our proposed algorithms. The results show that algorithm \textsc{ApproxHK} is both efficient and accurate for approximating walk centrality of all individual vertices and the Kemeny constant $K$. For the two greedy algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}, both of them are very accurate, often returning almost optimal solutions. Particularly, the randomized algorithm \textsc{ApproxMinGWC} is scale to large networks, which quickly returns good approximation solutions in networks with over a million vertices.
+
+
+
 
 \bibliographystyle{IEEEtran}
 \balance
@@ -1629,16 +1614,17 @@ Finally, we conducted extensive experiments on various real-world and model netw
 \end{IEEEbiographynophoto}
 
 % \begin{IEEEbiography}{Zhuoqing Song}
-\begin{IEEEbiographynophoto}{Zhuoqing Song}
-    received the B.S. degree in mathematics and applied mathematics in 2019 from Fudan University, Shanghai, China, where he is currently working toward the Ph.D. degree in applied mathematics. His research interests include decentralized optimization, graph algorithms, and machine learning.
-\end{IEEEbiographynophoto}
+%\begin{IEEEbiographynophoto}{Zhuoqing Song}
+%    received the B.S. degree in mathematics and applied mathematics in 2019 from Fudan University, Shanghai, China, where he is currently working toward the Ph.D. degree in applied mathematics. His research interests include decentralized optimization, graph algorithms, and machine learning.
+%\end{IEEEbiographynophoto}
 
 % \begin{IEEEbiography}[\biophoto{zzz.jpg}]{Zhongzhi Zhang}
 \begin{IEEEbiographynophoto}{Zhongzhi Zhang}
-    (Member, IEEE) received the B.Sc. degree in applied mathematics from Anhui University, Hefei, China, in 1997 and the Ph.D. degree in management science and engineering from Dalian University of Technology, Dalian, China, in 2006. \\
-    From 2006 to 2008, he was a Post-Doctoral Research Fellow with Fudan University, Shanghai, China, where he is currently a Full Professor with the School of Computer Science. He has published over 150 papers in international journals or conferences. He has over 3300 ISI Web of Science citations with an H-index of 33 according to the Clarivate. He was selected as one of the most cited Chinese researchers
-    (Elsevier) in 2019 and 2020. His current research interests include network science, graph data mining, social network analysis, spectral graph theory, and random walks. \\
-    Dr. Zhang was a recipient of the Excellent Doctoral Dissertation Award of Liaoning Province, China, in 2007, the Excellent Post-Doctor Award of Fudan University in 2008, the Shanghai Natural Science Award (third class) in 2013, and the Wilkes Award for the best paper published in The Computer Journal in 2019. He is a member of the IEEE.
+    (M'19)	 received the B.Sc. degree in applied mathematics from Anhui University, Hefei, China, in 1997 and the Ph.D. degree in management science and engineering from Dalian University of Technology, Dalian, China, in 2006. \\
+    From 2006 to 2008, he was a Post-Doctoral Research Fellow with Fudan University, Shanghai, China, where he is currently a Full Professor with the School of Computer Science. He has published over 160 papers in international journals or conferences. %He has over 3400 ISI Web of Science citations with an H-index of 34 according to the Clarivate. 
+    He was selected as one of the most cited Chinese researchers
+    (Elsevier) in 2019,  2020, 2021, and 2022. His current research interests include network science, graph data mining, social network analysis, computational social science, spectral graph theory, and random walks. \\
+    Dr. Zhang was a recipient of the Excellent Doctoral Dissertation Award of Liaoning Province, China, in 2007, the Excellent Post-Doctor Award of Fudan University in 2008, the Shanghai Natural Science Award (third class) in 2013, the CCF Natural Science Award (second class) in 2022, and the Wilkes Award for the best paper published in The Computer Journal in 2019. He is a member of the IEEE.
 \end{IEEEbiographynophoto}
 
 \end{document}
