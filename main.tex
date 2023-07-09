@@ -55,11 +55,11 @@
 
 \IEEEPARstart{A}{s} a powerful tool and method, random walks have found broad applications in various aspects.
 Frequently cited examples include image segmentation~\cite{Le06}, random algorithm design~\cite{SaDi12}, collaborative recommendation~\cite{FoPiReSa07}, community detection~\cite{LaDeBa14}, among others.
-A fundamental quantity related to random walks is hitting time~\cite{Lo93}, also called first-passage time~\cite{CoBeTeVoKl07}.
+A fundamental quantity related to random walks is hitting time~\cite{Lo93,ShZh19}, also called first-passage time~\cite{CoBeTeVoKl07}.
 For a random walk on a graph, the hitting time \(H_{ij}\) from a vertex \(i\) to another vertex \(j\) is the expected time for the walker starting from \(i\) to visit \(j\) for the first time.
 Hitting time is related to many problems and has been successfully applied to diverse areas, such as Hanoi problem with random move~\cite{WuZhCh11,QiDoZhZh20}, query suggestion~\cite{MeZhCh08}, and clustering algorithm~\cite{ChLiTa08}.
 
-Except for the intrinsic interest of hitting time itself and its direct applications, many other relevant quantities related to random walks are encoded in or expressed in terms of this crucial quantity, for example, absorbing random-walk centrality~\cite{MaMaGi15} (or Markov centrality~\cite{WhSm03}), Kemeny constant~\cite{Hu14} and random detour time~\cite{BoRaZh11,RaZh13}.
+Except for the intrinsic interest of hitting time itself and its direct applications, many other relevant quantities related to random walks are encoded in or expressed in terms of this crucial quantity, for example, absorbing random-walk centrality~\cite{MaMaGi15} (or Markov centrality~\cite{WhSm03}), Kemeny constant~\cite{Hu14}, cover time~\cite{BlJaRy22,XuZh23}, and random detour time~\cite{BoRaZh11,RaZh13}.
 As the name implies, the absorbing random-walk centrality is a measure for the importance of vertices on a graph.
 For a vertex \(j\), its absorbing random-walk centrality \(H_j\) is defined by \(H_j=\sum_{i} \rho(i) H_{ij}\), where \(\rho(\cdot)\) is the starting probability distribution over all vertices.
 Different from the shortest-path based centrality measures, random-walk based centrality metrics include the contributions from essentially all paths~\cite{Ne05}, and thus have a better discriminating power.
@@ -589,7 +589,9 @@ Since $\lap_{-S}$ is an SDDM matrix, according to~\eqref{eq:GWC} and \lemref{lem
 
 In this subsection, we establish a link between GWC $H(S)$  in graph \(\gr\) and some other quantities related to hitting times for random walks without traps in \(\gr\).
 
-We first introduce a notion of random detour walk $i\rightarrow S \rightarrow j$. It is a random walk starting from a vertex $i$, that must visit at least a vertex in set $S$ before it arrives at the target vertex $j$ and stops. The group random detour time  \(D_{ij}(S)\) for the random detour walk $i\rightarrow S \rightarrow j$ is defined as the expected time for the walker starting from vertex \(i\) to visit at least a vertex in group \(S\), and then reaches vertex \(j\) for the first time. Note that when set $S$ includes only one vertex $k$, $i\rightarrow S \rightarrow j$ and \(D_{ij}(S)\) are reduced to the corresponding notion and quantity previously proposed in~\cite{RaZh13,BoRaZh11} for a single vertex.
+We first introduce a notion of random detour walk $i\rightarrow S \rightarrow j$. It is a random walk starting from a vertex $i$, that must visit at least a vertex in set $S$ before it arrives at the target vertex $j$ and stops. The group random detour time  \(D_{ij}(S)\) for the random detour walk $i\rightarrow S \rightarrow j$ is defined as the expected time for the walker starting from vertex \(i\) to visit at least a vertex in group \(S\), and then reaches vertex \(j\) for the first time. Note that when set $S$ includes only one vertex $k$, $i\rightarrow S \rightarrow j$ and \(D_{ij}(S)\) are reduced to the corresponding notion and quantity previously proposed in~\cite{RaZh13,BoRaZh11} for a single vertex. By definition, for a single vertex $k$, the random detour walk for $i\rightarrow k \rightarrow j$ is equal to $H_{ik}+ H_{kj} - H_{ij} $, which is defined based on the following triangular inequality  for hitting time $ H_{ij} \leq H_{ik}+ H_{kj}$ of all $1 \leq i,j,k \leq n$~\cite{Hu05}.  An intuitive interpretation of the random detour time $H_{ik}+ H_{kj} - H_{ij}$ is that the number of transition steps $H_{ij}$
+from one vertex $i$ to another vertex $j$ can be expected to increase when a forced passage through a third vertex $k$ is prescribed.
+
 
 
 For an absorbing random walks in graph \(\gr=(V,E)\)  with vertices in set \(S\)  being absorbing ones,  we denote the probability that a walker starting from vertex \(i\) first reaches vertex \(u\) in absorbing group \(S\) as the \(\myord{(i,u)}\) entry of matrix \(\matpdistr\in\rea^{n\times\abs{S}}\). Then, \(D_{ij}(S)\) can be expressed as
