@@ -1250,7 +1250,7 @@ In \tabref{tab:runtime_comparison}, we report the running time of \textsc{Approx
     %\small
     \fontsize{8.0}{8.8}\selectfont
     \begin{threeparttable}
-        \caption{The running time (seconds, \(s\)) of \textsc{DeterHK} and \textsc{ApproxHK} with various \(\epsilon\) on a diverse range of realistic networks from various domains.}
+        \caption{The running time (seconds, \(s\)) of \textsc{DeterHK} and \textsc{ApproxHK} with various \(\epsilon\) on a diverse range of realistic networks from various domains}
         \label{tab:runtime_comparison}
         \begin{tabular}{crrcccccc}
             \toprule
@@ -1301,7 +1301,7 @@ In addition to the high efficiency,  our algorithm  \textsc{ApproxHK} also provi
     \centering
     \fontsize{8.0}{8.8}\selectfont
     \begin{threeparttable}
-        \caption{Mean relative error \(\sigma\) of \textsc{ApproxHK} (\(\times \num{e-2}\)).} %100\%
+        \caption{Mean relative error \(\sigma\) of \textsc{ApproxHK} (\(\times \num{e-2}\))} %100\%
         \label{tab:accuracy}
         \begin{tabularx}{8.5cm}{c p{0.5cm} p{0.5cm} p{0.5cm} p{0.5cm} p{0.5cm}}
             \toprule[1pt]
@@ -1453,7 +1453,7 @@ The extended  Tower of Hanoi graph denoted by \(\overline{\mathcal{H}}_{g}(g\ge 
     % \normalsize
     %\fontsize{6.51}{8.0}\selectfont
     \begin{threeparttable}
-        \caption{Exact Kemeny constant \(K\),   their approximation \(\tilde{K}\),  relative error \(\rho=\abs{K-\tilde{K}}/K\), and running time (seconds, \(s\)) for \(\tilde{K}\) on networks \(\mathcal{F}_{12}\), \(\mathcal{M}_{10}\), \(\mathcal{C}_{3,19}\) and \(\overline{\mathcal{H}}_{13}\).  \(K\) is obtained via~\eqref{Kg01} and~\eqref{Kg02}, while \(\tilde{K}\) is obtained through algorithm \textsc{ApproxHK} with \(\epsilon=0.2\).}
+        \caption{Exact Kemeny constant \(K\),   their approximation \(\tilde{K}\),  relative error \(\rho=\abs{K-\tilde{K}}/K\), and running time (seconds, \(s\)) for \(\tilde{K}\) on networks \(\mathcal{F}_{12}\), \(\mathcal{M}_{10}\), \(\mathcal{C}_{3,19}\) and \(\overline{\mathcal{H}}_{13}\).  \(K\) is obtained via~\eqref{Kg01} and~\eqref{Kg02}, while \(\tilde{K}\) is obtained through algorithm \textsc{ApproxHK} with \(\epsilon=0.2\)}
         \label{tab:Kemeny}
         \begin{tabular}{ccccccc}
             \toprule
@@ -1528,40 +1528,46 @@ The efficiency advantage of   \textsc{ApproxMinGWC} over  \textsc{DeterMinGWC} b
     \begin{threeparttable}
         \caption{The running time (seconds, \(s\)) and the relative error (\(\times10^{-2}\)) of \textsc{DeterMinGWC}(\textsc{Deter}) and \textsc{ApproxMinGWC}(\textsc{Approx}) on several realistic networks for various \(\epsilon\)}
         \label{tab:running-time}
-        \begin{tabularx}{8.75cm}{p{1.75cm}<{\centering} p{0.5cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering}}
+        \begin{tabularx}{8.75cm}{p{1.75cm}<{\centering} p{0.6cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering} p{0.4cm}<{\centering}}
             \toprule[1pt]
-            \multirow{3}{*}{Network}                                           &
+            \multirow{4}{*}{Network}                                           &
             \multicolumn{4}{c}{Running time (\(s\)) for \textsc{Deter}}        &
-            \multicolumn{3}{c}{Relative error (\(\times10^{-2}\))}                                                                                            \\ &
+            \multicolumn{3}{c}{Relative error (\(\times10^{-2}\))}                                                                            \\ &
             \multicolumn{4}{c}{and \textsc{Approx} with varioius \(\epsilon\)} &
-            \multicolumn{3}{c}{of \textsc{Approx} with varioius \(\epsilon\)}                                                                                 \\
-            \cmidrule{2-8}                                                     & \textsc{Deter} & \(0.3\) & \(0.25\) & \(0.2\) & \(0.3\) & \(0.25\) & \(0.2\) \\
+            \multicolumn{3}{c}{of \textsc{Approx} with varioius \(\epsilon\)}                                                                 \\
+            \cmidrule{2-8}                                                     &
+            \multirow{2}{*}{\textsc{Deter}}                                    &
+            \multicolumn{3}{c}{\textsc{Approx}}                                &
+            \multirow{2}{*}{\(0.3\)}                                           &
+            \multirow{2}{*}{\(0.25\)}                                          &
+            \multirow{2}{*}{\(0.2\)}                                                                                                          \\
+            \cmidrule{3-5}                                                     &       & \(0.3\) & \(0.25\) & \(0.2\) &       &       &       \\
             \midrule
-            Jazz musicians                                                     & 0.214          & 0.157   & 0.178    & 0.194   & 0.959   & 0.631    & 0.473   \\
-            Euroroads                                                          & 0.498          & 0.239   & 0.277    & 0.281   & 2.457   & 2.154    & 0.261   \\
-            Hamster friends                                                    & 1.183          & 0.348   & 0.450    & 0.629   & 0.266   & 0.250    & 0.132   \\
-            Hamster full                                                       & 1.267          & 0.402   & 0.525    & 1.049   & 0.415   & 0.094    & 0.079   \\
-            Facebook (NIPS)                                                    & 10.20          & 1.956   & 2.919    & 4.349   & 1.050   & 0.649    & 0.072   \\
-            CA-GrQc                                                            & 10.74          & 0.686   & 0.896    & 0.968   & 1.339   & 1.067    & 0.812   \\
-            US power grid                                                      & 17.62          & 0.500   & 0.634    & 0.977   & 1.907   & 1.121    & 0.534   \\
-            Reactome                                                           & 30.13          & 3.593   & 4.680    & 7.329   & 0.895   & 0.668    & 0.479   \\
-            Route views                                                        & 37.55          & 0.582   & 0.704    & 1.024   & 0.326   & 0.184    & 0.031   \\
-            CA-HepTh                                                           & 85.83          & 1.108   & 1.602    & 2.476   & 0.475   & 0.090    & 0.067   \\
-            Sister cities                                                      & 143.3          & 3.246   & 3.974    & 7.013   & 0.355   & 0.152    & 0.131   \\
-            Pretty Good Privacy                                                & 157.7          & 3.844   & 5.170    & 7.657   & 0.286   & 0.118    & 0.069   \\
-            CA-HepPh                                                           & 180.8          & 6.601   & 9.775    & 15.74   & 0.321   & 0.207    & 0.053   \\
-            Astro-ph                                                           & 715.8          & 13.51   & 18.26    & 31.31   & 1.041   & 0.208    & 0.042   \\
-            CAIDA                                                              & 2272           & 6.355   & 7.838    & 11.28   & 0.228   & 0.216    & 0.141   \\
-            Brightkite*                                                        & --             & 23.31   & 32.68    & 54.21   & --      & --       & --      \\
-            Livemocha*                                                         & --             & 177.0   & 250.6    & 392.1   & --      & --       & --      \\
-            WordNet*                                                           & --             & 83.89   & 124.5    & 221.4   & --      & --       & --      \\
-            Gowalla*                                                           & --             & 129.1   & 195.7    & 342.8   & --      & --       & --      \\
-            com-DBLP*                                                          & --             & 232.7   & 399.1    & 756.8   & --      & --       & --      \\
-            Amazon*                                                            & --             & 349.5   & 652.3    & 1082    & --      & --       & --      \\
-            roadNet-PA*                                                        & --             & 2215    & 3349     & 5714    & --      & --       & --      \\
-            YouTube*                                                           & --             & 1482    & 2197     & 3661    & --      & --       & --      \\
-            roadNet-TX*                                                        & --             & 3135    & 4464     & 9338    & --      & --       & --      \\
-            roadNet-CA*                                                        & --             & 5445    & 8214     & 14458   & --      & --       & --      \\
+            Jazz musicians                                                     & 0.214 & 0.157   & 0.178    & 0.194   & 0.959 & 0.631 & 0.473 \\
+            Euroroads                                                          & 0.498 & 0.239   & 0.277    & 0.281   & 2.457 & 2.154 & 0.261 \\
+            Hamster friends                                                    & 1.183 & 0.348   & 0.450    & 0.629   & 0.266 & 0.250 & 0.132 \\
+            Hamster full                                                       & 1.267 & 0.402   & 0.525    & 1.049   & 0.415 & 0.094 & 0.079 \\
+            Facebook (NIPS)                                                    & 10.20 & 1.956   & 2.919    & 4.349   & 1.050 & 0.649 & 0.072 \\
+            CA-GrQc                                                            & 10.74 & 0.686   & 0.896    & 0.968   & 1.339 & 1.067 & 0.812 \\
+            US power grid                                                      & 17.62 & 0.500   & 0.634    & 0.977   & 1.907 & 1.121 & 0.534 \\
+            Reactome                                                           & 30.13 & 3.593   & 4.680    & 7.329   & 0.895 & 0.668 & 0.479 \\
+            Route views                                                        & 37.55 & 0.582   & 0.704    & 1.024   & 0.326 & 0.184 & 0.031 \\
+            CA-HepTh                                                           & 85.83 & 1.108   & 1.602    & 2.476   & 0.475 & 0.090 & 0.067 \\
+            Sister cities                                                      & 143.3 & 3.246   & 3.974    & 7.013   & 0.355 & 0.152 & 0.131 \\
+            Pretty Good Privacy                                                & 157.7 & 3.844   & 5.170    & 7.657   & 0.286 & 0.118 & 0.069 \\
+            CA-HepPh                                                           & 180.8 & 6.601   & 9.775    & 15.74   & 0.321 & 0.207 & 0.053 \\
+            Astro-ph                                                           & 715.8 & 13.51   & 18.26    & 31.31   & 1.041 & 0.208 & 0.042 \\
+            CAIDA                                                              & 2272  & 6.355   & 7.838    & 11.28   & 0.228 & 0.216 & 0.141 \\
+            Brightkite*                                                        & --    & 23.31   & 32.68    & 54.21   & --    & --    & --    \\
+            Livemocha*                                                         & --    & 177.0   & 250.6    & 392.1   & --    & --    & --    \\
+            WordNet*                                                           & --    & 83.89   & 124.5    & 221.4   & --    & --    & --    \\
+            Gowalla*                                                           & --    & 129.1   & 195.7    & 342.8   & --    & --    & --    \\
+            com-DBLP*                                                          & --    & 232.7   & 399.1    & 756.8   & --    & --    & --    \\
+            Amazon*                                                            & --    & 349.5   & 652.3    & 1082    & --    & --    & --    \\
+            roadNet-PA*                                                        & --    & 2215    & 3349     & 5714    & --    & --    & --    \\
+            YouTube*                                                           & --    & 1482    & 2197     & 3661    & --    & --    & --    \\
+            roadNet-TX*                                                        & --    & 3135    & 4464     & 9338    & --    & --    & --    \\
+            roadNet-CA*                                                        & --    & 5445    & 8214     & 14458   & --    & --    & --    \\
             \bottomrule
         \end{tabularx}
     \end{threeparttable}
