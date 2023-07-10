@@ -38,7 +38,7 @@
 \IEEEtitleabstractindextext{
     \begin{abstract}
         For random walks on graph $\gr$ with $n$ vertices and $m$ edges, the mean hitting time $H_j$ from a vertex   chosen from the stationary distribution to  vertex  $j$ measures the importance for $j$, while the Kemeny constant  $K$ is the mean hitting time from one vertex  to another selected randomly according to the stationary distribution. In this paper, we first establish a connection between the two quantities, representing $K$ in terms of $H_j$ for all vertices. We then develop an efficient algorithm estimating $H_j$ for all vertices and $K$ in nearly linear time of $m$. Moreover, we extend the centrality $H_j$ of a single vertex to $H(S)$ of a vertex set $S$,  and  establish a link between  $H(S)$ and some other quantities.  We further study the NP-hard problem of selecting a group $S$ of  $k\ll n$ vertices with minimum $H(S)$, whose objective function is monotonic and supermodular. We finally propose two greedy algorithms  approximately solving the problem. The former has an approximation factor $(1-\frac{k}{k-1}\frac{1}{e})$ and $O(kn^3)$ running time, while the latter returns a $(1-\frac{k}{k-1}\frac{1}{e}-\epsilon)$-approximation solution in nearly-linear time of $m$, for any parameter $0<\epsilon <1$. Extensive experiment results validate the performance of our  algorithms.
-        % For random walks on an undirected graph, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution.         Both quantities have found a large variety of applications in different areas.         However, their high computational complexity limits their applications, especially for large networks with millions of vertices.         In this paper, we first establish a connection between the two quantities, representing \(K\) in terms of \(H_j\) for all vertices.         Subsequently, we extend the notion of mean hitting time to the case of multiple vertices, proposing a vertex group centrality called Group Walk Centrality (GWC).         We then express these quantities in terms of either the pseudoinverse for graph Laplacian or the inverse for a SDDM matrix, based on which we develop an efficient algorithm that provides an approximation of \(H_j\) for all vertices and \(K\) in nearly linear time with respect to the edge number, with high probability.         Moreover, we study the problem of finding a subset \(S\) of \(k\) vertices to minimize its GWC \(\manc{S}\), proving its NP-hardness.         Based on the aforementioned algorithm, we provide another nearly linear greedy algorithm to solve the GWC minimization problem with a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximation factor for any error parameter \(\epsilon\in(0,1)\).         Extensive experiment results on real-life and model networks validate both the efficiency and accuracy of our proposed algorithms.
+        % For random walks on an undirected graph, the mean hitting time \(H_j\) from a vertex \(i\) chosen from the stationary distribution to the target vertex \(j\) can be used as a measure of importance for vertex \(j\), while the Kemeny constant \(K\) is the mean hitting time from a vertex \(i\) to a vertex \(j\) selected randomly according to the stationary distribution.         Both quantities have found a large variety of applications in different areas.         However, their high computational complexity limits their applications, especially for large networks with millions of vertices.         In this paper, we first establish a connection between the two quantities, representing \(K\) in terms of \(H_j\) for all vertices.         Subsequently, we extend the notion of mean hitting time to the case of multiple vertices, proposing a vertex group centrality called Group Walk Centrality (GWC).         We then express these quantities in terms of either the pseudoinverse for graph Laplacian or the inverse for a SDDM matrix, based on which we develop an efficient algorithm that provides an approximation of \(H_j\) for all vertices and \(K\) in nearly linear time with respect to the edge number, with high probability.         Moreover, we study the problem of finding a subset \(S\) of \(k\) vertices to minimize its GWC \(\manc{S}\), proving its NP-hardness.         Based on the aforementioned algorithm, we provide another nearly linear greedy algorithm to solve the GWC minimization problem with a \(1-\frac{k}{k-1}\frac{1}{e}-\epsilon\) approximation factor for any error parameter \(\epsilon\in(0,1)\).         Extensive experiment results on real-life and model networks validate both the efficiency and accuracy of our proposed algorithms.
     \end{abstract}
 
     \begin{IEEEkeywords}
@@ -83,7 +83,7 @@ Moreover, in various practical applications, many problems cannot be reduced to 
 
 \textbf{ Contributions}. In a preliminary version~\cite{ZhXuZh20} of this paper, we studied the absorbing random-walk centrality $H_j=\sum_{i} \rho(i) H_{ij}$ for an individual vertex and Kemeny constant $K$. We focused on a special absorbing random-walk centrality $H_j=\sum_{i} \pi_i H_{ij}$, where the starting probability distribution $\rho(\cdot)$ is the stationary distribution $\vecpi=(\pi_1, \pi_2, \cdots, \pi_n)^{\top}$ of the random walk, and we call $H_j$ walk centrality. The walk centrality $H_j=\sum_{i} \pi_i H_{ij}$ has received considerable attention~\cite{TeBeVo09,Be09,Be16}. We first expressed \(K\) in terms of \(H_j\) for all vertices, and further expressed \(H_j\) and \(K\) in terms of quadratic forms of pseudoinverse of the Laplacian matrix. We then proposed a fast algorithm \textsc{ApproxHK} to compute approximate \(H_j\) for all vertices in $V$ and \(K\) for the whole graph in nearly linear time of the number of edges, based on the Johnson-Lindenstrauss lemma~\cite{Ac01} and the Laplacian solver~\cite{SpTe04,Sp10,KoMiPe11,LiBr12,CoKyMiPaPeRaSu14,KySa16,GaKySp23}. Finally, we experimentally demonstrated that \textsc{ApproxHK} is accurate and is significantly faster than the direct exact computation of related quantities according to their definitions.
 
-The contributions of the current presentation are as follows. We extend the walk centrality  $H_j$ of individual vertices by proposing group walk centrality (GWC) for vertex groups.   In a graph \(\gr=(V,E,w)\) with $n=|V|$ vertices and $m=|E|$ edges,  the GWC $H(S)$ of a group $S \subset V$  is defined as  $H(S) =\sum_{i \in V \setminus S} \pi_i H_{iS}$, where is $H_{iS}$ is the expected time taken by a random walker starting from vertex $i$ to visit any vertex in \(S\) for the first time. We establish a connection between  $H(S)$ and two other quantities related to hitting times.  We show that $H(\cdot)$ is a monotonic and supermodular set function. We then consider an NP-hard optimization problem MinGWC: how to find an optimal set $S^*$ of $k \ll n$ vertices such that $H(S^*)$ is minimized.  We devise two greedy algorithms,  \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} to approximately solve this problem. The former has a $(1-\frac{k}{k-1} \frac{1}{e})$  approximation factor and $O(n^3)$ running time, while the latter has a $(1-\frac{k}{k-1} \frac{1}{e}-\epsilon)$ approximation factor for any error parameter \(\epsilon\in(0,1)\) and $\Otil (km \epsilon^{-2})$ running time, where $\Otil (\cdot)$ notation hides the ${\rm poly}\log $ factors. Finally, extensive experiment results demonstrate that both \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}  are accurate, while \textsc{ApproxMinGWC} is more efficient and is scalable to massive networks with millions of vertices.
+The contributions of the current presentation are as follows. We extend the walk centrality  $H_j$ of individual vertices by proposing group walk centrality (GWC) for vertex groups.   In a graph \(\gr=(V,E,w)\) with $n=|V|$ vertices and $m=|E|$ edges,  the GWC $H(S)$ of a group $S \subseteq V$  is defined as  $H(S) =\sum_{i \in V \setminus S} \pi_i H_{iS}$, where is $H_{iS}$ is the expected time taken by a random walker starting from vertex $i$ to visit any vertex in \(S\) for the first time. We establish a connection between  $H(S)$ and two other quantities related to hitting times.  We show that $H(\cdot)$ is a monotonic and supermodular set function. We then consider an NP-hard optimization problem MinGWC: how to find an optimal set $S^*$ of $k \ll n$ vertices such that $H(S^*)$ is minimized.  We devise two greedy algorithms,  \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} to approximately solve this problem. The former has a $(1-\frac{k}{k-1} \frac{1}{e})$  approximation factor and $O(n^3)$ running time, while the latter has a $(1-\frac{k}{k-1} \frac{1}{e}-\epsilon)$ approximation factor for any error parameter \(\epsilon\in(0,1)\) and $\Otil (km \epsilon^{-2})$ running time, where $\Otil (\cdot)$ notation hides the ${\rm poly}\log $ factors. Finally, extensive experiment results demonstrate that both \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}  are accurate, while \textsc{ApproxMinGWC} is more efficient and is scalable to massive networks with millions of vertices.
 
 
 
@@ -132,7 +132,7 @@ Note that the subscript takes precedence over the superscript, thus \(\mata_{-S}
 
 \subsection{Graph and Laplacian Matrix}\label{sub:lap}
 
-Let \(\gr=(V,E,w)\) denote a connected undirected weighted graph or network,  where \(V\) is the set of vertices,  \(E\) is the set of edges, and  \(w: E\to \mathbb{R}_{+}\) is the positive edge weight function, with \(w_e\) being the weight for edge \(e\). Then, there are total \(n=\abs{V}\) vertices and \(m=|E|\) edges in graph \(\gr\). We use \(u \sim v\) to indicate that two vertices \(u\) and \(v\) are connected by an edge. Let \(w_{\max}\) and \(w_{\min}\) denote the maximum edge weight and minimum edge weight, respectively. Namely, \(w_{\max}=\max_{e\in E} w_e \) and \(w_{\min}=\min_{e\in E} w_e\).
+Let \(\gr=(V,E,w)\) denote a connected undirected weighted graph or network,  where \(V\) is the set of vertices,  \(E\) is the set of edges, and  \(w: E\to \mathbb{R}_{+}\) is the positive edge weight function, with \(w_e\) being the weight for edge \(e\). Then, there are total \(n=\abs{V}\) vertices and \(m=|E|\) edges in graph \(\gr\). Let \(w_{\max}\) and \(w_{\min}\) denote the maximum edge weight and minimum edge weight, respectively. Namely, \(w_{\max}=\max_{e\in E} w_e \) and \(w_{\min}=\min_{e\in E} w_e\).
 
 Mathematically, the topological and weighted properties of a graph \(\gr\) are encoded in its generalized adjacency matrix \(\mata\) with the entry \(a_{ij}\) denoting the adjacency relation between vertices \(i\) and \(j\). If vertices \(i\) and \(j\) are linked to each other by an edge, then we denote this edge as \(e=\edge{i}{j}\), with \(a_{ij}= a_{ji}=w_{e}> 0\). If vertices \(i\) and \(j\) are not adjacent, \(a_{ij}=a_{ji}=0\). In a weighted graph \(\gr\), the degree \(d_i\) of a vertex \(i\) is defined by \(d_i=\sum_{j=1}^n a_{ij}\)~\cite{BaBaPaVe04}, where we denote the maximal vertex degree as \(d_{\max}=\max\setof{d_i|i\in V}\).
 The diagonal degree vector of graph \(\gr\) is defined to be \(\vecd=\mypar{d_1,d_2,\cdots,d_n}^\top\), while the diagonal degree matrix of graph \(\gr\) is defined to be \({\matd} = {\rm diag}(d_1, d_2, \ldots, d_n)\), and the Laplacian matrix of \(\gr\) is \({\lap}={\matd}-{\mata}\). Thus, \(\lap\)  is a symmetric diagonally dominant (SDD) matrix. Moreover, for
@@ -159,7 +159,7 @@ Define \(\matr\) as the \(n \times n\) resistance matrix of graph \(\gr\), whose
 \begin{lemma}\label{Foster} \cite{Te91}
     Let \(\gr=(V,E,w)\) be a simple connected graph with \(n\) vertices. Then the sum of  weight times resistance distance over all pairs of adjacent vertices in  \(\gr\)  satisfies
     \begin{equation*}
-        \sum_{ i\sim j\in E }w_{ij}R_{ij}=n-1.
+        \sum_{ \edge{i}{j}\in E }w_{ij}R_{ij}=n-1.
     \end{equation*}
     %where the summation is taken over all  edges in \(\gr\).
 \end{lemma}
@@ -418,12 +418,12 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitr
     Since we only consider connected graphs,   there exists a simple path \(\mathcal{P}_v\) between \(u\) and any other vertex \(v\).  Applying the triangle inequality along path \(\mathcal{P}_v\), the square of the last sum term in the above equation can be evaluated as:
     \begin{small}
         \begin{align*}
-             & \quad \sum_{v=1}^{n} \Abs{(\matz-\tilmatz)(\vece_u-\vece_v)}^2                                             \\
-             & \le \sum_{v=1}^{n} \left(\sum_{a\sim b \in \mathcal{P}_v} \Abs{(\matz-\tilmatz)(\vece_a-\vece_b)}\right)^2 \\
-             & \le n \sum_{v=1}^{n} \sum_{a\sim b \in \mathcal{P}_v} \Abs{(\matz-\tilmatz)(\vece_a-\vece_b)}^2            \\
-             & \le n^2 \sum_{a\sim b \in E} \Abs{(\matz-\tilmatz)(\vece_a-\vece_b)}^2                                     \\
-             & = n^2 \Abs{(\matz - \tilmatz ) \matb^{\top}}_{F}^{2}                                                       \\
-             & = n^2 \Abs{\matb(\matz - \tilmatz )^{\top}}_{F}^{2}                                                        \\
+             & \quad \sum_{v=1}^{n} \Abs{(\matz-\tilmatz)(\vece_u-\vece_v)}^2                                                 \\
+             & \le \sum_{v=1}^{n} \left(\sum_{\edge{a}{b} \in \mathcal{P}_v} \Abs{(\matz-\tilmatz)(\vece_a-\vece_b)}\right)^2 \\
+             & \le n \sum_{v=1}^{n} \sum_{\edge{a}{b} \in \mathcal{P}_v} \Abs{(\matz-\tilmatz)(\vece_a-\vece_b)}^2            \\
+             & \le n^2 \sum_{\edge{a}{b} \in E} \Abs{(\matz-\tilmatz)(\vece_a-\vece_b)}^2                                     \\
+             & = n^2 \Abs{(\matz - \tilmatz ) \matb^{\top}}_{F}^{2}                                                           \\
+             & = n^2 \Abs{\matb(\matz - \tilmatz )^{\top}}_{F}^{2}                                                            \\
              & \leq
             \frac{n^2}{w_{\min}} \Abs{\matw^{1/2} \matb(\matz - \tilmatz )^{\top}}_{F}^{2}\,.
         \end{align*}
@@ -444,29 +444,29 @@ By Lemmas~\ref{lemma:JL} and~\ref{lemma:ST}, one can approximate \(C(u)\) arbitr
     where the  inequality follows from (\ref{EE13}) and the last term can be further evaluated by Lemma~\ref {Foster} as
     %\begin{small}
     \begin{align*}
-         & \quad \frac{n^2\delta^2}{w_{\min}} \Abs{\matw^{1/2} \matb \matz^{\top}}_{F}^{2}                                            \\
+         & \quad \frac{n^2\delta^2}{w_{\min}} \Abs{\matw^{1/2} \matb \matz^{\top}}_{F}^{2}                                           \\
          & =\frac{n^2\delta^{2}}{w_{\min}}
-        \sum_{a\sim b \in E} w_{a\sim b} \Abs{\matz (\vece_{a} - \vece_{b})}^{2}                                                      \\
+        \sum_{\edge{a}{b} \in E} w_{ab} \Abs{\matz (\vece_{a} - \vece_{b})}^{2}                                                      \\
          & \leq
         \frac{\delta^{2}n^2 (1+\epsilon)}{w_{\min}}
-        \sum_{a\sim b \in E} w_{a\sim b}\|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_a-\vece_b)\|^2                              \\
+        \sum_{\edge{a}{b} \in E} w_{ab}\|\matw^{\frac{1}{2}} \matb \lap^{\dagger} (\vece_a-\vece_b)\|^2                              \\
          & =
         \frac{\delta^{2}n^2 (1+\epsilon)}{w_{\min}}
-        \sum_{a\sim b \in E} w_{a\sim b}(\vece_a-\vece_b)^\top \lap^{\dagger} \matb^\top \matw \matb \lap^{\dagger} (\vece_a-\vece_b) \\
+        \sum_{\edge{a}{b} \in E} w_{ab}(\vece_a-\vece_b)^\top \lap^{\dagger} \matb^\top \matw \matb \lap^{\dagger} (\vece_a-\vece_b) \\
          & =
         \frac{\delta^{2}n^2 (1+\epsilon)}{w_{\min}}
-        \sum_{a\sim b \in E} w_{a\sim b}(\vece_a-\vece_b)^\top \lap^{\dagger} \lap \lap^{\dagger} (\vece_a-\vece_b)                   \\
+        \sum_{\edge{a}{b} \in E} w_{ab}(\vece_a-\vece_b)^\top \lap^{\dagger} \lap \lap^{\dagger} (\vece_a-\vece_b)                   \\
          & =
         \frac{\delta^{2}n^2 (1+\epsilon)}{w_{\min}}
-        \sum_{a\sim b \in E} w_{a\sim b}(\vece_a-\vece_b)^\top \lap^{\dagger} (\vece_a-\vece_b)                                       \\
+        \sum_{\edge{a}{b} \in E} w_{ab}(\vece_a-\vece_b)^\top \lap^{\dagger} (\vece_a-\vece_b)                                       \\
          & =
         \frac{\delta^{2} n^2 (1+\epsilon)}{w_{\min}}
-        \sum_{a\sim b \in E} w_{a\sim b} R_{ab}                                                                                       \\
+        \sum_{\edge{a}{b} \in E} w_{ab} R_{ab}                                                                                       \\
          & =\frac{\delta^{2} n^2(n-1) (1+\epsilon)}{w_{\min}},
     \end{align*}
     %\end{small}
-    where $w_{a\sim b}$ represents the weight of the edge with endvertices $a$ and $b$.
-    %The last inequality follows by the fact that  \(\sum_{a\sim b \in E} w_{a\sim b} R_{ab} = n-1\).
+    where $w_{ab}$ represents the weight of the edge with endvertices $a$ and $b$.
+    %The last inequality follows by the fact that  \(\sum_{\edge{a}{b} \in E} w_{ab} R_{ab} = n-1\).
 
     In addition, \(\Abs{\matz (\vece_u - \vecpi)}^2\) can also be bounded by
     \begin{equation}\label{EE17}
@@ -528,7 +528,7 @@ Based on Theorem~\ref{TheoAlg1}, we  present an algorithm \textsc{ApproxHK} to a
         \(\tilde{\vecz}_i=\mathtt{Solver}(\lap, \vecq_i, \delta)\) where parameter   \(\delta\) is  given by~(\ref{EE14}) \\
     }
     Calculate the constant vector \({\bf p}=\tilmatz \vecpi\)\;
-    \For{each \(u\in V\)}{
+    \ForEach{\(u\in V\)}{
     \(\tilde{H}_u=d \|\tilmatz_{:,u}-{\bf p}\|^2\)
     }
     \(\tilde{K}=\sum_{u \in V} \frac{d_u}{d} \tilde{H}_u\)\;
@@ -817,9 +817,9 @@ Given a connected 3-regular graph \(G=(V,E)\) with every edge having a unit weig
 
 \subsection{A Simple Greedy Algorithm}
 
-Since the MinGWC problem is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve it. One often resorts to greedy algorithm. Due to the proved fact that the objective function \(\manc{\cdot}\) of  the MinGWC problem is monotonic and supermodular, a na\"{\i}ve greedy strategy for vertex selection yields an approximated   solution  with a $(1-\frac{k}{k-1}\cdot\frac{1}{e})$ approximation factor~\cite{NeWoFi78}. Initially, we set $S$ to be empty, then $k$ vertices from set $V \setminus S$ are added to $S$ iteratively. During the first iteration, the vertex $u$ with the minimum walk centrality $H_u$ is chosen to be added to $S$. Then, in each iteration step $i>1$, the vertex $u$ in the set $V \setminus S$ of candidate vertices is selected, which has the maximum marginal gain $\Delta(u,S) \triangleq \manc{S}-\manc{S+u}$.  The algorithm terminates when $k$ vertices are chosen to be added to set $S$.
+Since the MinGWC problem is NP-hard, it is nearly impossible to design a polynomial time algorithm to solve it. One often resorts to greedy algorithm. Due to the proved fact that the objective function \(\manc{\cdot}\) of  the MinGWC problem is monotonic and supermodular, a na\"{\i}ve greedy strategy for vertex selection yields an approximated   solution  with a $(1-\frac{k}{k-1}\frac{1}{e})$ approximation factor~\cite{NeWoFi78}. Initially, we set $S$ to be empty, then $k$ vertices from set $V \setminus S$ are added to $S$ iteratively. During the first iteration, the vertex $u$ with the minimum walk centrality $H_u$ is chosen to be added to $S$. Then, in each iteration step $i>1$, the vertex $u$ in the set $V \setminus S$ of candidate vertices is selected, which has the maximum marginal gain $\Delta(u,S) \defeq \manc{S}-\manc{S+u}$.  The algorithm terminates when $k$ vertices are chosen to be added to set $S$.
 
-At each iteration of the naive greedy algorithm, one needs computing the maximum marginal gain $\Delta(u,S)$ for every candidate vertex in set $V \setminus S$. As shown in~\eqref{eq:GWC}, a straightforward calculation of  $\Delta(u,S)$ for every vertex \(u\) requires inverting a matrix, which needs $O((n-\abs{S})^3)$ time.  Thus, for the $(O(n-\abs{S}))$ candidate vertices, the computation time at each iteration is $O((n-\abs{S})^4)$. Hence, the total computation complexity of the na\"{\i}ve greedy algorithm is \(O(kn^4)\) since $\abs{S} \ll n$.
+At each iteration of the na\"{\i}ve greedy algorithm, one needs computing the maximum marginal gain $\Delta(u,S)$ for every candidate vertex in set $V \setminus S$. As shown in~\eqref{eq:GWC}, a straightforward calculation of  $\Delta(u,S)$ for every vertex \(u\) requires inverting a matrix, which needs $O((n-\abs{S})^3)$ time.  Thus, for the $(O(n-\abs{S}))$ candidate vertices, the computation time at each iteration is $O((n-\abs{S})^4)$. Hence, the total computation complexity of the na\"{\i}ve greedy algorithm is \(O(kn^4)\) since $\abs{S} \ll n$.
 
 \iffalse
     \begin{gather*}
@@ -886,11 +886,11 @@ This avoids directly inverting the matrix \(\lap_{-(S+u)}\), which needs time $O
     \Return{\(S_k\)}
 \end{algorithm}
 
-In addition to good efficiency, \algoref{algo:exact-gwcm} is very effective since it has a $(1-\frac{k}{k-1}\cdot\frac{1}{e})$ approximation factor, as shown in the following theorem.
+In addition to good efficiency, \algoref{algo:exact-gwcm} is very effective since it has a $(1-\frac{k}{k-1}\frac{1}{e})$ approximation factor, as shown in the following theorem.
 \begin{theorem}
     The algorithm $S_k$= \textsc {DeterMinGWC}$ (\gr,k)$ takes a connected weighted undirected graph \(\gr=(V,E,w)\) and a positive integer \(1 \geq k \ll n\), and returns a  group \(S_k\) of \(k\) vertices.
     The return vertex group \(S\) satisfies
-    \[\manc{\setof{u^*}}-\manc{S_k}\ge\mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}}\mypar{\manc{\setof{u^*}}-\manc{S^*}},\]
+    \[\manc{\setof{u^*}}-\manc{S_k}\ge\mypar{1-\frac{k}{k-1}\frac{1}{e}}\mypar{\manc{\setof{u^*}}-\manc{S^*}},\]
     where
     \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}}\] and \[S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
 \end{theorem}
@@ -901,8 +901,8 @@ In addition to good efficiency, \algoref{algo:exact-gwcm} is very effective sinc
     \[\manc{S_{i+1}}-\manc{S^*}\le\mypar{1-\frac{1}{k}}\mypar{\manc{S_i}-\manc{S^*}}.\]
     Then, we  further obtain
     \begin{align*}
-        \manc{S_k}-\manc{S^*}\le & \mypar{1-\frac{1}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}    \\
-        \le                      & \frac{k}{k-1}\cdot\frac{1}{e}\mypar{\manc{S_1}-\manc{S^*}},
+        \manc{S_k}-\manc{S^*}\le & \mypar{1-\frac{1}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}} \\
+        \le                      & \frac{k}{k-1}\frac{1}{e}\mypar{\manc{S_1}-\manc{S^*}},
     \end{align*}
     which, together with the fact that \(S_1=\setof{u^*}\), completes the proof.
 \end{IEEEproof}
@@ -914,7 +914,7 @@ Although \algoref{algo:exact-gwcm} is much faster than the  na\"{\i}ve greedy  a
 In the rest of this section, we first approximate $\vece_u^\top \lap_{-S}^{-1} \vecd_{-S}$ and $\vece_u^\top \lap_{-S}^{-1}\vece_u$. Then, we present an  error-guaranteed approximation to  \(\Delta(u,S)\), based on which we further propose  a fast approximation algorithm to the MinGWC problem  with $(1-\frac{k}{k-1} \frac{1}{e}-\epsilon)$ approximation ratio and time complexity $\tilde{O}(km\epsilon^{-2})$ for any error parameter $0< \epsilon < 1$.
 
 
-\subsection{Approximation of the Quantity $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_S$}
+\subsection{Approximation of the Quantity $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{d}_{-S}$}
 
 We first  approximate the quantity \(\vece_i^\top\lap_{-S}^{-1}\vecd_{-S}\) for any node $i\in V\setminus S$. To this end, we introduce the following two lemmas.
 \begin{lemma}\label{lem:norm-ineq}
@@ -963,8 +963,8 @@ With the above two lemmas, we can approximate \(\vece_u^\top\lap_{-S}^{-1}\vecd_
     \begin{align*}
         (\vecx'_i-\vecx_i)^2
          & \le nw_{\min}^{-1}\Abs{\vecx'-\vecx}^2_{\lap_{-S}}
-        \le nw_{\min}^{-1}\delta_1^2\Abs{\vecx}^2_{\lap_{-S}}        \\
-         & \le n^4w_{\min}^{-1}w_{\max}^2\delta_1^2\trace{\lap_{-S}}
+        \le nw_{\min}^{-1}\delta_1^2\Abs{\vecx}^2_{\lap_{-S}}             \\
+         & \le n^4w_{\min}^{-1}w_{\max}^2\delta_1^2\trace{\lap_{-S}^{-1}}
         \le n^6w_{\min}^{-2}w_{\max}^2\delta_1^2,
     \end{align*}
     where the last inequality is due to \lemref{lem:trace-lap}.
@@ -990,7 +990,7 @@ we represent $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_i$ in terms of an
         =&\Abs{\matw'^{1/2}\matb'\lap_{-S}^{-1}\vece_i}^2+\Abs{\matz^{1/2}\lap_{-S}^{-1}\vece_i}^2.
     \end{split}
 \end{equation}
-Thus, the evaluation of $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_i$ is reduced to computing  the $\ell_2$-norm of two vectors in $\rea^m$ and $\rea^n$, respectively. However, exactly calculating $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_i$ by evaluating $\ell_2$-norms still has a high computational cost, since we still need to invert the matrix  $\mathbf{L}_{-S}$. Although by utilizing \lemref{lemma:ST}, one can approximate $\ell_2$-norms. Unfortunately,  since the dimensions of matrices \(\matw'\) and \(\matz\) are, respectively,  $O(m)$ and  $O(n)$, resulting in an unacceptable number of calls to the \(\mathtt{Solver}\) function. In the following text, by using~\lemref{lemma:JL} we will propose an approximating algorithm to estimate the two $\ell_2$-norms, which significantly lessens the computational cost.
+Thus, the evaluation of $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_i$ is reduced to computing  the $\ell_2$-norm of two vectors in $\rea^m$ and $\rea^n$, respectively. However, exactly calculating $\mathbf{e}_i^\top \mathbf{L}_{-S}^{-1}\mathbf{e}_i$ by evaluating $\ell_2$-norms still has a high computational cost, since we still need to invert the matrix  $\mathbf{L}_{-S}$. Although by utilizing \lemref{lemma:ST}, one can approximate $\ell_2$-norms. Unfortunately,  since the dimensions of matrices \(\matw'\) and \(\matz\) are, respectively,  $O(m)$ and  $O(n)$, resulting in an unacceptable number of calls to the \(\mathtt{Solver}\) function. In the following text, by using~\lemref{lemma:JL} we will propose an approximation algorithm to estimate the two $\ell_2$-norms, which significantly lessens the computational cost.
 
 In order to exploit \lemref{lemma:JL}, we introduce two projection matrices \(\matq\in\rea^{q\times m}\) and \(\matr\in\rea^{r\times n}\), where \(q=r=\ceil{24\epsilon^{-2}\log n}\). Each of the entry for \(\matq\in\rea^{q\times m}\) and \(\matr\in\rea^{r\times n}\) is  $1/\sqrt{q}$ or $1/\sqrt{q}$ with identical probability $1/2$. Then, we have
 \begin{equation}\label{eq:denom-jl}
@@ -1074,7 +1074,7 @@ Making this expression,  we can efficiently approximate the quantity $\vece_i^\t
 
 \subsection{Efficient Evaluation of Marginal Gain \(\Delta(u,S)\)}
 
-Combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose an efficient algorithm called \text{ApproxDelta} approximating \(\Delta(u,S)\) for  \(S\neq\varnothing\). The outline of  \text{ApproxDelta} is presented in Algorithm~\ref{algo:approxdelta}. The \text{ApproxDelta} algorithm calls the \(\mathtt{Solver}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\). The approximation guarantee for Algorithm~\ref{algo:approxdelta} is provided in
+Combining Lemmas~\ref{lem:approx-numer} and~\ref{lem:approx-denom}, we propose an efficient algorithm called \textsc{ApproxDelta} approximating \(\Delta(u,S)\) for  \(S\neq\varnothing\). The outline of  \textsc{ApproxDelta} is presented in Algorithm~\ref{algo:approxdelta}. The \textsc{ApproxDelta} algorithm calls the \(\mathtt{Solver}\) in \lemref{lem:approx-denom} for \(q=\ceil{24(\epsilon/7)^{-2}\log n}\) times, resulting in a complexity of \(\tilde{O}\mypar{m\epsilon^{-2}}\). The approximation guarantee for Algorithm~\ref{algo:approxdelta} is provided in
 Lemma~\ref{lem:approx-marginest}.
 
 
@@ -1125,7 +1125,7 @@ Lemma~\ref{lem:approx-marginest}.
 
 \subsection{Nearly Linear Algorithm for the MinGWC Problem}
 
-By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we develop a faster greedy approximation algorithm called \(\textsc{ApproxMinGWC}\), outlined in Algorithm~\ref{algo:approx}. The algorithm has time  complexity \(\tilde{O}\mypar{km\epsilon^{-2}}\), which  is nearly linear in $m$,  since it calls \textsc{ApproxHK} once and \textsc{ApproxDelta} \(k-1\) times. Algorithm~\ref{algo:approx} has a $(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon)$ approximation factor, as shown in Theorem~\ref{Mainthm}.
+By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we develop a faster greedy approximation algorithm called \(\textsc{ApproxMinGWC}\), outlined in Algorithm~\ref{algo:approx}. The algorithm has time  complexity \(\tilde{O}\mypar{km\epsilon^{-2}}\), which  is nearly linear in $m$,  since it calls \textsc{ApproxHK} once and \textsc{ApproxDelta} \(k-1\) times. Algorithm~\ref{algo:approx} has a $(1-\frac{k}{k-1}\frac{1}{e}-\epsilon)$ approximation factor, as shown in Theorem~\ref{Mainthm}.
 
 \begin{algorithm}
     \caption{\textsc{ApproxMinGWC}\((\gr,k,\epsilon)\)}
@@ -1149,8 +1149,8 @@ By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we develop a faster
 \begin{theorem}\label{Mainthm}
     The algorithm \(\textsc{ApproxMinGWC}(\gr,k,\epsilon)\) takes a connected weighted undirected graph \(\gr=(V,E,w)\) with Laplacian matrix \(\lap\) , a positive integer \(1<k \ll n\), and an error parameter \(\epsilon\in(0,1)\), and returns a set  \(S_k\) of \(k\) vertices. With high probability, the returned vertex set \(S\) satisfies
     \begin{align*}
-        \mypar{1+\epsilon} & \manc{\setof{u^*}}-\manc{S_k}\ge                                                                         \\
-                           & \mypar{1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon}\mypar{\mypar{1+\epsilon}\manc{\setof{u^*}}-\manc{S^*}},
+        \mypar{1+\epsilon} & \manc{\setof{u^*}}-\manc{S_k}\ge                                                                    \\
+                           & \mypar{1-\frac{k}{k-1}\frac{1}{e}-\epsilon}\mypar{\mypar{1+\epsilon}\manc{\setof{u^*}}-\manc{S^*}},
     \end{align*}
     where
     \[u^*\defeq\argmin_{u\in V}\manc{\setof{u}}, S^*\defeq\argmin_{\abs{S}=k}\manc{S}.\]
@@ -1167,8 +1167,8 @@ By combining \algoref{ALG01} and \algoref{algo:approxdelta}, we develop a faster
     % By Theorem~\ref{TheoAlg1}, 
     Repeating the above process, we  further obtain
     \begin{align*}
-        \manc{S_k}-\manc{S^*} \le & \mypar{1-\frac{1-\epsilon}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}            \\
-        \le                       & \mypar{\frac{k}{k-1}\cdot\frac{1}{e}+\epsilon}\mypar{\manc{S_1}-\manc{S^*}},
+        \manc{S_k}-\manc{S^*} \le & \mypar{1-\frac{1-\epsilon}{k}}^{k-1}\mypar{\manc{S_1}-\manc{S^*}}       \\
+        \le                       & \mypar{\frac{k}{k-1}\frac{1}{e}+\epsilon}\mypar{\manc{S_1}-\manc{S^*}},
     \end{align*}
     which, together with  the fact that \(\manc{S_1}\le\mypar{1+\epsilon}\manc{\setof{u^*}}\),
     completes the proof.
@@ -1479,7 +1479,7 @@ The extended  Tower of Hanoi graph denoted by \(\overline{\mathcal{H}}_{g}(g\ge 
 \subsection{Performance for Algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}}
 
 
-\textbf{Accuracy of Algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}.} We first demonstrate the accuracy of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} by comparing their results of with the optimum and random solutions on four small-scale networks~\cite{Ku13}: \(\mathit{Zebra}\) with 23 vertices and 105 edges, \(\mathit{Zachary\ karate\ club}\) with 34 vertices and 78 edges, \(\mathit{Contiguous\ USA}\) with 49 vertices and 107 edges, and \(\mathit{Les\ Miserables}\) with 77 vertices and 254 edges. For each network, a random solution is obtained by choosing $k$ vertices uniformly. Moreover, since these small networks, we are able to compute the optimum solutions by brute-force search. For each $k=1,2,\ldots,5$, we find $k$ vertices  by optimal and stochastic schemes, and \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}, with the error parameter $\epsilon$ in \textsc{ApproxMinGWC} being  \(0.2\). We report the GWC results on these four strategies in~\figref{pic:compare-effect-optimum}. As shown in~\figref{pic:compare-effect-optimum},  the solutions provided by \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are almost identical, with both being very close to the optimum solutions. This indicates that the practical approximation ratios of our algorithms are much better than their theoretical guarantees. In addition,  \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are far better than the random strategy.
+\textbf{Accuracy of Algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}.} We first demonstrate the accuracy of \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} by comparing their results of with the optimum and random solutions on four small-scale networks~\cite{Ku13}: \(\mathit{Zebra}\) with 23 vertices and 105 edges, \(\mathit{Zachary\ karate\ club}\) with 34 vertices and 78 edges, \(\mathit{Contiguous\ USA}\) with 49 vertices and 107 edges, and \(\mathit{Les\ Miserables}\) with 77 vertices and 254 edges. For each network, a random solution is obtained by choosing $k$ vertices uniformly. Moreover, since these are small networks, we are able to compute the optimum solutions by brute-force search. For each $k=2,3,4,5$, we find $k$ vertices by optimal and stochastic schemes, and \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}, with the error parameter $\epsilon$ in \textsc{ApproxMinGWC} being  \(0.2\). We report the GWC results on these four strategies in~\figref{pic:compare-effect-optimum}. As shown in~\figref{pic:compare-effect-optimum},  the solutions provided by \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are almost identical, with both being very close to the optimum solutions. This indicates that the practical approximation ratios of our algorithms are much better than their theoretical guarantees. In addition,  \textsc{DeterMinGWC} and \textsc{ApproxMinGWC} are far better than the random strategy.
 
 
 
@@ -1580,14 +1580,14 @@ As a fundamental concept in social network analysis and complex networks, networ
 
 %To overcome this flaw, betweenness centrality based on random walks~\cite{Ne05} and current flow closeness centrality~\cite{BrFl05} based on electrical networks were introduced, both of which display better discriminate power than their traditional counterparts~\cite{Ne05,BeWeLuMe16}, since they incorporate the contributions from all paths between different node pairs.
 
-In addition to the measurs of centrality for an individal vertex,  many metrics for centrality of node group were presented, in order to measure the importance of a node group. Most previous  node group centrality measures are based on graph structure~\cite{XuReLiYuLi17} or dynamic processes~\cite{MaMaGi15}. For example, based on the shortest paths, group betweenness~\cite{DoelPuZi09,Yo14,MaTsUp16} and group closeness~\cite{EvBo99,ZhLuToGu14,BeGoMe18} were proposed. Similar to the case of individual nodes, group betweenness and group closeness ignore contributions from non-shortest paths. To capture the contributions of all path, motivated by the work of White and Smyth~\cite{WhSm03}, absorbing random-walk group centrality was proposed~\cite{MaMaGi15}. And a algorithm for minimizing the absorbing random-walk group centrality with a cardinality constraint was proposed~\cite{MaMaGi15}. It has a $O(kn^3)$, and is thus not applicable to large networks.
+In addition to the measures of centrality for an individal vertex,  many metrics for centrality of node group were presented, in order to measure the importance of a node group. Most previous  node group centrality measures are based on graph structure~\cite{XuReLiYuLi17} or dynamic processes~\cite{MaMaGi15}. For example, based on the shortest paths, group betweenness~\cite{DoelPuZi09,Yo14,MaTsUp16} and group closeness~\cite{EvBo99,ZhLuToGu14,BeGoMe18} were proposed. Similar to the case of individual nodes, group betweenness and group closeness ignore contributions from non-shortest paths. To capture the contributions of all path, motivated by the work of White and Smyth~\cite{WhSm03}, absorbing random-walk group centrality was proposed~\cite{MaMaGi15}. And a algorithm for minimizing the absorbing random-walk group centrality with a cardinality constraint was proposed~\cite{MaMaGi15}. It has a $O(kn^3)$, and is thus not applicable to large networks.
 Our group walk centrality is different from that in~\cite{MaMaGi15}. Moreover,  our fast algorithm \textsc{ApproxMinGWC} has a nearly-linear time complexity.
 
 %Many researchers have noticed the connection between random detour time and their proposed centralities. Ranjan et al.~\cite{RaZh13} presented \textit{topological centrality} \(\cscr^*(u)\) as the reciprocal of \(\lap^\dagger_{[u,u]}\), and found that \(\cscr^*(u)\) can be represented by random detour time and hitting time, that is, \({\cscr^*(u)}^{-1}\propto \sum_{i=1}^n\sum_{j=1}^n\mypar{D_{ij}(u)-H_{ij}}\). Gangemi et al.~\cite{GaLePaGoLiZh15} simply took variants of random detour time as components of \textit{pivotality}, which is the measure of node reachability. We prove that random detour time is also related to Kemeny constant and absorbing random-walk centrality. This connection also holds for the case of multiple nodes.
 
 %There also exist various random walk-based centralities, such as the \textit{Random Walk Decay Centrality}~\cite{WaRaSk19} and the \textit{Group-to-group random walk betweenness centrality}~\cite{GiBaRa21}, both of them are variants of existing centralities. Besides, Mavroforakis et al.~\cite{MaMaGi15} presented \textit{\(k\) absorbing random-walk centrality}, which is the most directly related to our work. We give new proofs on the monotonicity and supermodularity of GWC from the perspective of numerical analysis, which is more concise and intuitive. Moreover, we design and implement a nearly linear algorithm for GWC minimization problem, which is proved to have an approximation guarantee.
 
-%Admittedly, many existing studies have focused on the notion of selecting \(k\) nodes in the network to optimize some quantities related to absorbing random walk, such as absorbing distance~\cite{LiYuHuCh14,MoBaZhPe20} and absorbing probability~\cite{RoGl16}. However, computing these quantities on infinite random walk models requires time-consuming matrix inversions. Most of researchers use finite random walk models to approximate the infinite case, except for Rosenfeld et al.~\cite{RoGl16}, who use LU decomposition to reduce the complexity of computing absorbing probability. Instead of constructing finite random walk models, our work focus on the infinite random walk model, use a nearly linear algorithm to minimize GWC, which has a \(1-\frac{k}{k-1}\cdot\frac{1}{e}-\epsilon\) approximate factor for any error parameter \(\epsilon\in(0,1)\).
+%Admittedly, many existing studies have focused on the notion of selecting \(k\) nodes in the network to optimize some quantities related to absorbing random walk, such as absorbing distance~\cite{LiYuHuCh14,MoBaZhPe20} and absorbing probability~\cite{RoGl16}. However, computing these quantities on infinite random walk models requires time-consuming matrix inversions. Most of researchers use finite random walk models to approximate the infinite case, except for Rosenfeld et al.~\cite{RoGl16}, who use LU decomposition to reduce the complexity of computing absorbing probability. Instead of constructing finite random walk models, our work focus on the infinite random walk model, use a nearly linear algorithm to minimize GWC, which has a \(1-\frac{k}{k-1}\frac{1}{e}-\epsilon\) approximate factor for any error parameter \(\epsilon\in(0,1)\).
 
 
 \section{Conclusion}
@@ -1595,7 +1595,7 @@ Our group walk centrality is different from that in~\cite{MaMaGi15}. Moreover,  
 The hitting time of random walks arises in many practical scenarios. However, the time cost of exactly computing hitting time is prohibitively expensive. In this paper, we studied a walk centrality $H_j$ for a single vertex and Kemeny constant $K$ of a graph \(\gr=(V,E,w)\) with $n$ vertices and $m$ edges, both of which are actually weighted averages of hitting times and have found wide applications. We established a link between the two quantities, and reformulated them in terms of quadratic forms of the pseudoinverse of the Laplacian $\lap$ for graph $\gr$. Moreover, we provided a randomized approximation algorithm \textsc{ApproxHK} with probabilistic guarantee, which computes the walk centrality $H_j$ for all vertices $j \in V$ and Kemeny constant $K$ in nearly linear time with respect to the edge number $m$.
 
 We then introduced the group walk centrality  for a group $H(S)$ of vertices, which extends the notion of walk centrality of an individual vertex to multiple vertices in set $S$. We proved that as a set function, $H(\cdot)$ is monotone and supermodular.
-We established a link between  $H(S)$ and some quantities related to hitting times.  We then considered the NP-hard optimization problem MinGWC of finding the set $S^*$ of $k \ll n$ vertices, aiming to minimize $H(S^*)$. We then developed two greedy approximation algorithms, \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}, which solve the problem MinGWC by iteratively selected $k$ vertices. The former obtains a $(1-\frac{k}{k-1} \frac{1}{e})$ approximation factor in time $O(n^3)$; while the latter achieves a $(1-\frac{k}{k-1}\frac{1}{e}-\epsilon)$ approximation ratio in time $\Otil (mk\epsilon^{-2})$ for any $0<\epsilon <1$.
+We established a link between  $H(S)$ and some quantities related to hitting times.  We then considered the NP-hard optimization problem MinGWC of finding the set $S^*$ of $k \ll n$ vertices, aiming to minimize $H(S^*)$. We then developed two greedy approximation algorithms, \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}, which solve the problem MinGWC by iteratively selected $k$ vertices. The former obtains a $(1-\frac{k}{k-1} \frac{1}{e})$ approximation factor in time $O(n^3)$; while the latter achieves a $(1-\frac{k}{k-1}\frac{1}{e}-\epsilon)$ approximation ratio in time $\Otil (km\epsilon^{-2})$ for any $0<\epsilon <1$.
 
 Finally, we conducted extensive experiments on various real and model networks, in order to verify the performance of our proposed algorithms. The results show that algorithm \textsc{ApproxHK} is both efficient and accurate for approximating walk centrality of all individual vertices and the Kemeny constant $K$. For the two greedy algorithms \textsc{DeterMinGWC} and \textsc{ApproxMinGWC}, both of them are very accurate, often returning almost optimal solutions. Particularly, the randomized algorithm \textsc{ApproxMinGWC} is scale to large networks, which quickly returns good approximation solutions in networks with over a million vertices.
 
