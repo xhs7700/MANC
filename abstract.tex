@@ -1,0 +1,55 @@
+\documentclass[10pt,twocolumn,twoside]{IEEEtran}
+
+\input{headers.tex}
+\newcommand{\biophoto}[1]{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{#1}}
+\newcommand{\todo}[1]{{\bf \color{red} TODO: #1}}
+
+\begin{document}
+
+\title{Means of Hitting Times for Random Walks on Graphs: Connections, Computation, and Optimization}
+\author{Haisong~Xia,
+    %22210240101@m.fudan.edu.cn    
+    Wanyue~Xu~\IEEEmembership{Student Member,~IEEE},
+    Zuobai~Zhang,
+    %Zhuoqing~Song,
+    Zhongzhi~Zhang~\IEEEmembership{Member,~IEEE}
+    \thanks{This work was  supported  by the National Natural Science Foundation of China (No. U20B2051) and the Shanghai Municipal Science and Technology
+        Major Project  (No. 2021SHZDZX03). Any correspondence should be addressed to Zhongzhi Zhang.
+    }
+
+
+    \thanks{
+        Haisong Xia, Wanyue Xu,  Zuobai~Zhang, and Zhongzhi Zhang are with the Shanghai Key Laboratory of Intelligent Information Processing, School of Computer Science, Fudan University, Shanghai 200433, China; Zhongzhi Zhang is also with the Shanghai Engineering Research Institute of Blockchains, Fudan University, Shanghai 200433, China; and Research
+        Institute of Intelligent Complex Systems, Fudan University, Shanghai 200433, China. {\tt\small zhangzz@fudan.edu.cn}
+    }
+    \thanks{
+        An earlier version of this paper was presented in part at the Thirteenth ACM International Conference on Web Search and Data Mining (WSDM)~\cite{ZhXuZh20} [DOI: 10.1145/3336191.3371777].
+    }
+
+}
+
+\markboth{IEEE Transactions on Information Theory}
+% {Xia \MakeLowercase{\textit{et al.}}: Absorbing Time of Random Walks as a Node Group Centrality}
+{Xia \MakeLowercase{\textit{et al.}}: Means of Hitting Times for Random Walks on Graphs: Connections, Computation, and Optimization}
+
+\IEEEtitleabstractindextext{
+    \begin{abstract}
+        For random walks on graph $\gr$ with $n$ vertices and $m$ edges, the mean hitting time $H_j$ from a vertex chosen from the stationary distribution to vertex $j$ measures the importance for $j$, while the Kemeny constant $K$ is the mean hitting time from one vertex to another selected randomly according to the stationary distribution. In this paper, we first establish a connection between the two quantities, representing $K$ in terms of $H_j$ for all vertices. We then develop an efficient algorithm estimating $H_j$ for all vertices and $K$ in nearly linear time of $m$. Moreover, we extend the centrality $H_j$ of a single vertex to $H(S)$ of a vertex set $S$, and establish a link between $H(S)$ and some other quantities. We further study the NP-hard problem of selecting a group $S$ of $k\ll n$ vertices with minimum $H(S)$, whose objective function is monotonic and supermodular. We finally propose two greedy algorithms approximately solving the problem. The former has an approximation factor $(1-\frac{k}{k-1}\frac{1}{e})$ and $O(kn^3)$ running time, while the latter returns a $(1-\frac{k}{k-1}\frac{1}{e}-\epsilon)$-approximation solution in nearly-linear time of $m$, for any parameter $0<\epsilon <1$. Extensive experiment results validate the performance of our algorithms.
+    \end{abstract}
+
+    \begin{IEEEkeywords}
+        Random walk, hitting time, Kemeny constant, spectral algorithm, complex network, optimization, vertex centrality.
+    \end{IEEEkeywords}
+}
+
+\maketitle
+
+\IEEEdisplaynontitleabstractindextext
+
+\IEEEpeerreviewmaketitle
+
+\bibliographystyle{IEEEtran}
+\balance
+\bibliography{refs}
+
+\end{document}
